@@ -28,12 +28,111 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(800, 450);
-			this.Text = "MainForm";
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+			pagePanel = new Panel();
+			menuStrip1 = new MenuStrip();
+			fileToolStripMenuItem = new ToolStripMenuItem();
+			exitToolStripMenuItem = new ToolStripMenuItem();
+			optionsToolStripMenuItem = new ToolStripMenuItem();
+			configureAutosaveToolStripMenuItem = new ToolStripMenuItem();
+			helpToolStripMenuItem = new ToolStripMenuItem();
+			checkForupdatesToolStripMenuItem = new ToolStripMenuItem();
+			aboutToolStripMenuItem = new ToolStripMenuItem();
+			menuStrip1.SuspendLayout();
+			SuspendLayout();
+			// 
+			// pagePanel
+			// 
+			pagePanel.Dock = DockStyle.Fill;
+			pagePanel.Location = new Point(0, 24);
+			pagePanel.Name = "pagePanel";
+			pagePanel.Size = new Size(634, 437);
+			pagePanel.TabIndex = 0;
+			// 
+			// menuStrip1
+			// 
+			menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, optionsToolStripMenuItem, helpToolStripMenuItem });
+			menuStrip1.Location = new Point(0, 0);
+			menuStrip1.Name = "menuStrip1";
+			menuStrip1.Size = new Size(634, 24);
+			menuStrip1.TabIndex = 1;
+			menuStrip1.Text = "menuStrip1";
+			// 
+			// fileToolStripMenuItem
+			// 
+			fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { exitToolStripMenuItem });
+			fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+			fileToolStripMenuItem.Size = new Size(37, 20);
+			fileToolStripMenuItem.Text = "&File";
+			// 
+			// exitToolStripMenuItem
+			// 
+			exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+			exitToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.F4;
+			exitToolStripMenuItem.Size = new Size(180, 22);
+			exitToolStripMenuItem.Text = "&Exit";
+			exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
+			// 
+			// optionsToolStripMenuItem
+			// 
+			optionsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { configureAutosaveToolStripMenuItem });
+			optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+			optionsToolStripMenuItem.Size = new Size(61, 20);
+			optionsToolStripMenuItem.Text = "&Options";
+			// 
+			// configureAutosaveToolStripMenuItem
+			// 
+			configureAutosaveToolStripMenuItem.Name = "configureAutosaveToolStripMenuItem";
+			configureAutosaveToolStripMenuItem.Size = new Size(191, 22);
+			configureAutosaveToolStripMenuItem.Text = "&Configure auto-save...";
+			// 
+			// helpToolStripMenuItem
+			// 
+			helpToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { checkForupdatesToolStripMenuItem, aboutToolStripMenuItem });
+			helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+			helpToolStripMenuItem.Size = new Size(44, 20);
+			helpToolStripMenuItem.Text = "&Help";
+			// 
+			// checkForupdatesToolStripMenuItem
+			// 
+			checkForupdatesToolStripMenuItem.Name = "checkForupdatesToolStripMenuItem";
+			checkForupdatesToolStripMenuItem.Size = new Size(180, 22);
+			checkForupdatesToolStripMenuItem.Text = "Check for &updates";
+			// 
+			// aboutToolStripMenuItem
+			// 
+			aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+			aboutToolStripMenuItem.Size = new Size(180, 22);
+			aboutToolStripMenuItem.Text = "&About...";
+			// 
+			// MainForm
+			// 
+			AutoScaleDimensions = new SizeF(7F, 15F);
+			AutoScaleMode = AutoScaleMode.Font;
+			ClientSize = new Size(634, 461);
+			Controls.Add(pagePanel);
+			Controls.Add(menuStrip1);
+			Icon = (Icon)resources.GetObject("$this.Icon");
+			MainMenuStrip = menuStrip1;
+			MinimumSize = new Size(400, 360);
+			Name = "MainForm";
+			Text = "Project Zomboid Savepoint Manager";
+			menuStrip1.ResumeLayout(false);
+			menuStrip1.PerformLayout();
+			ResumeLayout(false);
+			PerformLayout();
 		}
 
 		#endregion
+
+		private Panel pagePanel;
+		private MenuStrip menuStrip1;
+		private ToolStripMenuItem fileToolStripMenuItem;
+		private ToolStripMenuItem exitToolStripMenuItem;
+		private ToolStripMenuItem optionsToolStripMenuItem;
+		private ToolStripMenuItem configureAutosaveToolStripMenuItem;
+		private ToolStripMenuItem helpToolStripMenuItem;
+		private ToolStripMenuItem checkForupdatesToolStripMenuItem;
+		private ToolStripMenuItem aboutToolStripMenuItem;
 	}
 }
