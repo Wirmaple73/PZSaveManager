@@ -49,6 +49,14 @@ namespace SavepointManager.Classes
 
 		public static bool DoesDirectoryExist => Directory.Exists(SaveDirectory);
 
+		public List<Savepoint> Savepoints
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+		}
+
 		public World(string title, string folderPath, string gamemode)
 		{
 			Title	   = title;

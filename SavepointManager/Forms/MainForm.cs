@@ -9,19 +9,40 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SavepointManager.Classes;
+using SavepointManager.Pages;
 
 namespace SavepointManager.Forms
 {
 	public partial class MainForm : Form
 	{
+		private readonly WorldSelectionPage worldSelectionPage = new();
 		private readonly SaveSelectionPage saveSelectionPage = new();
 
 		public MainForm()
 		{
 			InitializeComponent();
+			FormPageLoader.Load(pagePanel, worldSelectionPage);
 
+			worldSelectionPage.NextButton.Click += NextButton_Click;
+			saveSelectionPage.BackButton.Click += BackButton_Click;
+
+			this.AcceptButton = worldSelectionPage.NextButton;
+		}
+
+		private void BackButton_Click(object? sender, EventArgs e)
+		{
+			FormPageLoader.Load(pagePanel, worldSelectionPage);
+			this.CancelButton = saveSelectionPage.BackButton;
+
+			worldSelectionPage.RefreshSaveListTimer.Start();
+		}
+
+		private void NextButton_Click(object? sender, EventArgs e)
+		{
 			FormPageLoader.Load(pagePanel, saveSelectionPage);
-			this.AcceptButton = saveSelectionPage.NextButton;
+			saveSelectionPage.SelectedWorld = worldSelectionPage.SelectedWorld!;
+
+			worldSelectionPage.RefreshSaveListTimer.Stop();
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e) => Application.Exit();

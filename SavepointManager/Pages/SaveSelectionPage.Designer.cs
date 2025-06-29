@@ -1,4 +1,4 @@
-﻿namespace SavepointManager.Forms
+﻿namespace SavepointManager.Pages
 {
 	partial class SaveSelectionPage
 	{
@@ -28,141 +28,137 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			nextButton = new Button();
-			worldPreview = new PictureBox();
-			label2 = new Label();
 			label1 = new Label();
-			worldList = new ListView();
+			saveList = new ListView();
 			columnHeader1 = new ColumnHeader();
 			columnHeader2 = new ColumnHeader();
-			columnHeader3 = new ColumnHeader();
-			errorLabel = new Label();
-			errorLabelIcon = new PictureBox();
-			((System.ComponentModel.ISupportInitialize)worldPreview).BeginInit();
-			((System.ComponentModel.ISupportInitialize)errorLabelIcon).BeginInit();
+			newSavepoint = new Button();
+			button2 = new Button();
+			label2 = new Label();
+			worldName = new Label();
+			button3 = new Button();
+			backButton = new Button();
 			SuspendLayout();
-			// 
-			// nextButton
-			// 
-			nextButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-			nextButton.DialogResult = DialogResult.OK;
-			nextButton.Location = new Point(15, 417);
-			nextButton.Name = "nextButton";
-			nextButton.Size = new Size(112, 28);
-			nextButton.TabIndex = 9;
-			nextButton.Text = "&Next";
-			// 
-			// worldPreview
-			// 
-			worldPreview.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			worldPreview.BorderStyle = BorderStyle.FixedSingle;
-			worldPreview.Location = new Point(417, 36);
-			worldPreview.Name = "worldPreview";
-			worldPreview.Size = new Size(200, 200);
-			worldPreview.SizeMode = PictureBoxSizeMode.Zoom;
-			worldPreview.TabIndex = 8;
-			worldPreview.TabStop = false;
-			// 
-			// label2
-			// 
-			label2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			label2.Location = new Point(417, 241);
-			label2.Name = "label2";
-			label2.Size = new Size(200, 15);
-			label2.TabIndex = 7;
-			label2.Text = "World preview";
-			label2.TextAlign = ContentAlignment.MiddleCenter;
 			// 
 			// label1
 			// 
 			label1.AutoSize = true;
-			label1.Location = new Point(13, 10);
+			label1.Location = new Point(13, 40);
 			label1.Name = "label1";
-			label1.Size = new Size(156, 15);
-			label1.TabIndex = 5;
-			label1.Text = "Select a world to begin with.";
+			label1.Size = new Size(104, 15);
+			label1.TabIndex = 6;
+			label1.Text = "Select a savepoint.";
 			// 
-			// worldList
+			// saveList
 			// 
-			worldList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-			worldList.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2, columnHeader3 });
-			worldList.FullRowSelect = true;
-			worldList.HeaderStyle = ColumnHeaderStyle.Nonclickable;
-			worldList.Location = new Point(16, 36);
-			worldList.MultiSelect = false;
-			worldList.Name = "worldList";
-			worldList.Size = new Size(382, 364);
-			worldList.TabIndex = 11;
-			worldList.UseCompatibleStateImageBehavior = false;
-			worldList.View = View.Details;
-			worldList.SelectedIndexChanged += saveList_SelectedIndexChanged;
-			worldList.DoubleClick += worldList_DoubleClick;
+			saveList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+			saveList.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2 });
+			saveList.FullRowSelect = true;
+			saveList.HeaderStyle = ColumnHeaderStyle.Nonclickable;
+			saveList.Location = new Point(16, 66);
+			saveList.MultiSelect = false;
+			saveList.Name = "saveList";
+			saveList.Size = new Size(417, 335);
+			saveList.TabIndex = 12;
+			saveList.UseCompatibleStateImageBehavior = false;
+			saveList.View = View.Details;
 			// 
 			// columnHeader1
 			// 
 			columnHeader1.Text = "Title";
-			columnHeader1.Width = 220;
+			columnHeader1.Width = 240;
 			// 
 			// columnHeader2
 			// 
-			columnHeader2.Text = "Gamemode";
-			columnHeader2.Width = 100;
+			columnHeader2.Text = "Date";
+			columnHeader2.Width = 120;
 			// 
-			// columnHeader3
+			// newSavepoint
 			// 
-			columnHeader3.Text = "Active";
-			columnHeader3.Width = 50;
+			newSavepoint.Location = new Point(445, 65);
+			newSavepoint.Name = "newSavepoint";
+			newSavepoint.Size = new Size(175, 28);
+			newSavepoint.TabIndex = 13;
+			newSavepoint.Text = "&New savepoint...";
+			newSavepoint.UseVisualStyleBackColor = true;
+			newSavepoint.Click += newSavepoint_Click;
 			// 
-			// errorLabel
+			// button2
 			// 
-			errorLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-			errorLabel.AutoEllipsis = true;
-			errorLabel.Location = new Point(175, 417);
-			errorLabel.Name = "errorLabel";
-			errorLabel.Size = new Size(442, 40);
-			errorLabel.TabIndex = 12;
-			errorLabel.TextChanged += errorLabel_TextChanged;
+			button2.Location = new Point(445, 109);
+			button2.Name = "button2";
+			button2.Size = new Size(175, 28);
+			button2.TabIndex = 14;
+			button2.Text = "&Restore to selected savepoint";
+			button2.UseVisualStyleBackColor = true;
 			// 
-			// errorLabelIcon
+			// label2
 			// 
-			errorLabelIcon.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-			errorLabelIcon.Location = new Point(141, 417);
-			errorLabelIcon.Name = "errorLabelIcon";
-			errorLabelIcon.Size = new Size(28, 28);
-			errorLabelIcon.SizeMode = PictureBoxSizeMode.StretchImage;
-			errorLabelIcon.TabIndex = 13;
-			errorLabelIcon.TabStop = false;
-			errorLabelIcon.Visible = false;
+			label2.AutoSize = true;
+			label2.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+			label2.Location = new Point(13, 10);
+			label2.Name = "label2";
+			label2.Size = new Size(44, 15);
+			label2.TabIndex = 15;
+			label2.Text = "World:";
+			// 
+			// worldName
+			// 
+			worldName.AutoSize = true;
+			worldName.Location = new Point(54, 10);
+			worldName.Name = "worldName";
+			worldName.Size = new Size(133, 15);
+			worldName.TabIndex = 16;
+			worldName.Text = "How are you even here?";
+			// 
+			// button3
+			// 
+			button3.Location = new Point(445, 153);
+			button3.Name = "button3";
+			button3.Size = new Size(175, 28);
+			button3.TabIndex = 17;
+			button3.Text = "&Delete";
+			button3.UseVisualStyleBackColor = true;
+			// 
+			// backButton
+			// 
+			backButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+			backButton.DialogResult = DialogResult.OK;
+			backButton.Location = new Point(15, 417);
+			backButton.Name = "backButton";
+			backButton.Size = new Size(112, 28);
+			backButton.TabIndex = 18;
+			backButton.Text = "&Back";
 			// 
 			// SaveSelectionPage
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			Controls.Add(errorLabelIcon);
-			Controls.Add(errorLabel);
-			Controls.Add(worldList);
-			Controls.Add(nextButton);
-			Controls.Add(worldPreview);
+			Controls.Add(backButton);
+			Controls.Add(button3);
+			Controls.Add(worldName);
 			Controls.Add(label2);
+			Controls.Add(button2);
+			Controls.Add(newSavepoint);
+			Controls.Add(saveList);
 			Controls.Add(label1);
 			Name = "SaveSelectionPage";
 			Size = new Size(634, 461);
-			((System.ComponentModel.ISupportInitialize)worldPreview).EndInit();
-			((System.ComponentModel.ISupportInitialize)errorLabelIcon).EndInit();
 			ResumeLayout(false);
 			PerformLayout();
 		}
 
 		#endregion
-		private Label label2;
+
 		private Label label1;
-		private PictureBox worldPreview;
-		private ListView worldList;
+		private ListView saveList;
 		private ColumnHeader columnHeader1;
 		private ColumnHeader columnHeader2;
-		private ColumnHeader columnHeader3;
-		private Button nextButton;
-		private Label errorLabel;
-		private PictureBox errorLabelIcon;
+		private Button newSavepoint;
+		private Button button2;
+		private Label label2;
+		private Label worldName;
+		private Button button3;
+		private Button backButton;
 	}
 }
