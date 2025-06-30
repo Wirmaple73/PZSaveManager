@@ -1,16 +1,20 @@
-﻿using System;
+﻿using SharpCompress.Archives.Tar;
+using SharpCompress.Common;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace SavepointManager.Classes
 {
 	public class World
 	{
 		private static readonly string BaseDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Zomboid");
-		private static readonly string SaveDirectory = Path.Combine(BaseDirectory, "Saves");
+		public static readonly string WorldDirectory = Path.Combine(BaseDirectory, "Saves");
+
 		private const string LockedFileName = "players.db";
 		private const string ThumbName = "thumb.png";
 
@@ -47,14 +51,70 @@ namespace SavepointManager.Classes
 			}
 		}
 
-		public static bool DoesDirectoryExist => Directory.Exists(SaveDirectory);
-
-		public List<Savepoint> Savepoints
+		public List<Save> Saves
 		{
 			get
 			{
-				throw new NotImplementedException();
-			}
+				var saves = new List<Save>();
+
+				foreach (string tarPath in Directory.GetFiles(Save.SavePath))
+				{
+					if (!TarArchive.IsTarFile(tarPath))
+						continue;
+
+					using var archive = TarArchive.Open(tarPath);
+					string? firstEntryPath = archive.Entries.FirstOrDefault()?.Key;  // e.g. WorldName/folder/file.bin
+
+					if (firstEntryPath is null || !firstEntryPath.Contains('/'))
+						continue;
+
+					string worldName = firstEntryPath.Split('/')[0];
+
+					// Only fetch saves belonging to the selected world
+					if (Title != worldName)
+						continue;
+
+					// Fetch the metadata
+					var metadata = archive.Entries.FirstOrDefault(e => e.Key == $"{worldName}/{Save.MetadataFileName}");
+
+					string? title = null;
+					DateTime? date = null;
+
+					if (metadata is not null)
+					{
+						try
+						{
+							using var sr = new StreamReader(metadata.OpenEntryStream());
+							var xml = XElement.Load(sr);
+
+							title = xml.Element("Title")?.Value;
+
+							if (DateTime.TryParse(xml.Element("Timestamp")?.Value, out var parsedDate))
+								date = parsedDate;
+						}
+						catch
+						{
+							// Not a big deal. The save is probably still fine.
+						}
+					}
+
+					// Fetch the save preview
+					var thumbFile = archive.Entries.FirstOrDefault(e => e.Key == $"{worldName}/{ThumbName}");
+					var thumb = new MemoryStream();
+
+					if (thumbFile is not null)
+					{
+						using var s = thumbFile.OpenEntryStream();
+						s.CopyTo(thumb);
+
+						thumb.Position = 0;
+					}
+
+					saves.Add(new(tarPath, title ?? "No title", date is not null ? date.Value : File.GetLastWriteTime(tarPath), thumb));
+				}
+
+				return saves;
+            }
 		}
 
 		public World(string title, string folderPath, string gamemode)
@@ -69,11 +129,11 @@ namespace SavepointManager.Classes
 			if (!Directory.Exists(BaseDirectory))
 				throw new DirectoryNotFoundException("Could not locate the save folder. Project Zomboid is likely not installed.");
 
-			if (!Directory.Exists(SaveDirectory))
+			if (!Directory.Exists(WorldDirectory))
 				throw new DirectoryNotFoundException("Project Zomboid is installed, but the save folder could not be located.");
 
 			var worlds = new List<World>();
-			var gamemodes = Directory.GetDirectories(SaveDirectory);
+			var gamemodes = Directory.GetDirectories(WorldDirectory);
 
 			foreach (var gamemodeFolder in gamemodes)
 			{

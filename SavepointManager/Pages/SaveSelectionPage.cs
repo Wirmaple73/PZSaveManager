@@ -1,9 +1,11 @@
 ﻿using SavepointManager.Classes;
 using SavepointManager.Forms;
+using SavepointManager.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -15,6 +17,7 @@ namespace SavepointManager.Pages
 	public partial class SaveSelectionPage : UserControl
 	{
 		private World? selectedWorld;
+		private List<Save> saves = new();
 
 		public World? SelectedWorld
 		{
@@ -35,6 +38,12 @@ namespace SavepointManager.Pages
 			}
 		}
 
+		private Save? SelectedSave => saves.FirstOrDefault(s =>
+			s.Title == saveList.SelectedItems[0].Text && s.Date == DateTime.Parse(saveList.SelectedItems[0].SubItems[1].Text)
+		);
+
+		private string SaveInfo => $"  Save date: {SelectedSave!.Date}\n  Title: {SelectedSave.Title}";
+
 		public Button BackButton => backButton;
 
 		public SaveSelectionPage()
@@ -44,23 +53,81 @@ namespace SavepointManager.Pages
 
 		private void RefillSaveList()
 		{
-			saveList.Items.Clear();
+			saves = SelectedWorld!.Saves;
+			saves.Reverse();  // Reverse to sort saves by newest date
 
-			foreach (var save in SelectedWorld!.Savepoints)
+			if (saveList.Items.Count == saves.Count)
+				return;
+
+			saveList.Items.Clear();
+			savePreview.Image = null;
+
+			foreach (var save in saves)
 				saveList.Items.Add(new ListViewItem(new[] { save.Title, save.Date.ToString("G") }));
+
+			if (saveList.Items.Count > 0)
+				saveList.Items[0].Selected = true;
+
+			saveList.Focus();
+		}
+
+		private void saveList_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (saveList.SelectedIndices.Count == 0 || SelectedSave is null)
+			{
+				savePreview.Image = null;
+				return;
+			}
+
+			savePreview.Image = SelectedSave.Thumb is not null && SelectedSave.Thumb.Length > 0 ?
+				Image.FromStream(SelectedSave.Thumb) : Resources.InvalidWorld;
 		}
 
 		private void newSavepoint_Click(object sender, EventArgs e)
 		{
-			var newSaveForm = new NewSavepointForm();
-			newSaveForm.ShowDialog();
+			var newSaveForm = new NewSaveForm();
 
+			if (newSaveForm.ShowDialog() != DialogResult.OK)
+				return;
+
+			var progressForm = new ArchiveProgressForm();
 			string saveTitle = newSaveForm.SaveTitle is not null && newSaveForm.SaveTitle.Length > 0 ? newSaveForm.SaveTitle : "Manual save";
 
-			var sp = new Savepoint(SelectedWorld!.FolderPath, saveTitle, DateTime.Now);
-			sp.Save();
+			progressForm.Save = new Save(SelectedWorld!.FolderPath, saveTitle, DateTime.Now, new MemoryStream());
+			progressForm.ShowDialog();
 
-			RefillSaveList();
+			if (progressForm.DialogResult == DialogResult.OK)
+				RefillSaveList();
+		}
+
+		private void restoreSaveButton_Click(object sender, EventArgs e)
+		{
+			if (saveList.SelectedIndices.Count == 0 || SelectedSave is null)
+				return;
+
+			if (MessageBoxManager.ShowPrompt($"Are you sure you want to restore the world {SelectedWorld!.Title} back to the following save? All current unsaved progress will be lost!\n\n{SaveInfo}", "Save Restoration Confirmation") != DialogResult.Yes)
+				return;
+
+
+		}
+
+		private void deleteSaveButton_Click(object sender, EventArgs e)
+		{
+			if (saveList.SelectedIndices.Count == 0 || SelectedSave is null)
+				return;
+
+			if (MessageBoxManager.ShowPrompt($"Are you sure you want to delete the following save?\nThis action cannot be undone!\n\n{SaveInfo}", "Save Deletion Confirmation") != DialogResult.Yes)
+				return;
+
+			try
+			{
+				File.Delete(SelectedSave.WorldPath);
+				RefillSaveList();
+			}
+			catch
+			{
+				MessageBoxManager.ShowError("The specified save could not be deleted. It may still be deleted manually.");
+			}
 		}
 	}
 }

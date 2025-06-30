@@ -46,7 +46,7 @@
 			// 
 			nextButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
 			nextButton.DialogResult = DialogResult.OK;
-			nextButton.Location = new Point(15, 417);
+			nextButton.Location = new Point(15, 493);
 			nextButton.Name = "nextButton";
 			nextButton.Size = new Size(112, 28);
 			nextButton.TabIndex = 9;
@@ -56,7 +56,7 @@
 			// 
 			worldPreview.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			worldPreview.BorderStyle = BorderStyle.FixedSingle;
-			worldPreview.Location = new Point(417, 36);
+			worldPreview.Location = new Point(518, 36);
 			worldPreview.Name = "worldPreview";
 			worldPreview.Size = new Size(200, 200);
 			worldPreview.SizeMode = PictureBoxSizeMode.Zoom;
@@ -66,7 +66,7 @@
 			// label2
 			// 
 			label2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			label2.Location = new Point(417, 241);
+			label2.Location = new Point(518, 241);
 			label2.Name = "label2";
 			label2.Size = new Size(200, 15);
 			label2.TabIndex = 7;
@@ -91,7 +91,7 @@
 			worldList.Location = new Point(16, 36);
 			worldList.MultiSelect = false;
 			worldList.Name = "worldList";
-			worldList.Size = new Size(382, 364);
+			worldList.Size = new Size(486, 440);
 			worldList.TabIndex = 11;
 			worldList.UseCompatibleStateImageBehavior = false;
 			worldList.View = View.Details;
@@ -101,7 +101,7 @@
 			// columnHeader1
 			// 
 			columnHeader1.Text = "Title";
-			columnHeader1.Width = 220;
+			columnHeader1.Width = 300;
 			// 
 			// columnHeader2
 			// 
@@ -117,9 +117,9 @@
 			// 
 			errorLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 			errorLabel.AutoEllipsis = true;
-			errorLabel.Location = new Point(175, 417);
+			errorLabel.Location = new Point(175, 493);
 			errorLabel.Name = "errorLabel";
-			errorLabel.Size = new Size(442, 40);
+			errorLabel.Size = new Size(542, 40);
 			errorLabel.TabIndex = 12;
 			errorLabel.Visible = false;
 			errorLabel.TextChanged += errorLabel_TextChanged;
@@ -127,7 +127,7 @@
 			// errorLabelIcon
 			// 
 			errorLabelIcon.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-			errorLabelIcon.Location = new Point(141, 417);
+			errorLabelIcon.Location = new Point(141, 493);
 			errorLabelIcon.Name = "errorLabelIcon";
 			errorLabelIcon.Size = new Size(28, 28);
 			errorLabelIcon.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -147,7 +147,7 @@
 			Controls.Add(label2);
 			Controls.Add(label1);
 			Name = "WorldSelectionPage";
-			Size = new Size(634, 461);
+			Size = new Size(734, 537);
 			((System.ComponentModel.ISupportInitialize)worldPreview).EndInit();
 			((System.ComponentModel.ISupportInitialize)errorLabelIcon).EndInit();
 			ResumeLayout(false);

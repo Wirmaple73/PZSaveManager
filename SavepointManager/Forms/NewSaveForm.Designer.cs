@@ -1,6 +1,6 @@
 ﻿namespace SavepointManager.Forms
 {
-	partial class NewSavepointForm
+	partial class NewSaveForm
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -47,7 +47,7 @@
 			// 
 			saveTitle.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			saveTitle.Location = new Point(12, 33);
-			saveTitle.MaxLength = 50;
+			saveTitle.MaxLength = 200;
 			saveTitle.Name = "saveTitle";
 			saveTitle.Size = new Size(360, 23);
 			saveTitle.TabIndex = 1;
@@ -82,12 +82,16 @@
 			Controls.Add(okButton);
 			Controls.Add(saveTitle);
 			Controls.Add(label1);
+			FormBorderStyle = FormBorderStyle.FixedDialog;
+			KeyPreview = true;
 			MaximizeBox = false;
 			MinimizeBox = false;
+			MinimumSize = new Size(190, 180);
 			Name = "NewSavepointForm";
 			ShowIcon = false;
 			SizeGripStyle = SizeGripStyle.Hide;
 			Text = "New Savepoint";
+			KeyDown += NewSavepointForm_KeyDown;
 			ResumeLayout(false);
 			PerformLayout();
 		}

@@ -1,8 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "FHt3sI+4sJdAyT0ersjqNGnaitLv04gd+G+b1w5mxxQm2xlWqTy4lFUPb4YHPtMQCIzDR15/+60Qkoo/XM4SeQ==",
+  "dgSpecHash": "mm4WDPW0Rr39N5bmZSX52uNTDtIu7AbZrkY+GAsZrDbsX5vRWAPJA6/HH4zwtJ7q4vwN2J6z+QUEjrojahtwsg==",
   "success": true,
   "projectFilePath": "C:\\Users\\Wirmaple73\\source\\repos\\SavepointManager\\SavepointManager\\SavepointManager.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\Wirmaple73\\.nuget\\packages\\sharpcompress\\0.40.0\\sharpcompress.0.40.0.nupkg.sha512",
+    "C:\\Users\\Wirmaple73\\.nuget\\packages\\system.buffers\\4.6.0\\system.buffers.4.6.0.nupkg.sha512",
+    "C:\\Users\\Wirmaple73\\.nuget\\packages\\zstdsharp.port\\0.8.5\\zstdsharp.port.0.8.5.nupkg.sha512"
+  ],
   "logs": []
 }

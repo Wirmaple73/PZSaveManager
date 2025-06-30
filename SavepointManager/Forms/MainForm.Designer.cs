@@ -46,7 +46,7 @@
 			pagePanel.Dock = DockStyle.Fill;
 			pagePanel.Location = new Point(0, 24);
 			pagePanel.Name = "pagePanel";
-			pagePanel.Size = new Size(634, 437);
+			pagePanel.Size = new Size(734, 537);
 			pagePanel.TabIndex = 0;
 			// 
 			// menuStrip1
@@ -54,7 +54,7 @@
 			menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, optionsToolStripMenuItem, helpToolStripMenuItem });
 			menuStrip1.Location = new Point(0, 0);
 			menuStrip1.Name = "menuStrip1";
-			menuStrip1.Size = new Size(634, 24);
+			menuStrip1.Size = new Size(734, 24);
 			menuStrip1.TabIndex = 1;
 			menuStrip1.Text = "menuStrip1";
 			// 
@@ -69,7 +69,7 @@
 			// 
 			exitToolStripMenuItem.Name = "exitToolStripMenuItem";
 			exitToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.F4;
-			exitToolStripMenuItem.Size = new Size(180, 22);
+			exitToolStripMenuItem.Size = new Size(135, 22);
 			exitToolStripMenuItem.Text = "&Exit";
 			exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
 			// 
@@ -96,27 +96,27 @@
 			// checkForupdatesToolStripMenuItem
 			// 
 			checkForupdatesToolStripMenuItem.Name = "checkForupdatesToolStripMenuItem";
-			checkForupdatesToolStripMenuItem.Size = new Size(180, 22);
+			checkForupdatesToolStripMenuItem.Size = new Size(170, 22);
 			checkForupdatesToolStripMenuItem.Text = "Check for &updates";
 			// 
 			// aboutToolStripMenuItem
 			// 
 			aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-			aboutToolStripMenuItem.Size = new Size(180, 22);
+			aboutToolStripMenuItem.Size = new Size(170, 22);
 			aboutToolStripMenuItem.Text = "&About...";
 			// 
 			// MainForm
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(634, 461);
+			ClientSize = new Size(734, 561);
 			Controls.Add(pagePanel);
 			Controls.Add(menuStrip1);
 			Icon = (Icon)resources.GetObject("$this.Icon");
 			MainMenuStrip = menuStrip1;
-			MinimumSize = new Size(400, 360);
+			MinimumSize = new Size(400, 530);
 			Name = "MainForm";
-			Text = "Project Zomboid Savepoint Manager";
+			Text = "Project Zomboid Save Manager";
 			menuStrip1.ResumeLayout(false);
 			menuStrip1.PerformLayout();
 			ResumeLayout(false);

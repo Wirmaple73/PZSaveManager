@@ -32,12 +32,15 @@
 			saveList = new ListView();
 			columnHeader1 = new ColumnHeader();
 			columnHeader2 = new ColumnHeader();
-			newSavepoint = new Button();
-			button2 = new Button();
+			newSave = new Button();
+			restoreSaveButton = new Button();
 			label2 = new Label();
 			worldName = new Label();
-			button3 = new Button();
+			deleteSaveButton = new Button();
 			backButton = new Button();
+			label3 = new Label();
+			savePreview = new PictureBox();
+			((System.ComponentModel.ISupportInitialize)savePreview).BeginInit();
 			SuspendLayout();
 			// 
 			// label1
@@ -45,9 +48,9 @@
 			label1.AutoSize = true;
 			label1.Location = new Point(13, 40);
 			label1.Name = "label1";
-			label1.Size = new Size(104, 15);
+			label1.Size = new Size(76, 15);
 			label1.TabIndex = 6;
-			label1.Text = "Select a savepoint.";
+			label1.Text = "Select a save.";
 			// 
 			// saveList
 			// 
@@ -58,39 +61,43 @@
 			saveList.Location = new Point(16, 66);
 			saveList.MultiSelect = false;
 			saveList.Name = "saveList";
-			saveList.Size = new Size(417, 335);
+			saveList.Size = new Size(485, 411);
 			saveList.TabIndex = 12;
 			saveList.UseCompatibleStateImageBehavior = false;
 			saveList.View = View.Details;
+			saveList.SelectedIndexChanged += saveList_SelectedIndexChanged;
 			// 
 			// columnHeader1
 			// 
 			columnHeader1.Text = "Title";
-			columnHeader1.Width = 240;
+			columnHeader1.Width = 330;
 			// 
 			// columnHeader2
 			// 
 			columnHeader2.Text = "Date";
-			columnHeader2.Width = 120;
+			columnHeader2.Width = 140;
 			// 
-			// newSavepoint
+			// newSave
 			// 
-			newSavepoint.Location = new Point(445, 65);
-			newSavepoint.Name = "newSavepoint";
-			newSavepoint.Size = new Size(175, 28);
-			newSavepoint.TabIndex = 13;
-			newSavepoint.Text = "&New savepoint...";
-			newSavepoint.UseVisualStyleBackColor = true;
-			newSavepoint.Click += newSavepoint_Click;
+			newSave.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+			newSave.Location = new Point(518, 369);
+			newSave.Name = "newSave";
+			newSave.Size = new Size(200, 28);
+			newSave.TabIndex = 13;
+			newSave.Text = "&New save...";
+			newSave.UseVisualStyleBackColor = true;
+			newSave.Click += newSavepoint_Click;
 			// 
-			// button2
+			// restoreSaveButton
 			// 
-			button2.Location = new Point(445, 109);
-			button2.Name = "button2";
-			button2.Size = new Size(175, 28);
-			button2.TabIndex = 14;
-			button2.Text = "&Restore to selected savepoint";
-			button2.UseVisualStyleBackColor = true;
+			restoreSaveButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+			restoreSaveButton.Location = new Point(518, 409);
+			restoreSaveButton.Name = "restoreSaveButton";
+			restoreSaveButton.Size = new Size(200, 28);
+			restoreSaveButton.TabIndex = 14;
+			restoreSaveButton.Text = "&Restore save";
+			restoreSaveButton.UseVisualStyleBackColor = true;
+			restoreSaveButton.Click += restoreSaveButton_Click;
 			// 
 			// label2
 			// 
@@ -107,43 +114,69 @@
 			worldName.AutoSize = true;
 			worldName.Location = new Point(54, 10);
 			worldName.Name = "worldName";
-			worldName.Size = new Size(133, 15);
+			worldName.Size = new Size(72, 15);
 			worldName.TabIndex = 16;
-			worldName.Text = "How are you even here?";
+			worldName.Text = "World name";
 			// 
-			// button3
+			// deleteSaveButton
 			// 
-			button3.Location = new Point(445, 153);
-			button3.Name = "button3";
-			button3.Size = new Size(175, 28);
-			button3.TabIndex = 17;
-			button3.Text = "&Delete";
-			button3.UseVisualStyleBackColor = true;
+			deleteSaveButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+			deleteSaveButton.Location = new Point(518, 449);
+			deleteSaveButton.Name = "deleteSaveButton";
+			deleteSaveButton.Size = new Size(200, 28);
+			deleteSaveButton.TabIndex = 17;
+			deleteSaveButton.Text = "&Delete";
+			deleteSaveButton.UseVisualStyleBackColor = true;
+			deleteSaveButton.Click += deleteSaveButton_Click;
 			// 
 			// backButton
 			// 
 			backButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
 			backButton.DialogResult = DialogResult.OK;
-			backButton.Location = new Point(15, 417);
+			backButton.Location = new Point(15, 493);
 			backButton.Name = "backButton";
 			backButton.Size = new Size(112, 28);
 			backButton.TabIndex = 18;
 			backButton.Text = "&Back";
 			// 
+			// label3
+			// 
+			label3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			label3.Location = new Point(518, 269);
+			label3.Name = "label3";
+			label3.Size = new Size(200, 15);
+			label3.TabIndex = 19;
+			label3.Text = "Save preview";
+			label3.TextAlign = ContentAlignment.MiddleCenter;
+			// 
+			// savePreview
+			// 
+			savePreview.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			savePreview.BorderStyle = BorderStyle.FixedSingle;
+			savePreview.Location = new Point(518, 66);
+			savePreview.Name = "savePreview";
+			savePreview.Size = new Size(200, 200);
+			savePreview.SizeMode = PictureBoxSizeMode.Zoom;
+			savePreview.TabIndex = 20;
+			savePreview.TabStop = false;
+			// 
 			// SaveSelectionPage
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
+			Controls.Add(savePreview);
+			Controls.Add(label3);
 			Controls.Add(backButton);
-			Controls.Add(button3);
+			Controls.Add(deleteSaveButton);
 			Controls.Add(worldName);
 			Controls.Add(label2);
-			Controls.Add(button2);
-			Controls.Add(newSavepoint);
+			Controls.Add(restoreSaveButton);
+			Controls.Add(newSave);
 			Controls.Add(saveList);
 			Controls.Add(label1);
 			Name = "SaveSelectionPage";
-			Size = new Size(634, 461);
+			Size = new Size(734, 537);
+			((System.ComponentModel.ISupportInitialize)savePreview).EndInit();
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -154,11 +187,13 @@
 		private ListView saveList;
 		private ColumnHeader columnHeader1;
 		private ColumnHeader columnHeader2;
-		private Button newSavepoint;
-		private Button button2;
+		private Button newSave;
+		private Button restoreSaveButton;
 		private Label label2;
 		private Label worldName;
-		private Button button3;
+		private Button deleteSaveButton;
 		private Button backButton;
+		private Label label3;
+		private PictureBox savePreview;
 	}
 }

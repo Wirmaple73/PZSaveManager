@@ -21,6 +21,7 @@ namespace SavepointManager.Forms
 		public MainForm()
 		{
 			InitializeComponent();
+
 			FormPageLoader.Load(pagePanel, worldSelectionPage);
 
 			worldSelectionPage.NextButton.Click += NextButton_Click;

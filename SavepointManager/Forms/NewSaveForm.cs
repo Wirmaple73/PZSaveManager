@@ -10,15 +10,24 @@ using System.Windows.Forms;
 
 namespace SavepointManager.Forms
 {
-	public partial class NewSavepointForm : Form
+	public partial class NewSaveForm : Form
 	{
 		public string? SaveTitle { get; private set; }
 
-		public NewSavepointForm() => InitializeComponent();
+		public NewSaveForm() => InitializeComponent();
+
 		private void okButton_Click(object sender, EventArgs e)
 		{
 			SaveTitle = saveTitle.Text;
+
+			this.DialogResult = DialogResult.OK;
 			this.Close();
+		}
+
+		private void NewSavepointForm_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Escape)
+				this.Close();
 		}
 	}
 }

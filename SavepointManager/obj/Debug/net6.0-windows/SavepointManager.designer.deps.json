@@ -6,92 +6,50 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v6.0": {
-      "LibGit2Sharp/0.30.0": {
+      "SharpCompress/0.40.0": {
         "dependencies": {
-          "LibGit2Sharp.NativeBinaries": "2.0.322"
+          "System.Buffers": "4.6.0",
+          "ZstdSharp.Port": "0.8.5"
         },
         "runtime": {
-          "lib/net6.0/LibGit2Sharp.dll": {
-            "assemblyVersion": "0.30.0.0",
-            "fileVersion": "0.30.0.0"
+          "lib/net6.0/SharpCompress.dll": {
+            "assemblyVersion": "0.40.0.0",
+            "fileVersion": "0.40.0.0"
           }
         }
       },
-      "LibGit2Sharp.NativeBinaries/2.0.322": {
-        "runtimeTargets": {
-          "runtimes/linux-arm/native/libgit2-a418d9d.so": {
-            "rid": "linux-arm",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/linux-arm64/native/libgit2-a418d9d.so": {
-            "rid": "linux-arm64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/linux-musl-arm/native/libgit2-a418d9d.so": {
-            "rid": "linux-musl-arm",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/linux-musl-arm64/native/libgit2-a418d9d.so": {
-            "rid": "linux-musl-arm64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/linux-musl-x64/native/libgit2-a418d9d.so": {
-            "rid": "linux-musl-x64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/linux-x64/native/libgit2-a418d9d.so": {
-            "rid": "linux-x64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/osx-arm64/native/libgit2-a418d9d.dylib": {
-            "rid": "osx-arm64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/osx-x64/native/libgit2-a418d9d.dylib": {
-            "rid": "osx-x64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/win-arm64/native/git2-a418d9d.dll": {
-            "rid": "win-arm64",
-            "assetType": "native",
-            "fileVersion": "1.7.2.0"
-          },
-          "runtimes/win-x64/native/git2-a418d9d.dll": {
-            "rid": "win-x64",
-            "assetType": "native",
-            "fileVersion": "1.7.2.0"
-          },
-          "runtimes/win-x86/native/git2-a418d9d.dll": {
-            "rid": "win-x86",
-            "assetType": "native",
-            "fileVersion": "1.7.2.0"
+      "System.Buffers/4.6.0": {},
+      "ZstdSharp.Port/0.8.5": {
+        "runtime": {
+          "lib/net6.0/ZstdSharp.dll": {
+            "assemblyVersion": "0.8.5.0",
+            "fileVersion": "0.8.5.0"
           }
         }
       }
     }
   },
   "libraries": {
-    "LibGit2Sharp/0.30.0": {
+    "SharpCompress/0.40.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-1cBg/7nz6q+yzvComhqQaTS4nbXloLp/x29ZgY/Rr82ohpkuaWT8ZYzsPLFvs1zmCh/4xQbVt5sQxazGblgRig==",
-      "path": "libgit2sharp/0.30.0",
-      "hashPath": "libgit2sharp.0.30.0.nupkg.sha512"
+      "sha512": "sha512-yP/aFX1jqGikVF7u2f05VEaWN4aCaKNLxSas82UgA2GGVECxq/BcqZx3STHCJ78qilo1azEOk1XpBglIuGMb7w==",
+      "path": "sharpcompress/0.40.0",
+      "hashPath": "sharpcompress.0.40.0.nupkg.sha512"
     },
-    "LibGit2Sharp.NativeBinaries/2.0.322": {
+    "System.Buffers/4.6.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-EWQaEevzc8uS1ZGS6T83jqUPBY//2WUSCHwbZHBoHOjlfSehqr30nm/VAhJPzjam/69sv7nlLKVcho9t2XuR/Q==",
-      "path": "libgit2sharp.nativebinaries/2.0.322",
-      "hashPath": "libgit2sharp.nativebinaries.2.0.322.nupkg.sha512"
+      "sha512": "sha512-lN6tZi7Q46zFzAbRYXTIvfXcyvQQgxnY7Xm6C6xQ9784dEL1amjM6S6Iw4ZpsvesAKnRVsM4scrDQaDqSClkjA==",
+      "path": "system.buffers/4.6.0",
+      "hashPath": "system.buffers.4.6.0.nupkg.sha512"
+    },
+    "ZstdSharp.Port/0.8.5": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-TR4j17WeVSEb3ncgL2NqlXEqcy04I+Kk9CaebNDplUeL8XOgjkZ7fP4Wg4grBdPLIqsV86p2QaXTkZoRMVOsew==",
+      "path": "zstdsharp.port/0.8.5",
+      "hashPath": "zstdsharp.port.0.8.5.nupkg.sha512"
     }
   }
 }
