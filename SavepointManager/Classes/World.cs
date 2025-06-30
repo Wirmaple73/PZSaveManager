@@ -16,7 +16,10 @@ namespace SavepointManager.Classes
 		public static readonly string WorldDirectory = System.IO.Path.Combine(BaseDirectory, "Saves");
 
 		private const string LockedFileName = "players.db";
-		private const string ThumbName = "thumb.png";
+		public const string ThumbName = "thumb.png";
+
+		public const int ThumbWidth = 256;
+		public const int ThumbHeight = 256;
 
 		public string Name { get; }
 		public string Path { get; }

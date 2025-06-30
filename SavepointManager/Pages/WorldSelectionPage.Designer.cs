@@ -38,8 +38,10 @@
 			columnHeader3 = new ColumnHeader();
 			errorLabel = new Label();
 			errorLabelIcon = new PictureBox();
+			pictureBox1 = new PictureBox();
 			((System.ComponentModel.ISupportInitialize)worldPreview).BeginInit();
 			((System.ComponentModel.ISupportInitialize)errorLabelIcon).BeginInit();
+			((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
 			SuspendLayout();
 			// 
 			// nextButton
@@ -135,10 +137,22 @@
 			errorLabelIcon.TabStop = false;
 			errorLabelIcon.Visible = false;
 			// 
+			// pictureBox1
+			// 
+			pictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			pictureBox1.BorderStyle = BorderStyle.FixedSingle;
+			pictureBox1.Location = new Point(517, 299);
+			pictureBox1.Name = "pictureBox1";
+			pictureBox1.Size = new Size(200, 200);
+			pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+			pictureBox1.TabIndex = 14;
+			pictureBox1.TabStop = false;
+			// 
 			// WorldSelectionPage
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
+			Controls.Add(pictureBox1);
 			Controls.Add(errorLabelIcon);
 			Controls.Add(errorLabel);
 			Controls.Add(worldList);
@@ -150,6 +164,7 @@
 			Size = new Size(734, 537);
 			((System.ComponentModel.ISupportInitialize)worldPreview).EndInit();
 			((System.ComponentModel.ISupportInitialize)errorLabelIcon).EndInit();
+			((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -165,5 +180,6 @@
 		private Button nextButton;
 		private Label errorLabel;
 		private PictureBox errorLabelIcon;
+		private PictureBox pictureBox1;
 	}
 }

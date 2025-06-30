@@ -79,7 +79,31 @@ namespace SavepointManager.Classes
 				doc.Save(xmlStream);
 
 				archive.AddEntry(Path.Combine(AssociatedWorld.Name, MetadataFileName), xmlStream, true, xmlStream.Length, DateTime.Now);
-				
+
+				// Whenever the game has actively loaded a save, it doesn't update the thumb before the save is closed.
+				// We can try to take a screenshot ourselves for kudos.
+				if (AssociatedWorld.IsActive)
+				{
+					var thumb = GameScreen.Capture();
+
+					if (thumb is not null)
+					{
+						string thumbPath = Path.Combine(AssociatedWorld.Name, World.ThumbName).Replace('\\', '/');
+						var originalThumb = archive.Entries.FirstOrDefault(e => e.Key == thumbPath);
+
+						if (originalThumb is not null)
+						{
+							var ms = new MemoryStream();
+
+							thumb = thumb.CropCenterAndResize(World.ThumbWidth);
+							thumb.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+
+							archive.RemoveEntry(originalThumb);
+							archive.AddEntry(thumbPath, ms, true, ms.Length, DateTime.Now);
+						}
+					}
+				}
+
 				archive.SaveTo(outputPath, new(CompressionType.None));
 			}, token);
 		}
