@@ -18,7 +18,7 @@ namespace SavepointManager.Forms
 
 		private void okButton_Click(object sender, EventArgs e)
 		{
-			SaveTitle = saveTitle.Text;
+			SaveTitle = saveDescription.Text;
 
 			this.DialogResult = DialogResult.OK;
 			this.Close();

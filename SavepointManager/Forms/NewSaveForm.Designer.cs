@@ -29,7 +29,7 @@
 		private void InitializeComponent()
 		{
 			label1 = new Label();
-			saveTitle = new TextBox();
+			saveDescription = new TextBox();
 			okButton = new Button();
 			label2 = new Label();
 			SuspendLayout();
@@ -39,18 +39,18 @@
 			label1.AutoSize = true;
 			label1.Location = new Point(9, 12);
 			label1.Name = "label1";
-			label1.Size = new Size(57, 15);
+			label1.Size = new Size(96, 15);
 			label1.TabIndex = 0;
-			label1.Text = "Save title:";
+			label1.Text = "Save description:";
 			// 
-			// saveTitle
+			// saveDescription
 			// 
-			saveTitle.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			saveTitle.Location = new Point(12, 33);
-			saveTitle.MaxLength = 200;
-			saveTitle.Name = "saveTitle";
-			saveTitle.Size = new Size(360, 23);
-			saveTitle.TabIndex = 1;
+			saveDescription.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			saveDescription.Location = new Point(12, 33);
+			saveDescription.MaxLength = 200;
+			saveDescription.Name = "saveDescription";
+			saveDescription.Size = new Size(360, 23);
+			saveDescription.TabIndex = 1;
 			// 
 			// okButton
 			// 
@@ -72,7 +72,7 @@
 			label2.TabIndex = 3;
 			label2.Text = "Example: \"After the loot run\"";
 			// 
-			// NewSavepointForm
+			// NewSaveForm
 			// 
 			AcceptButton = okButton;
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -80,17 +80,17 @@
 			ClientSize = new Size(384, 141);
 			Controls.Add(label2);
 			Controls.Add(okButton);
-			Controls.Add(saveTitle);
+			Controls.Add(saveDescription);
 			Controls.Add(label1);
 			FormBorderStyle = FormBorderStyle.FixedDialog;
 			KeyPreview = true;
 			MaximizeBox = false;
 			MinimizeBox = false;
 			MinimumSize = new Size(190, 180);
-			Name = "NewSavepointForm";
+			Name = "NewSaveForm";
 			ShowIcon = false;
 			SizeGripStyle = SizeGripStyle.Hide;
-			Text = "New Savepoint";
+			Text = "New Save";
 			KeyDown += NewSavepointForm_KeyDown;
 			ResumeLayout(false);
 			PerformLayout();
@@ -99,7 +99,7 @@
 		#endregion
 
 		private Label label1;
-		private TextBox saveTitle;
+		private TextBox saveDescription;
 		private Button okButton;
 		private Label label2;
 	}

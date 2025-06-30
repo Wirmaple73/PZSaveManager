@@ -29,7 +29,7 @@ namespace SavepointManager.Pages
 				if (value is not null)
 				{
 					RefillSaveList();
-					worldName.Text = value.Title;
+					worldName.Text = value.Name;
 				}
 				else
 				{
@@ -39,10 +39,10 @@ namespace SavepointManager.Pages
 		}
 
 		private Save? SelectedSave => saves.FirstOrDefault(s =>
-			s.Title == saveList.SelectedItems[0].Text && s.Date == DateTime.Parse(saveList.SelectedItems[0].SubItems[1].Text)
+			s.Description == saveList.SelectedItems[0].Text && s.Date == DateTime.Parse(saveList.SelectedItems[0].SubItems[1].Text)
 		);
 
-		private string SaveInfo => $"  Save date: {SelectedSave!.Date}\n  Title: {SelectedSave.Title}";
+		private string SaveInfo => $"  Save date: {SelectedSave!.Date}\n  Description: {SelectedSave.Description}";
 
 		public Button BackButton => backButton;
 
@@ -63,7 +63,7 @@ namespace SavepointManager.Pages
 			savePreview.Image = null;
 
 			foreach (var save in saves)
-				saveList.Items.Add(new ListViewItem(new[] { save.Title, save.Date.ToString("G") }));
+				saveList.Items.Add(new ListViewItem(new[] { save.Description, save.Date.ToString("G") }));
 
 			if (saveList.Items.Count > 0)
 				saveList.Items[0].Selected = true;
@@ -93,7 +93,7 @@ namespace SavepointManager.Pages
 			var progressForm = new ArchiveProgressForm();
 			string saveTitle = newSaveForm.SaveTitle is not null && newSaveForm.SaveTitle.Length > 0 ? newSaveForm.SaveTitle : "Manual save";
 
-			progressForm.Save = new Save(SelectedWorld!.FolderPath, saveTitle, DateTime.Now, new MemoryStream());
+			progressForm.Save = new Save(SelectedWorld!, null, saveTitle, DateTime.Now, new MemoryStream());
 			progressForm.ShowDialog();
 
 			if (progressForm.DialogResult == DialogResult.OK)
@@ -105,7 +105,13 @@ namespace SavepointManager.Pages
 			if (saveList.SelectedIndices.Count == 0 || SelectedSave is null)
 				return;
 
-			if (MessageBoxManager.ShowPrompt($"Are you sure you want to restore the world {SelectedWorld!.Title} back to the following save? All current unsaved progress will be lost!\n\n{SaveInfo}", "Save Restoration Confirmation") != DialogResult.Yes)
+			if (SelectedSave.AssociatedWorld.IsActive)
+			{
+				MessageBoxManager.ShowError("The world is currently actively loaded by the game. Please quit to the main menu in-game and try again.");
+				return;
+			}
+
+			if (MessageBoxManager.ShowPrompt($"Are you sure you want to restore the world {SelectedWorld!.Name} back to the following save? All current unsaved progress will be lost!\n\n{SaveInfo}", "Save Restoration Confirmation") != DialogResult.Yes)
 				return;
 
 
@@ -121,7 +127,7 @@ namespace SavepointManager.Pages
 
 			try
 			{
-				File.Delete(SelectedSave.WorldPath);
+				File.Delete(SelectedSave.ArchivePath!);
 				RefillSaveList();
 			}
 			catch

@@ -12,7 +12,7 @@ using System.Xml.Linq;
 
 namespace SavepointManager.Classes
 {
-	public class Save
+	public class Save : IThumb
 	{
 		public const string MetadataFileName = "SaveMetadata.xml";
 
@@ -20,17 +20,17 @@ namespace SavepointManager.Classes
 		public static string SavePath { get; set; } = Settings.Default.SavePath.Length > 0 ? Settings.Default.SavePath : DefaultSavePath;
 		public static int ProgressReportThreshold { get; } = 50;  // Report progress every 50 files
 
-		public string WorldPath { get; }
-		public string Title { get; }
+		public World AssociatedWorld { get; }
+		public string? ArchivePath { get; }
+		public string Description { get; }
 		public DateTime Date { get; }
 		public MemoryStream Thumb { get; }
 
-		public string WorldName => Path.GetFileName(WorldPath);
-
-		public Save(string worldPath, string title, DateTime date, MemoryStream thumb)
+		public Save(World associatedWorld, string? archivePath, string description, DateTime date, MemoryStream thumb)
 		{
-			WorldPath = worldPath;
-			Title = title;
+			AssociatedWorld = associatedWorld;
+			ArchivePath = archivePath;
+			Description = description;
 			Date = date;
 			Thumb = thumb;
 		}
@@ -40,18 +40,18 @@ namespace SavepointManager.Classes
 			if (!Directory.Exists(SavePath))
 				Directory.CreateDirectory(SavePath);
 
-			string outputPath = Path.Combine(SavePath, $"{WorldName} {DateTime.Now:yyyy-MM-dd HH-mm-ss fffff}.tar");
+			string outputPath = Path.Combine(SavePath, $"{AssociatedWorld.Name} {DateTime.Now:yyyy-MM-dd HH-mm-ss fffff}.tar");
 
 			var doc = new XDocument(
-				new XElement("SaveMetadata",
-					new XElement("Title", Title),
-					new XElement("Timestamp", Date.ToString("G"))
+				new XElement(XmlElementName.SaveMetadata,
+					new XElement(XmlElementName.Description, Description),
+					new XElement(XmlElementName.Date, Date.ToString("G"))
 				)
 			);
 
 			await Task.Run(() =>
 			{
-				var files = Directory.GetFiles(WorldPath, "*", SearchOption.AllDirectories);
+				var files = Directory.GetFiles(AssociatedWorld.Path, "*", SearchOption.AllDirectories);
 				int totalFiles = files.Length, processedFiles = 0;
 
 				using var archive = TarArchive.Create();
@@ -62,10 +62,12 @@ namespace SavepointManager.Classes
 					if (token.IsCancellationRequested)
 						throw new TaskCanceledException();
 
-					string relativePath = Path.GetRelativePath(WorldPath, filePath);  // e.g. "map.bin" or "players/player.dat"
-					string entryPath = Path.Combine(WorldName, relativePath).Replace('\\', '/');  // Normalize for tar
+					string relativePath = Path.GetRelativePath(AssociatedWorld.Path, filePath);  // e.g. "folder/file.dat"
+					string entryPath = Path.Combine(AssociatedWorld.Name, relativePath).Replace('\\', '/');  // e.g. WorldName/folder/file.dat
 
-					archive.AddEntry(entryPath, filePath);
+					var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+					archive.AddEntry(entryPath, fs, true, fs.Length, File.GetLastWriteTime(filePath));
+
 					processedFiles++;
 
 					if (processedFiles % ProgressReportThreshold == 0)
@@ -76,7 +78,7 @@ namespace SavepointManager.Classes
 				using var xmlStream = new MemoryStream();
 				doc.Save(xmlStream);
 
-				archive.AddEntry(Path.Combine(WorldName, MetadataFileName), xmlStream, true, xmlStream.Length, DateTime.Now);
+				archive.AddEntry(Path.Combine(AssociatedWorld.Name, MetadataFileName), xmlStream, true, xmlStream.Length, DateTime.Now);
 				
 				archive.SaveTo(outputPath, new(CompressionType.None));
 			}, token);

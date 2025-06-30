@@ -23,7 +23,7 @@ namespace SavepointManager.Forms
 
 		private async void ArchiveProgressForm_Load(object sender, EventArgs e)
 		{
-			this.Text = $"Saving {Save!.WorldName}";
+			this.Text = $"Saving {Save!.AssociatedWorld.Name}";
 			Save.ArchiveProgressChanged += Save_ArchiveProgressChanged;
 
 			try

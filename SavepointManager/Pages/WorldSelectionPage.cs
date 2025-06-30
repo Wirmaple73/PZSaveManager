@@ -17,7 +17,7 @@ namespace SavepointManager.Forms
 		public readonly System.Windows.Forms.Timer RefreshSaveListTimer = new() { Interval = 2000 };
 
 		public List<World> Worlds { get; private set; } = new List<World>();
-		public World? SelectedWorld => Worlds.Find(world => world.Title == worldList.SelectedItems[0].Text);
+		public World? SelectedWorld => Worlds.Find(world => world.Name == worldList.SelectedItems[0].Text);
 		public Button NextButton => nextButton;
 
 		public WorldSelectionPage()
@@ -79,7 +79,7 @@ namespace SavepointManager.Forms
 			void FillWorldList()
 			{
 				foreach (var world in Worlds)
-					worldList.Items.Add(new ListViewItem(new[] { world.Title, world.Gamemode, world.IsActive ? "Yes" : "No" }));
+					worldList.Items.Add(new ListViewItem(new[] { world.Name, world.Gamemode, world.IsActive ? "Yes" : "No" }));
 
 				worldList.Items[0].Selected = true;
 			}
@@ -88,7 +88,7 @@ namespace SavepointManager.Forms
 			{
 				for (int i = 0; i < worldList.Items.Count; i++)
 				{
-					if (worldList.Items[i].SubItems[0].Text != Worlds[i].Title)
+					if (worldList.Items[i].SubItems[0].Text != Worlds[i].Name)
 						return true;
 				}
 
@@ -105,10 +105,8 @@ namespace SavepointManager.Forms
 				return;
 			}
 
-			if (SelectedWorld is not null && File.Exists(SelectedWorld.ThumbPath))
-				worldPreview.ImageLocation = SelectedWorld.ThumbPath;
-			else
-				worldPreview.Image = Resources.InvalidWorld;
+			worldPreview.Image = SelectedWorld is not null && SelectedWorld.Thumb is not null && SelectedWorld.Thumb.Length > 0
+				? Image.FromStream(SelectedWorld.Thumb) : Resources.InvalidWorld;
 
 			nextButton.Enabled = true;
 		}

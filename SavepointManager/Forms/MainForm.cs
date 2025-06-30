@@ -46,6 +46,6 @@ namespace SavepointManager.Forms
 			worldSelectionPage.RefreshSaveListTimer.Stop();
 		}
 
-		private void exitToolStripMenuItem_Click(object sender, EventArgs e) => Application.Exit();
+		private void exitToolStripMenuItem_Click(object sender, EventArgs e) => this.Close();
 	}
 }

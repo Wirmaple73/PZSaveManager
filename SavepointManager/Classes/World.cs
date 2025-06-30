@@ -10,24 +10,24 @@ using System.Xml.Linq;
 
 namespace SavepointManager.Classes
 {
-	public class World
+	public class World : IThumb
 	{
-		private static readonly string BaseDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Zomboid");
-		public static readonly string WorldDirectory = Path.Combine(BaseDirectory, "Saves");
+		private static readonly string BaseDirectory = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Zomboid");
+		public static readonly string WorldDirectory = System.IO.Path.Combine(BaseDirectory, "Saves");
 
 		private const string LockedFileName = "players.db";
 		private const string ThumbName = "thumb.png";
 
-		public string Title { get; }
-		public string FolderPath { get; }
-		public string ThumbPath => Path.Combine(FolderPath, ThumbName);
+		public string Name { get; }
+		public string Path { get; }
+		public MemoryStream Thumb { get; }
 		public string Gamemode { get; }
 
 		public bool IsActive
 		{
 			get
 			{
-				string lockedFilePath = Path.Combine(FolderPath, LockedFileName);
+				string lockedFilePath = System.IO.Path.Combine(Path, LockedFileName);
 
 				if (!File.Exists(lockedFilePath))
 					return false;
@@ -68,16 +68,14 @@ namespace SavepointManager.Classes
 					if (firstEntryPath is null || !firstEntryPath.Contains('/'))
 						continue;
 
-					string worldName = firstEntryPath.Split('/')[0];
-
-					// Only fetch saves belonging to the selected world
-					if (Title != worldName)
+					// Only fetch saves within the same world
+					if (Name != firstEntryPath.Split('/')[0])
 						continue;
 
 					// Fetch the metadata
-					var metadata = archive.Entries.FirstOrDefault(e => e.Key == $"{worldName}/{Save.MetadataFileName}");
+					var metadata = archive.Entries.FirstOrDefault(e => e.Key == $"{Name}/{Save.MetadataFileName}");
 
-					string? title = null;
+					string? description = null;
 					DateTime? date = null;
 
 					if (metadata is not null)
@@ -87,9 +85,9 @@ namespace SavepointManager.Classes
 							using var sr = new StreamReader(metadata.OpenEntryStream());
 							var xml = XElement.Load(sr);
 
-							title = xml.Element("Title")?.Value;
+							description = xml.Element(XmlElementName.Description)?.Value;
 
-							if (DateTime.TryParse(xml.Element("Timestamp")?.Value, out var parsedDate))
+							if (DateTime.TryParse(xml.Element(XmlElementName.Date)?.Value, out var parsedDate))
 								date = parsedDate;
 						}
 						catch
@@ -99,7 +97,7 @@ namespace SavepointManager.Classes
 					}
 
 					// Fetch the save preview
-					var thumbFile = archive.Entries.FirstOrDefault(e => e.Key == $"{worldName}/{ThumbName}");
+					var thumbFile = archive.Entries.FirstOrDefault(e => e.Key == $"{Name}/{ThumbName}");
 					var thumb = new MemoryStream();
 
 					if (thumbFile is not null)
@@ -110,18 +108,19 @@ namespace SavepointManager.Classes
 						thumb.Position = 0;
 					}
 
-					saves.Add(new(tarPath, title ?? "No title", date is not null ? date.Value : File.GetLastWriteTime(tarPath), thumb));
+					saves.Add(new Save(this, tarPath, description ?? "No description", date is not null ? date.Value : File.GetLastWriteTime(tarPath), thumb));
 				}
 
 				return saves;
             }
 		}
 
-		public World(string title, string folderPath, string gamemode)
+		public World(string name, string path, string gamemode, MemoryStream thumb)
 		{
-			Title	   = title;
-			FolderPath = folderPath;
-			Gamemode   = gamemode;
+			Name = name;
+			Path = path;
+			Gamemode = gamemode;
+			Thumb = thumb;
 		}
 
 		public static List<World> FetchAll()
@@ -139,8 +138,19 @@ namespace SavepointManager.Classes
 			{
 				var worldFolders = Directory.GetDirectories(gamemodeFolder);
 
-				foreach (var world in worldFolders)
-					worlds.Add(new(Path.GetFileName(world), world, Path.GetFileName(gamemodeFolder)));
+				foreach (var world in worldFolders) {
+					string thumbFilePath = System.IO.Path.Combine(world, ThumbName);
+					var thumb = new MemoryStream();
+
+					if (File.Exists(thumbFilePath)) {
+						using var fs = new FileStream(thumbFilePath, FileMode.Open);
+
+						fs.CopyTo(thumb);
+						thumb.Position = 0;
+					}
+					
+					worlds.Add(new(System.IO.Path.GetFileName(world), world, System.IO.Path.GetFileName(gamemodeFolder), thumb));
+				}
 			}
 
 			return worlds;
