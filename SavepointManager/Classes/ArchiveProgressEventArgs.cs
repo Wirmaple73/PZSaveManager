@@ -8,14 +8,12 @@ namespace SavepointManager.Classes
 {
 	public class ArchiveProgressEventArgs : EventArgs
 	{
-		public string CurrentFileName { get; }
-		public int CurrentIndex { get; }
+		public int FilesProcessed { get; }
 		public int TotalFiles { get; }
 
-		public ArchiveProgressEventArgs(string currentFileName, int currentIndex, int totalFiles)
+		public ArchiveProgressEventArgs(int filesProcessed, int totalFiles)
 		{
-			CurrentFileName = currentFileName;
-			CurrentIndex = currentIndex;
+			FilesProcessed = filesProcessed;
 			TotalFiles = totalFiles;
 		}
 	}

@@ -1,4 +1,6 @@
-﻿using SharpCompress.Archives.Tar;
+﻿using SharpCompress.Archives;
+using SharpCompress.Archives.Tar;
+using SharpCompress.Archives.Zip;
 using SharpCompress.Common;
 using System;
 using System.Collections.Generic;
@@ -16,15 +18,20 @@ namespace SavepointManager.Classes
 		public static readonly string WorldDirectory = System.IO.Path.Combine(BaseDirectory, "Saves");
 
 		private const string LockedFileName = "players.db";
-		public const string ThumbName = "thumb.png";
+		private const string BackupSuffix = "_old";
 
+		public const string ThumbName = "thumb.png";
 		public const int ThumbWidth = 256;
-		public const int ThumbHeight = 256;
 
 		public string Name { get; }
 		public string Path { get; }
 		public MemoryStream Thumb { get; }
 		public string Gamemode { get; }
+
+		public string GamemodePath => System.IO.Path.Combine(WorldDirectory, Gamemode);
+
+		// Append the backup suffix to the world folder's name
+		public string BackupPath => System.IO.Path.Combine(GamemodePath, Name + BackupSuffix);
 
 		public bool IsActive
 		{
@@ -60,12 +67,12 @@ namespace SavepointManager.Classes
 			{
 				var saves = new List<Save>();
 
-				foreach (string tarPath in Directory.GetFiles(Save.SavePath))
+				foreach (string archivePath in Directory.GetFiles(Save.BackupPath))
 				{
-					if (!TarArchive.IsTarFile(tarPath))
+					if (!ZipArchive.IsZipFile(archivePath) && !TarArchive.IsTarFile(archivePath))
 						continue;
 
-					using var archive = TarArchive.Open(tarPath);
+					using var archive = ArchiveFactory.Open(archivePath);
 					string? firstEntryPath = archive.Entries.FirstOrDefault()?.Key;  // e.g. WorldName/folder/file.bin
 
 					if (firstEntryPath is null || !firstEntryPath.Contains('/'))
@@ -111,7 +118,7 @@ namespace SavepointManager.Classes
 						thumb.Position = 0;
 					}
 
-					saves.Add(new Save(this, tarPath, description ?? "No description", date is not null ? date.Value : File.GetLastWriteTime(tarPath), thumb));
+					saves.Add(new Save(this, archivePath, description ?? "No description", date is not null ? date.Value : File.GetLastWriteTime(archivePath), thumb));
 				}
 
 				return saves;

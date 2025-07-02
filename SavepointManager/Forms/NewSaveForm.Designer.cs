@@ -28,10 +28,13 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			components = new System.ComponentModel.Container();
 			label1 = new Label();
 			saveDescription = new TextBox();
 			okButton = new Button();
 			label2 = new Label();
+			useCompression = new CheckBox();
+			compressToolTip = new ToolTip(components);
 			SuspendLayout();
 			// 
 			// label1
@@ -72,12 +75,33 @@
 			label2.TabIndex = 3;
 			label2.Text = "Example: \"After the loot run\"";
 			// 
+			// useCompression
+			// 
+			useCompression.AutoSize = true;
+			useCompression.Checked = true;
+			useCompression.CheckState = CheckState.Checked;
+			useCompression.Location = new Point(12, 107);
+			useCompression.Name = "useCompression";
+			useCompression.Size = new Size(131, 19);
+			useCompression.TabIndex = 4;
+			useCompression.Text = "Compress save data";
+			compressToolTip.SetToolTip(useCompression, "Enables fast compression to significantly reduce output archive size at the cost of a slightly longer saving process.");
+			useCompression.UseVisualStyleBackColor = true;
+			// 
+			// compressToolTip
+			// 
+			compressToolTip.AutoPopDelay = 8000;
+			compressToolTip.InitialDelay = 500;
+			compressToolTip.ReshowDelay = 100;
+			compressToolTip.ToolTipTitle = "Compress save data";
+			// 
 			// NewSaveForm
 			// 
 			AcceptButton = okButton;
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(384, 141);
+			Controls.Add(useCompression);
 			Controls.Add(label2);
 			Controls.Add(okButton);
 			Controls.Add(saveDescription);
@@ -102,5 +126,7 @@
 		private TextBox saveDescription;
 		private Button okButton;
 		private Label label2;
+		private CheckBox useCompression;
+		private ToolTip compressToolTip;
 	}
 }

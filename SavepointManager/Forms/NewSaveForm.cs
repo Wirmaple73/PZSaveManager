@@ -12,13 +12,15 @@ namespace SavepointManager.Forms
 {
 	public partial class NewSaveForm : Form
 	{
-		public string? SaveTitle { get; private set; }
+		public string? SaveDescription { get; private set; }
+		public bool UseCompression { get; private set; }
 
 		public NewSaveForm() => InitializeComponent();
 
 		private void okButton_Click(object sender, EventArgs e)
 		{
-			SaveTitle = saveDescription.Text;
+			SaveDescription = saveDescription.Text;
+			UseCompression = useCompression.Checked;
 
 			this.DialogResult = DialogResult.OK;
 			this.Close();

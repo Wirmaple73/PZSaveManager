@@ -12,43 +12,55 @@ using System.Windows.Forms;
 
 namespace SavepointManager.Forms
 {
-	public partial class ArchiveProgressForm : Form
+	public partial class SavingProgressForm : Form
 	{
 		public Save? Save { get; set; }
+		public bool UseCompression { get; set; }
 
 		private readonly CancellationTokenSource tokenSource = new();
 		private DialogResult result = DialogResult.None;
 
-		public ArchiveProgressForm() => InitializeComponent();
+		public SavingProgressForm() => InitializeComponent();
 
 		private async void ArchiveProgressForm_Load(object sender, EventArgs e)
 		{
 			this.Text = $"Saving {Save!.AssociatedWorld.Name}";
 			Save.ArchiveProgressChanged += Save_ArchiveProgressChanged;
+			Save.ExportStarted += Save_ExportStarted;
 
 			try
 			{
-				await Save.ExportAsync(tokenSource.Token);
+				await Save.ExportAsync(UseCompression, tokenSource.Token);
 				result = DialogResult.OK;
 			}
 			catch (TaskCanceledException)
 			{
 				Save.ArchiveProgressChanged -= Save_ArchiveProgressChanged;
+				Save.ExportStarted -= Save_ExportStarted;
 				result = DialogResult.Cancel;
 			}
 
 			this.Close();
 		}
 
-		private void Save_ArchiveProgressChanged(object? sender, ArchiveProgressEventArgs e) => this.Invoke(() => UpdateProgress(e));
-
-		private void UpdateProgress(ArchiveProgressEventArgs e)
+		private void Save_ExportStarted(object? sender, EventArgs e)
 		{
-			int percentDone = (int)((float)e.CurrentIndex / e.TotalFiles * 100);
+			this.Invoke(() =>
+			{
+				status.Text = UseCompression ? "Compressing and exporting archive..." : "Exporting archive...";
+				progressBar.Style = ProgressBarStyle.Marquee;
+			});
+		}
 
-			progressBar.Value = percentDone;
-			fileName.Text = e.CurrentFileName;
-			progress.Text = $"{e.CurrentIndex} out of {e.TotalFiles} files done ({percentDone}%)";
+		private void Save_ArchiveProgressChanged(object? sender, ArchiveProgressEventArgs e)
+		{
+			int percentDone = (int)((float)e.FilesProcessed / e.TotalFiles * 100);
+
+			this.Invoke(() =>
+			{
+				progressBar.Value = percentDone;
+				status.Text = $"{e.FilesProcessed} out of {e.TotalFiles} files saved ({percentDone}% done)";
+			});
 		}
 
 		private void ArchiveProgressForm_FormClosing(object sender, FormClosingEventArgs e)

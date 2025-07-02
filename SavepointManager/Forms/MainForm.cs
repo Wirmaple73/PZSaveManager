@@ -35,7 +35,7 @@ namespace SavepointManager.Forms
 			FormPageLoader.Load(pagePanel, worldSelectionPage);
 			this.CancelButton = saveSelectionPage.BackButton;
 
-			worldSelectionPage.RefreshSaveListTimer.Start();
+			worldSelectionPage.IsRefreshTimerEnabled = true;
 		}
 
 		private void NextButton_Click(object? sender, EventArgs e)
@@ -43,7 +43,7 @@ namespace SavepointManager.Forms
 			FormPageLoader.Load(pagePanel, saveSelectionPage);
 			saveSelectionPage.SelectedWorld = worldSelectionPage.SelectedWorld!;
 
-			worldSelectionPage.RefreshSaveListTimer.Stop();
+			worldSelectionPage.IsRefreshTimerEnabled = false;
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e) => this.Close();

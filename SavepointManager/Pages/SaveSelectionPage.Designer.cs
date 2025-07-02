@@ -32,7 +32,7 @@
 			saveList = new ListView();
 			columnHeader1 = new ColumnHeader();
 			columnHeader2 = new ColumnHeader();
-			newSave = new Button();
+			newSaveButton = new Button();
 			restoreSaveButton = new Button();
 			label2 = new Label();
 			worldName = new Label();
@@ -70,23 +70,23 @@
 			// columnHeader1
 			// 
 			columnHeader1.Text = "Title";
-			columnHeader1.Width = 330;
+			columnHeader1.Width = 300;
 			// 
 			// columnHeader2
 			// 
 			columnHeader2.Text = "Date";
-			columnHeader2.Width = 140;
+			columnHeader2.Width = 150;
 			// 
-			// newSave
+			// newSaveButton
 			// 
-			newSave.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			newSave.Location = new Point(518, 369);
-			newSave.Name = "newSave";
-			newSave.Size = new Size(200, 28);
-			newSave.TabIndex = 13;
-			newSave.Text = "&New save...";
-			newSave.UseVisualStyleBackColor = true;
-			newSave.Click += newSavepoint_Click;
+			newSaveButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+			newSaveButton.Location = new Point(518, 369);
+			newSaveButton.Name = "newSaveButton";
+			newSaveButton.Size = new Size(200, 28);
+			newSaveButton.TabIndex = 13;
+			newSaveButton.Text = "&New save...";
+			newSaveButton.UseVisualStyleBackColor = true;
+			newSaveButton.Click += newSaveButton_Click;
 			// 
 			// restoreSaveButton
 			// 
@@ -171,7 +171,7 @@
 			Controls.Add(worldName);
 			Controls.Add(label2);
 			Controls.Add(restoreSaveButton);
-			Controls.Add(newSave);
+			Controls.Add(newSaveButton);
 			Controls.Add(saveList);
 			Controls.Add(label1);
 			Name = "SaveSelectionPage";
@@ -187,7 +187,7 @@
 		private ListView saveList;
 		private ColumnHeader columnHeader1;
 		private ColumnHeader columnHeader2;
-		private Button newSave;
+		private Button newSaveButton;
 		private Button restoreSaveButton;
 		private Label label2;
 		private Label worldName;

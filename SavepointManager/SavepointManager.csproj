@@ -7,8 +7,8 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
-    <Title>Project Zomboid Savepoint Manager</Title>
-    <Product>Project Zomboid Savepoint Manager</Product>
+    <Title>Project Zomboid Save Manager</Title>
+    <Product>Project Zomboid Save Manager</Product>
     <Company>Wirmaple73</Company>
     <AssemblyVersion>1.0</AssemblyVersion>
     <FileVersion>1.0</FileVersion>

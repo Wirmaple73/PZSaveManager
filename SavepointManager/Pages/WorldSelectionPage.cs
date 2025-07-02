@@ -15,9 +15,16 @@ namespace SavepointManager.Forms
 {
 	public partial class WorldSelectionPage : UserControl
 	{
-		public readonly System.Windows.Forms.Timer RefreshSaveListTimer = new() { Interval = 2000 };
+		private readonly System.Windows.Forms.Timer RefreshSaveListTimer = new() { Interval = 2000 };
 
-		public List<World> Worlds { get; private set; } = new List<World>();
+		private List<World> Worlds { get; set; } = new();
+
+		public bool IsRefreshTimerEnabled
+		{
+			get => RefreshSaveListTimer.Enabled;
+			set => RefreshSaveListTimer.Enabled = value;
+		}
+
 		public World? SelectedWorld => Worlds.Find(world => world.Name == worldList.SelectedItems[0].Text);
 		public Button NextButton => nextButton;
 
