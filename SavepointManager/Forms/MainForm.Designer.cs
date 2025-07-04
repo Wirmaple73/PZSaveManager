@@ -34,7 +34,7 @@
 			fileToolStripMenuItem = new ToolStripMenuItem();
 			exitToolStripMenuItem = new ToolStripMenuItem();
 			optionsToolStripMenuItem = new ToolStripMenuItem();
-			configureAutosaveToolStripMenuItem = new ToolStripMenuItem();
+			configureSaveOptionsToolStripMenuItem = new ToolStripMenuItem();
 			helpToolStripMenuItem = new ToolStripMenuItem();
 			checkForupdatesToolStripMenuItem = new ToolStripMenuItem();
 			aboutToolStripMenuItem = new ToolStripMenuItem();
@@ -75,16 +75,17 @@
 			// 
 			// optionsToolStripMenuItem
 			// 
-			optionsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { configureAutosaveToolStripMenuItem });
+			optionsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { configureSaveOptionsToolStripMenuItem });
 			optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
 			optionsToolStripMenuItem.Size = new Size(61, 20);
 			optionsToolStripMenuItem.Text = "&Options";
 			// 
-			// configureAutosaveToolStripMenuItem
+			// configureSaveOptionsToolStripMenuItem
 			// 
-			configureAutosaveToolStripMenuItem.Name = "configureAutosaveToolStripMenuItem";
-			configureAutosaveToolStripMenuItem.Size = new Size(191, 22);
-			configureAutosaveToolStripMenuItem.Text = "&Configure auto-save...";
+			configureSaveOptionsToolStripMenuItem.Name = "configureSaveOptionsToolStripMenuItem";
+			configureSaveOptionsToolStripMenuItem.Size = new Size(205, 22);
+			configureSaveOptionsToolStripMenuItem.Text = "&Configure save options...";
+			configureSaveOptionsToolStripMenuItem.Click += configureSaveOptionsToolStripMenuItem_Click;
 			// 
 			// helpToolStripMenuItem
 			// 
@@ -113,6 +114,7 @@
 			Controls.Add(pagePanel);
 			Controls.Add(menuStrip1);
 			Icon = (Icon)resources.GetObject("$this.Icon");
+			KeyPreview = true;
 			MainMenuStrip = menuStrip1;
 			MinimumSize = new Size(400, 530);
 			Name = "MainForm";
@@ -130,7 +132,7 @@
 		private ToolStripMenuItem fileToolStripMenuItem;
 		private ToolStripMenuItem exitToolStripMenuItem;
 		private ToolStripMenuItem optionsToolStripMenuItem;
-		private ToolStripMenuItem configureAutosaveToolStripMenuItem;
+		private ToolStripMenuItem configureSaveOptionsToolStripMenuItem;
 		private ToolStripMenuItem helpToolStripMenuItem;
 		private ToolStripMenuItem checkForupdatesToolStripMenuItem;
 		private ToolStripMenuItem aboutToolStripMenuItem;

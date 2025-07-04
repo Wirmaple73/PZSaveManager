@@ -34,5 +34,65 @@ namespace SavepointManager.Properties {
                 this["SavePath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseCompression {
+            get {
+                return ((bool)(this["UseCompression"]));
+            }
+            set {
+                this["UseCompression"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SaveHotkey {
+            get {
+                return ((string)(this["SaveHotkey"]));
+            }
+            set {
+                this["SaveHotkey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EnableAutosave {
+            get {
+                return ((bool)(this["EnableAutosave"]));
+            }
+            set {
+                this["EnableAutosave"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int AutosaveInterval {
+            get {
+                return ((int)(this["AutosaveInterval"]));
+            }
+            set {
+                this["AutosaveInterval"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AbortSaveHotkey {
+            get {
+                return ((string)(this["AbortSaveHotkey"]));
+            }
+            set {
+                this["AbortSaveHotkey"] = value;
+            }
+        }
     }
 }

@@ -12,10 +12,11 @@
     <Company>Wirmaple73</Company>
     <AssemblyVersion>1.0</AssemblyVersion>
     <FileVersion>1.0</FileVersion>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\InvalidWorld.png" />
+    <None Remove="Resources\NoPreview.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\InvalidWorld.png" />
+    <EmbeddedResource Include="Resources\NoPreview.png" />
   </ItemGroup>
 
   <ItemGroup>

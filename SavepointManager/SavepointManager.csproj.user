@@ -4,6 +4,9 @@
     <Compile Update="Forms\RestorationProgressForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Forms\SaveOptionsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\SavingProgressForm.cs">
       <SubType>Form</SubType>
     </Compile>

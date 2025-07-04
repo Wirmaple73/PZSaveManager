@@ -1,6 +1,8 @@
 ﻿using SavepointManager.Classes;
 using SavepointManager.Forms;
 using SavepointManager.Properties;
+using System.Globalization;
+using System.Media;
 
 namespace SavepointManager.Pages
 {
@@ -47,14 +49,11 @@ namespace SavepointManager.Pages
 			saves = SelectedWorld!.Saves;
 			saves.Reverse();  // Reversed to sort saves by newest date
 
-			if (saveList.Items.Count == saves.Count)
-				return;
-
 			saveList.Items.Clear();
 			savePreview.Image = null;
 
 			foreach (var save in saves)
-				saveList.Items.Add(new ListViewItem(new[] { save.Description, save.Date.ToString("G") }));
+				saveList.Items.Add(new ListViewItem(new[] { save.Description, save.Date.ToString() }));
 
 			if (saveList.Items.Count > 0)
 				saveList.Items[0].Selected = true;
@@ -74,8 +73,10 @@ namespace SavepointManager.Pages
 			SetSaveButtonsEnabled(true);
 
 			savePreview.Image = SelectedSave.Thumb is not null && SelectedSave.Thumb.Length > 0 ?
-				Image.FromStream(SelectedSave.Thumb) : Resources.InvalidWorld;
+				Image.FromStream(SelectedSave.Thumb) : Resources.NoPreview;
 		}
+
+		private void refreshListButton_Click(object sender, EventArgs e) => RefillSaveList();
 
 		private void newSaveButton_Click(object sender, EventArgs e)
 		{
@@ -96,7 +97,12 @@ namespace SavepointManager.Pages
 			progressForm.ShowDialog();
 
 			if (progressForm.DialogResult == DialogResult.OK)
+			{
+				if (!Window.IsInForeground())
+					SystemSounds.Beep.Play();
+
 				RefillSaveList();
+			}
 		}
 
 		private void restoreSaveButton_Click(object sender, EventArgs e)
@@ -136,7 +142,7 @@ namespace SavepointManager.Pages
 				else
 				{
 					message += $"Your current unsaved progress was previously backed up and now is safe, but couldn't be restored automatically. It has been saved at '{SelectedSave.AssociatedWorld.BackupPath}' and is playable in-game. You can safely rename it back to {SelectedSave.AssociatedWorld.Name} if you want to. Would you like to do so now?";
-					
+
 					if (MessageBoxManager.ShowConfirmation(message, "Browse Save Confirmation"))
 						FileExplorer.Browse(World.WorldDirectory);
 				}
@@ -153,7 +159,7 @@ namespace SavepointManager.Pages
 
 			try
 			{
-				File.Delete(SelectedSave.ArchivePath!);
+				Directory.Delete(Directory.GetParent(SelectedSave.ArchivePath!)!.FullName, true);
 				RefillSaveList();
 			}
 			catch

@@ -10,18 +10,12 @@ namespace SavepointManager.Classes
 	public static class Logger
 	{
 		private static readonly string LogPath = Path.Combine(Environment.CurrentDirectory, "PZSaveManager.log");
+		private const int MaxLinesToKeep = 1000;
 
 		static Logger()
 		{
-			try
-			{
-				if (File.Exists(LogPath))
-					File.Delete(LogPath);
-			}
-			catch
-			{
-				Log("Unable to delete old log contents.", LogSeverity.Info);
-			}
+			// TODO: Only keep last 1000 lines
+			Log("Application started.", LogSeverity.Info);
 		}
 
 		private static string FormatMessage(string message, LogSeverity severity)

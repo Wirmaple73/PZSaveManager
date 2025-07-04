@@ -40,6 +40,7 @@
 			backButton = new Button();
 			label3 = new Label();
 			savePreview = new PictureBox();
+			refreshListButton = new Button();
 			((System.ComponentModel.ISupportInitialize)savePreview).BeginInit();
 			SuspendLayout();
 			// 
@@ -69,7 +70,7 @@
 			// 
 			// columnHeader1
 			// 
-			columnHeader1.Text = "Title";
+			columnHeader1.Text = "Description";
 			columnHeader1.Width = 300;
 			// 
 			// columnHeader2
@@ -80,7 +81,7 @@
 			// newSaveButton
 			// 
 			newSaveButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			newSaveButton.Location = new Point(518, 369);
+			newSaveButton.Location = new Point(518, 374);
 			newSaveButton.Name = "newSaveButton";
 			newSaveButton.Size = new Size(200, 28);
 			newSaveButton.TabIndex = 13;
@@ -91,7 +92,7 @@
 			// restoreSaveButton
 			// 
 			restoreSaveButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			restoreSaveButton.Location = new Point(518, 409);
+			restoreSaveButton.Location = new Point(518, 412);
 			restoreSaveButton.Name = "restoreSaveButton";
 			restoreSaveButton.Size = new Size(200, 28);
 			restoreSaveButton.TabIndex = 14;
@@ -121,7 +122,7 @@
 			// deleteSaveButton
 			// 
 			deleteSaveButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			deleteSaveButton.Location = new Point(518, 449);
+			deleteSaveButton.Location = new Point(518, 450);
 			deleteSaveButton.Name = "deleteSaveButton";
 			deleteSaveButton.Size = new Size(200, 28);
 			deleteSaveButton.TabIndex = 17;
@@ -160,10 +161,22 @@
 			savePreview.TabIndex = 20;
 			savePreview.TabStop = false;
 			// 
+			// refreshListButton
+			// 
+			refreshListButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+			refreshListButton.Location = new Point(518, 326);
+			refreshListButton.Name = "refreshListButton";
+			refreshListButton.Size = new Size(200, 28);
+			refreshListButton.TabIndex = 21;
+			refreshListButton.Text = "R&efresh list";
+			refreshListButton.UseVisualStyleBackColor = true;
+			refreshListButton.Click += refreshListButton_Click;
+			// 
 			// SaveSelectionPage
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
+			Controls.Add(refreshListButton);
 			Controls.Add(savePreview);
 			Controls.Add(label3);
 			Controls.Add(backButton);
@@ -195,5 +208,6 @@
 		private Button backButton;
 		private Label label3;
 		private PictureBox savePreview;
+		private Button refreshListButton;
 	}
 }

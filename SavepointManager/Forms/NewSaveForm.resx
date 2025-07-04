@@ -120,4 +120,17 @@
   <metadata name="compressToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="useCompression.ToolTip" xml:space="preserve">
+    <value>Enables fast compression to significantly reduce output archive size at the cost of significantly slower compression and decompression, especially for larger worlds.
+It's recommended to turn this setting off unless you're low on disk space.
+
+Tests performed on a sample world:
+* Saving:
+    Compression on: 31 MB (38 seconds)
+    Compression off: 133 MB (33 seconds)
+
+* Restoration:
+    Compression on: 93 seconds
+    Decompression off: 40 seconds</value>
+  </data>
 </root>

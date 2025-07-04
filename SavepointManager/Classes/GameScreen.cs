@@ -12,22 +12,10 @@ namespace SavepointManager.Classes
 		private const string Game32ProcessName = "javaw";
 		private const string Game64ProcessName = "ProjectZomboid64";
 
-		[DllImport("user32.dll")]
-		private static extern IntPtr GetForegroundWindow();
-
 		public static Bitmap? Capture()
 		{
-			var processes32 = Process.GetProcessesByName(Game32ProcessName);
-			var processes64 = Process.GetProcessesByName(Game64ProcessName);
-			var handle = IntPtr.Zero;
-
-			if (processes64.Length > 0)
-				handle = processes64[0].MainWindowHandle;
-			else if (processes32.Length > 0)
-				handle = processes32[0].MainWindowHandle;
-
-			// Check either if the game isn't focused
-			if (handle == IntPtr.Zero || handle != GetForegroundWindow())
+			// At least one game process must be active
+			if (!Window.IsInForeground(Game32ProcessName) && !Window.IsInForeground(Game64ProcessName))
 				return null;
 
 			var bmp = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);

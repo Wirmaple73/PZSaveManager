@@ -63,9 +63,9 @@ namespace SavepointManager.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap InvalidWorld {
+        internal static System.Drawing.Bitmap NoPreview {
             get {
-                object obj = ResourceManager.GetObject("InvalidWorld", resourceCulture);
+                object obj = ResourceManager.GetObject("NoPreview", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

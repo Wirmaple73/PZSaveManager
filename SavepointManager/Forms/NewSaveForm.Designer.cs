@@ -29,6 +29,7 @@
 		private void InitializeComponent()
 		{
 			components = new System.ComponentModel.Container();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NewSaveForm));
 			label1 = new Label();
 			saveDescription = new TextBox();
 			okButton = new Button();
@@ -71,28 +72,27 @@
 			label2.AutoSize = true;
 			label2.Location = new Point(9, 69);
 			label2.Name = "label2";
-			label2.Size = new Size(159, 15);
+			label2.Size = new Size(233, 15);
 			label2.TabIndex = 3;
-			label2.Text = "Example: \"After the loot run\"";
+			label2.Text = "Example: \"Before testing my new shotgun\"";
 			// 
 			// useCompression
 			// 
 			useCompression.AutoSize = true;
-			useCompression.Checked = true;
-			useCompression.CheckState = CheckState.Checked;
 			useCompression.Location = new Point(12, 107);
 			useCompression.Name = "useCompression";
 			useCompression.Size = new Size(131, 19);
 			useCompression.TabIndex = 4;
 			useCompression.Text = "Compress save data";
-			compressToolTip.SetToolTip(useCompression, "Enables fast compression to significantly reduce output archive size at the cost of a slightly longer saving process.");
+			compressToolTip.SetToolTip(useCompression, resources.GetString("useCompression.ToolTip"));
 			useCompression.UseVisualStyleBackColor = true;
 			// 
 			// compressToolTip
 			// 
-			compressToolTip.AutoPopDelay = 8000;
+			compressToolTip.AutoPopDelay = 30000;
 			compressToolTip.InitialDelay = 500;
 			compressToolTip.ReshowDelay = 100;
+			compressToolTip.ToolTipIcon = ToolTipIcon.Info;
 			compressToolTip.ToolTipTitle = "Compress save data";
 			// 
 			// NewSaveForm

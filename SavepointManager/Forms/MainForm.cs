@@ -34,18 +34,19 @@ namespace SavepointManager.Forms
 		{
 			FormPageLoader.Load(pagePanel, worldSelectionPage);
 			this.CancelButton = saveSelectionPage.BackButton;
-
-			worldSelectionPage.IsRefreshTimerEnabled = true;
 		}
 
 		private void NextButton_Click(object? sender, EventArgs e)
 		{
 			FormPageLoader.Load(pagePanel, saveSelectionPage);
 			saveSelectionPage.SelectedWorld = worldSelectionPage.SelectedWorld!;
-
-			worldSelectionPage.IsRefreshTimerEnabled = false;
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e) => this.Close();
+
+		private void configureSaveOptionsToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			new SaveOptionsForm().ShowDialog();
+		}
 	}
 }

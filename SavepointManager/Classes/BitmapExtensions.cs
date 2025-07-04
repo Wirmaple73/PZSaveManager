@@ -8,40 +8,17 @@ namespace SavepointManager.Classes
 {
 	public static class BitmapExtensions
 	{
-		public static Bitmap CropCenterAndResize(this Bitmap source, int targetSize)
+		public static Bitmap CropCenter(this Bitmap source, int width, int height)
 		{
-			float srcAspect = source.Width / (float)source.Height;
-			int cropWidth, cropHeight;
+			// Ensure the crop size doesn't exceed the source size
+			width = Math.Min(width, source.Width);
+			height = Math.Min(height, source.Height);
 
-			if (srcAspect > 1)
-			{
-				// Wider than tall – crop horizontally
-				cropHeight = source.Height;
-				cropWidth = (int)(cropHeight * 1.0f); // Make square based on height
-			}
-			else
-			{
-				// Taller than wide or square – crop vertically
-				cropWidth = source.Width;
-				cropHeight = (int)(cropWidth * 1.0f); // Make square based on width
-			}
+			int x = (source.Width - width) / 2;
+			int y = (source.Height - height) / 2;
 
-			int x = (source.Width - cropWidth) / 2;
-			int y = (source.Height - cropHeight) / 2;
-
-			var cropRect = new Rectangle(x, y, cropWidth, cropHeight);
-			using Bitmap cropped = source.Clone(cropRect, source.PixelFormat);
-
-			var resized = new Bitmap(targetSize, targetSize);
-
-			using (Graphics g = Graphics.FromImage(resized))
-			{
-				g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-				g.DrawImage(cropped, 0, 0, targetSize, targetSize);
-			}
-
-			return resized;
+			var cropRect = new Rectangle(x, y, width, height);
+			return source.Clone(cropRect, source.PixelFormat);
 		}
 	}
-
 }

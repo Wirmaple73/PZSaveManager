@@ -11,12 +11,15 @@ using System.Xml.Linq;
 using SavepointManager.Classes.Exceptions;
 using SharpCompress.Archives.Tar;
 using SharpCompress.Readers;
+using System.Diagnostics;
 
 namespace SavepointManager.Classes
 {
-	public class Save : IThumb
+	public class Save
 	{
-		public const string MetadataFileName = "SaveMetadata.xml";
+		public const string ArchiveFileName = "Save";
+		public const string MetadataFileName = "Metadata.xml";
+		public const string ThumbFileName = "Thumb.png";
 
 		public static readonly string DefaultBackupPath = Path.Combine(World.WorldDirectory, "Backups");
 		public static string BackupPath { get; set; } = Settings.Default.SavePath.Length > 0 ? Settings.Default.SavePath : DefaultBackupPath;
@@ -96,10 +99,15 @@ namespace SavepointManager.Classes
 				if (!Directory.Exists(BackupPath))
 					Directory.CreateDirectory(BackupPath);
 
-				Logger.Log($"Beginning to export {AssociatedWorld.Name}...", LogSeverity.Info);
+				Logger.Log($"Beginning to export {AssociatedWorld.Name}... (compression {(useCompression ? "enabled" : "disabled")})", LogSeverity.Info);
 				var startTime = DateTime.Now;
 
-				string outputPath = Path.Combine(BackupPath, $"{AssociatedWorld.Name} {DateTime.Now:yyyy-MM-dd HH-mm-ss fffff}.{(useCompression ? "zip" : "tar")}");
+				string saveName = $"{AssociatedWorld.Name} {DateTime.Now:yyyy-MM-dd HH-mm-ss fffff}";
+				string saveDir = Path.Combine(BackupPath, saveName);
+
+				string outputArchivePath = Path.Combine(saveDir, ArchiveFileName + (useCompression ? ".zip" : ".tar"));
+				string outputXmlPath = Path.Combine(saveDir, MetadataFileName);
+				string outputThumbPath = Path.Combine(saveDir, ThumbFileName);
 
 				var files = Directory.GetFiles(AssociatedWorld.Path, "*", SearchOption.AllDirectories);
 				int totalFiles = files.Length, filesProcessed = 0;
@@ -124,55 +132,50 @@ namespace SavepointManager.Classes
 						ArchiveProgressChanged?.Invoke(this, new(filesProcessed, totalFiles));
 				}
 
-				// Remove the old metadata first if it exists
-				string metadataPath = Path.Combine(AssociatedWorld.Name, MetadataFileName).Replace('\\', '/');
+				if (!Directory.Exists(saveDir))
+					Directory.CreateDirectory(saveDir);
 
-				var oldMetadata = archive.Entries.FirstOrDefault(e => e.Key == metadataPath);
-
-				if (oldMetadata is not null)
-					archive.RemoveEntry(oldMetadata);
-
-				// Add the new metadata
-				var doc = new XDocument(
-					new XElement(XmlElementName.SaveMetadata,
-						new XElement(XmlElementName.Description, Description),
-						new XElement(XmlElementName.Date, Date.ToString("G"))
-					)
-				);
-
-				using var xmlStream = new MemoryStream();
-				doc.Save(xmlStream);
-
-				archive.AddEntry(metadataPath, xmlStream, true, xmlStream.Length, DateTime.Now);
-
-				// Whenever the game has actively loaded a save, it doesn't update the thumb before the save is closed.
-				// We can try to take a screenshot ourselves to help the player better recognize the save later.
+				// Whenever the game has actively loaded a world, it doesn't update the thumb before the world is closed.
+				// We can take a screenshot ourselves to help the player better recognize the save later.
 				if (AssociatedWorld.IsActive)
 				{
 					var thumb = GameScreen.Capture();
 
 					if (thumb is not null)
 					{
-						string thumbPath = Path.Combine(AssociatedWorld.Name, World.ThumbName).Replace('\\', '/');
-						var originalThumb = archive.Entries.FirstOrDefault(e => e.Key == thumbPath);
+						using var fs = File.OpenWrite(outputThumbPath);
 
-						if (originalThumb is not null)
-						{
-							var ms = new MemoryStream();
-
-							thumb = thumb.CropCenterAndResize(World.ThumbWidth);
-							thumb.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-
-							archive.RemoveEntry(originalThumb);
-							archive.AddEntry(thumbPath, ms, true, ms.Length, DateTime.Now);
-						}
+						thumb = thumb.CropCenter(World.ThumbWidth, World.ThumbWidth);
+						thumb.Save(fs, System.Drawing.Imaging.ImageFormat.Png);
+					}
+					else
+					{
+						CopyOriginalThumb();
 					}
 				}
+				else
+				{
+					CopyOriginalThumb();
+				}
+
+				// Save the metadata
+				var doc = new XDocument(
+					new XElement(XmlElementName.Metadata,
+						new XElement(XmlElementName.WorldName, AssociatedWorld.Name),
+						new XElement(XmlElementName.Description, Description),
+						new XElement(XmlElementName.Date, Date.ToString("G"))
+					)
+				);
+
+				using (var xmlStream = File.OpenWrite(outputXmlPath))
+					doc.Save(xmlStream);
 
 				ExportStarted?.Invoke(this, EventArgs.Empty);
-				archive.SaveTo(outputPath, new(useCompression ? CompressionType.Deflate : CompressionType.None));
+				archive.SaveTo(outputArchivePath, new(useCompression ? CompressionType.Deflate : CompressionType.None));
 
 				Logger.Log($"Exportation took {(DateTime.Now - startTime).TotalSeconds:f1}s.", LogSeverity.Info);
+
+				void CopyOriginalThumb() => File.Copy(Path.Combine(AssociatedWorld.Path, World.ThumbName), outputThumbPath, true);
 			}, token);
 		}
 

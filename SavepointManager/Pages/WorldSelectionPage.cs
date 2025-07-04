@@ -15,15 +15,7 @@ namespace SavepointManager.Forms
 {
 	public partial class WorldSelectionPage : UserControl
 	{
-		private readonly System.Windows.Forms.Timer RefreshSaveListTimer = new() { Interval = 2000 };
-
 		private List<World> Worlds { get; set; } = new();
-
-		public bool IsRefreshTimerEnabled
-		{
-			get => RefreshSaveListTimer.Enabled;
-			set => RefreshSaveListTimer.Enabled = value;
-		}
 
 		public World? SelectedWorld => Worlds.Find(world => world.Name == worldList.SelectedItems[0].Text);
 		public Button NextButton => nextButton;
@@ -32,9 +24,6 @@ namespace SavepointManager.Forms
 		{
 			InitializeComponent();
 			UpdateSaveList();
-
-			RefreshSaveListTimer.Tick += (object? sender, EventArgs e) => UpdateSaveList();
-			RefreshSaveListTimer.Start();
 
 			errorLabelIcon.Image = SystemIcons.Error.ToBitmap();
 		}
@@ -60,6 +49,7 @@ namespace SavepointManager.Forms
 			}
 
 			errorLabel.Text = "";
+			saveList_SelectedIndexChanged(this, EventArgs.Empty);
 
 			if (worldList.Items.Count == 0)
 			{
@@ -113,15 +103,24 @@ namespace SavepointManager.Forms
 				return;
 			}
 
-			worldPreview.Image = SelectedWorld is not null && SelectedWorld.Thumb is not null && SelectedWorld.Thumb.Length > 0
-				? Image.FromStream(SelectedWorld.Thumb) : Resources.InvalidWorld;
-
 			nextButton.Enabled = true;
+
+			if (SelectedWorld is not null)
+			{
+				string thumbPath = Path.Combine(SelectedWorld.Path, World.ThumbName);
+
+				if (File.Exists(thumbPath))
+					worldPreview.ImageLocation = thumbPath;
+				else
+					worldPreview.Image = Resources.NoPreview;
+			}
 		}
 
 		private void errorLabel_TextChanged(object sender, EventArgs e)
 			=> errorLabel.Visible = errorLabelIcon.Visible = errorLabel.Text.Length > 0;
 
 		private void worldList_DoubleClick(object sender, EventArgs e) => nextButton.PerformClick();
+
+		private void refreshButton_Click(object sender, EventArgs e) => UpdateSaveList();
 	}
 }

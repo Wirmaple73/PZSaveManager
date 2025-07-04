@@ -38,10 +38,9 @@
 			columnHeader3 = new ColumnHeader();
 			errorLabel = new Label();
 			errorLabelIcon = new PictureBox();
-			pictureBox1 = new PictureBox();
+			refreshButton = new Button();
 			((System.ComponentModel.ISupportInitialize)worldPreview).BeginInit();
 			((System.ComponentModel.ISupportInitialize)errorLabelIcon).BeginInit();
-			((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
 			SuspendLayout();
 			// 
 			// nextButton
@@ -121,7 +120,7 @@
 			errorLabel.AutoEllipsis = true;
 			errorLabel.Location = new Point(175, 493);
 			errorLabel.Name = "errorLabel";
-			errorLabel.Size = new Size(542, 40);
+			errorLabel.Size = new Size(543, 40);
 			errorLabel.TabIndex = 12;
 			errorLabel.Visible = false;
 			errorLabel.TextChanged += errorLabel_TextChanged;
@@ -137,22 +136,22 @@
 			errorLabelIcon.TabStop = false;
 			errorLabelIcon.Visible = false;
 			// 
-			// pictureBox1
+			// refreshButton
 			// 
-			pictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			pictureBox1.BorderStyle = BorderStyle.FixedSingle;
-			pictureBox1.Location = new Point(517, 299);
-			pictureBox1.Name = "pictureBox1";
-			pictureBox1.Size = new Size(200, 200);
-			pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-			pictureBox1.TabIndex = 14;
-			pictureBox1.TabStop = false;
+			refreshButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+			refreshButton.DialogResult = DialogResult.OK;
+			refreshButton.Location = new Point(518, 448);
+			refreshButton.Name = "refreshButton";
+			refreshButton.Size = new Size(200, 28);
+			refreshButton.TabIndex = 14;
+			refreshButton.Text = "&Refresh list";
+			refreshButton.Click += refreshButton_Click;
 			// 
 			// WorldSelectionPage
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			Controls.Add(pictureBox1);
+			Controls.Add(refreshButton);
 			Controls.Add(errorLabelIcon);
 			Controls.Add(errorLabel);
 			Controls.Add(worldList);
@@ -164,7 +163,6 @@
 			Size = new Size(734, 537);
 			((System.ComponentModel.ISupportInitialize)worldPreview).EndInit();
 			((System.ComponentModel.ISupportInitialize)errorLabelIcon).EndInit();
-			((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -180,6 +178,6 @@
 		private Button nextButton;
 		private Label errorLabel;
 		private PictureBox errorLabelIcon;
-		private PictureBox pictureBox1;
+		private Button refreshButton;
 	}
 }
