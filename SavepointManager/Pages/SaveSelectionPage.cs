@@ -21,7 +21,7 @@ namespace SavepointManager.Pages
 
 				if (value is not null)
 				{
-					RefillSaveList();
+					UpdateSaveList();
 					worldName.Text = value.Name;
 				}
 				else
@@ -42,12 +42,16 @@ namespace SavepointManager.Pages
 		public SaveSelectionPage()
 		{
 			InitializeComponent();
+			saveLabelIcon.Image = SystemIcons.Asterisk.ToBitmap();
 		}
 
-		private void RefillSaveList()
+		private void UpdateSaveList(bool refillList = true)
 		{
 			saves = SelectedWorld!.Saves;
 			saves.Reverse();  // Reversed to sort saves by newest date
+
+			if (!refillList)
+				return;
 
 			saveList.Items.Clear();
 			savePreview.Image = null;
@@ -56,7 +60,14 @@ namespace SavepointManager.Pages
 				saveList.Items.Add(new ListViewItem(new[] { save.Description, save.Date.ToString() }));
 
 			if (saveList.Items.Count > 0)
+			{
 				saveList.Items[0].Selected = true;
+				saveLabel.Visible = saveLabelIcon.Visible = false;
+			}
+			else
+			{
+				saveLabel.Visible = saveLabelIcon.Visible = true;
+			}
 
 			saveList.Focus();
 		}
@@ -76,37 +87,52 @@ namespace SavepointManager.Pages
 				Image.FromStream(SelectedSave.Thumb) : Resources.NoPreview;
 		}
 
-		private void refreshListButton_Click(object sender, EventArgs e) => RefillSaveList();
+		private void refreshListButton_Click(object sender, EventArgs e) => UpdateSaveList();
 
 		private void newSaveButton_Click(object sender, EventArgs e)
 		{
 			var newSaveForm = new NewSaveForm();
 
+			if (Save.IsSaveInProgress)
+			{
+				ShowSaveInProgressError();
+				return;
+			}
+
 			if (newSaveForm.ShowDialog() != DialogResult.OK)
 				return;
 
 			string description = newSaveForm.SaveDescription is not null && newSaveForm.SaveDescription.Length > 0 ?
-				newSaveForm.SaveDescription : "Manual save";
+				newSaveForm.SaveDescription : Save.ManualSaveDescription;
 
 			var progressForm = new SavingProgressForm()
 			{
-				Save = new Save(SelectedWorld!, null, description, DateTime.Now, new MemoryStream()),
-				UseCompression = newSaveForm.UseCompression
+				Save = new Save(SelectedWorld!, null, description, DateTime.Now, new MemoryStream())
 			};
 
-			progressForm.ShowDialog();
+			if (Save.IsSaveInProgress)
+			{
+				ShowSaveInProgressError();
+				return;
+			}
 
-			if (progressForm.DialogResult == DialogResult.OK)
+			if (progressForm.ShowDialog() == DialogResult.OK)
 			{
 				if (!Window.IsInForeground())
 					SystemSounds.Beep.Play();
 
-				RefillSaveList();
+				UpdateSaveList();
+			}
+			else
+			{
+				MessageBoxManager.ShowError($"The save could not be exported.\n\nError message: {progressForm.ErrorMessage}");
 			}
 		}
 
 		private void restoreSaveButton_Click(object sender, EventArgs e)
 		{
+			UpdateSaveList(false);
+
 			if (saveList.SelectedIndices.Count == 0 || SelectedWorld is null || SelectedSave is null)
 				return;
 
@@ -119,7 +145,7 @@ namespace SavepointManager.Pages
 			if (!MessageBoxManager.ShowConfirmation($"Are you sure you want to restore the world {SelectedWorld.Name} back to the following save? All current unsaved progress will be lost!\n\n{SaveInfo}", "Save Restoration Confirmation"))
 				return;
 
-			var progressForm = new RestorationProgressForm { SelectedSave = SelectedSave };
+			var progressForm = new RestorationProgressForm { SelectedSave = this.SelectedSave };
 
 			if (progressForm.ShowDialog() == DialogResult.OK)
 			{
@@ -132,12 +158,12 @@ namespace SavepointManager.Pages
 			}
 			else
 			{
-				string message = $"An error occured while trying to restore the save.\n";
+				string message = $"An error occured while trying to restore the save: {progressForm.ErrorMessage}\n\n";
 
 				if (progressForm.IsOriginalWorldRestored!.Value)
 				{
 					message += "Your current unsaved progress has been successfully recovered. No further action is needed.";
-					MessageBoxManager.ShowInfo(message, "Error");
+					MessageBoxManager.ShowError(message);
 				}
 				else
 				{
@@ -160,13 +186,16 @@ namespace SavepointManager.Pages
 			try
 			{
 				Directory.Delete(Directory.GetParent(SelectedSave.ArchivePath!)!.FullName, true);
-				RefillSaveList();
+				UpdateSaveList();
 			}
 			catch
 			{
 				MessageBoxManager.ShowError("The specified save could not be deleted. It may still be deleted manually.");
 			}
 		}
+
 		private void SetSaveButtonsEnabled(bool value) => restoreSaveButton.Enabled = deleteSaveButton.Enabled = value;
+
+		private void ShowSaveInProgressError() => MessageBoxManager.ShowError("Another save process is already in progress. Please wait until it is completed.");
 	}
 }

@@ -1,4 +1,5 @@
-﻿using SavepointManager.Classes;
+﻿using NHotkey;
+using SavepointManager.Classes;
 using SavepointManager.Properties;
 using System;
 using System.Collections.Generic;
@@ -22,14 +23,29 @@ namespace SavepointManager.Forms
 
 			for (int i = 0; i < keys.Length; i++)
 			{
-				saveHotkey.Items.Add(keys[i]);
-				abortSaveHotkey.Items.Add(keys[i]);
+				saveHotkeys.Items.Add(keys[i]);
+				abortSaveHotkeys.Items.Add(keys[i]);
 			}
 
-			saveHotkey.Text = Settings.Default.SaveHotkey;
-			abortSaveHotkey.Text = Settings.Default.AbortSaveHotkey;
+			if (Directory.Exists(Save.BackupPath))
+				folderBrowser.InitialDirectory = Save.BackupPath;
+
+			backupPath.Text = Save.BackupPath;
+			useCompression.Checked = Settings.Default.UseCompression;
+			useSaveSounds.Checked = Settings.Default.UseSaveSounds;
+			saveHotkeys.Text = Settings.Default.SaveHotkey;
+			abortSaveHotkeys.Text = Settings.Default.AbortSaveHotkey;
 			autosaveInterval.Text = Settings.Default.AutosaveInterval.ToString();
 			enableAutosave.Checked = autosaveInterval.Enabled = Settings.Default.EnableAutosave;
+		}
+
+		private void browseButton_Click(object sender, EventArgs e)
+		{
+			folderBrowser.InitialDirectory = Directory.Exists(backupPath.Text) ? backupPath.Text : "";
+			var result = folderBrowser.ShowDialog(this);
+
+			if (result == DialogResult.OK)
+				backupPath.Text = folderBrowser.SelectedPath;
 		}
 
 		private void enableAutosave_CheckedChanged(object sender, EventArgs e)
@@ -37,19 +53,91 @@ namespace SavepointManager.Forms
 
 		private void okButton_Click(object sender, EventArgs e)
 		{
-			if (enableAutosave.Checked && !int.TryParse(autosaveInterval.Text, out _))
+			if (enableAutosave.Checked && (!int.TryParse(autosaveInterval.Text, out int interval) || interval <= 0))
 			{
-				MessageBoxManager.ShowError("Please enter a valid interval for auto-save.");
+				MessageBoxManager.ShowError("The auto-save interval must be greater than zero.");
 				return;
 			}
 
-			Settings.Default.SaveHotkey = saveHotkey.Text;
-			Settings.Default.AbortSaveHotkey = abortSaveHotkey.Text;
+			var saveKey = SaveHelper.GetKeyFromString(saveHotkeys.Text);
+			var abortKey = SaveHelper.GetKeyFromString(abortSaveHotkeys.Text);
+
+			if (saveKey.IsErroneous || abortKey.IsErroneous)
+			{
+				MessageBoxManager.ShowError("One of the selected hotkeys is invalid. Please select another one.");
+				return;
+			}
+
+			SaveHelper.UnbindAll();
+
+			if (saveKey.Key is not null && saveKey.Key != Keys.None && !SaveHelper.IsHotkeyAvailable(saveKey.Key.Value))
+			{
+				MessageBoxManager.ShowError($"The specified hotkey for manual save ({saveKey.Key.Value}) could not be registered, probably because it's already in use by another process. Please select another one.");
+				return;
+			}
+
+			if (abortKey.Key is not null && abortKey.Key != Keys.None && !SaveHelper.IsHotkeyAvailable(abortKey.Key.Value))
+			{
+				MessageBoxManager.ShowError($"The specified hotkey for aborting saves ({abortKey.Key.Value}) could not be registered, probably because it's already in use by another process. Please select another one.");
+				return;
+			}
+
+			if (saveKey.Key is not null && abortKey.Key is not null && saveKey.Key.Value == abortKey.Key.Value)
+			{
+				MessageBoxManager.ShowError("The 'manual save' and 'abort save' hotkeys are the same. Please make sure they are different from each other.");
+				return;
+			}
+
+			if (!Directory.Exists(backupPath.Text))
+			{
+				try
+				{
+					Directory.CreateDirectory(backupPath.Text);
+				}
+				catch (Exception ex)
+				{
+					Logger.Log($"Could not create the save backup directory at {Save.BackupPath}", ex);
+					MessageBoxManager.ShowError("The selected save backup path could not be created automatically. Please select another path.");
+
+					return;
+				}
+			}
+
+			if (backupPath.Text != Settings.Default.SavePath && Directory.Exists(Settings.Default.SavePath))  // If the user has changed the backup path
+			{
+				var form = new SaveRelocationProgressForm()
+				{
+					OldPath = Settings.Default.SavePath,
+					NewPath = backupPath.Text
+				};
+
+				if (form.ShowDialog() != DialogResult.OK && MessageBoxManager.ShowConfirmation($"Some backup folders could not be moved to the new backup path automatically. These folders have to be moved manually in order to be recognized by the program later. Would you like to browse and move the folders yourself now?\n\nError message: {form.ErrorMessage}", "Backup Path Error", MessageBoxIcon.Error, true))
+					FileExplorer.Browse(Settings.Default.SavePath);
+			}
+
+			Settings.Default.SavePath = backupPath.Text;
+			Settings.Default.UseCompression = useCompression.Checked;
+			Settings.Default.UseSaveSounds = useSaveSounds.Checked;
+			Settings.Default.SaveHotkey = saveHotkeys.Text;
+			Settings.Default.AbortSaveHotkey = abortSaveHotkeys.Text;
 			Settings.Default.EnableAutosave = enableAutosave.Checked;
-			Settings.Default.AutosaveInterval = enableAutosave.Checked ? int.Parse(autosaveInterval.Text) : 10;
+			Settings.Default.AutosaveInterval = enableAutosave.Checked ? int.Parse(autosaveInterval.Text) : SaveHelper.DefaultAutosaveInterval;
 
 			Settings.Default.Save();
+
+			this.DialogResult = DialogResult.OK;
 			this.Close();
+		}
+
+		private void resetButton_Click(object sender, EventArgs e)
+		{
+			backupPath.Text = Save.DefaultBackupPath;
+			useCompression.Checked = false;
+			useSaveSounds.Checked = true;
+			saveHotkeys.Text = Keys.F5.ToString();
+			abortSaveHotkeys.Text = Keys.F6.ToString();
+			enableAutosave.Checked = true;
+			autosaveInterval.Text = SaveHelper.DefaultAutosaveInterval.ToString();
 		}
 	}
 }

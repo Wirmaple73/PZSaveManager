@@ -138,7 +138,7 @@
 			// 
 			// refreshButton
 			// 
-			refreshButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+			refreshButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 			refreshButton.DialogResult = DialogResult.OK;
 			refreshButton.Location = new Point(518, 448);
 			refreshButton.Name = "refreshButton";

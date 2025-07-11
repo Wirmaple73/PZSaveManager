@@ -9,35 +9,40 @@ namespace SavepointManager.Classes
 {
 	public static class Logger
 	{
-		private static readonly string LogPath = Path.Combine(Environment.CurrentDirectory, "PZSaveManager.log");
-		private const int MaxLinesToKeep = 1000;
+		private static readonly string LogDirectory = Path.Combine(Environment.CurrentDirectory, "Logs");
+		private static string FilePath => Path.Combine(LogDirectory, $"PZSaveManager {DateTime.Now:yyyy-MM-dd}.log");
+
+		private static string FormatMessage(string message, LogSeverity severity)
+			=> $"[{DateTime.Now:yyyy/MM/dd HH:mm:ss.fff}] {severity}: {message}";  // ISO 8601 gang stay winning
 
 		static Logger()
 		{
-			// TODO: Only keep last 1000 lines
-			Log("Application started.", LogSeverity.Info);
+			Log($"Application started.", LogSeverity.Info, true);
 		}
 
-		private static string FormatMessage(string message, LogSeverity severity)
-			=> $"[{DateTime.Now:yyyy/MM/dd HH:mm:ss}] {severity}: {message}";
-
-		public static void Log(string message, LogSeverity severity)
+		public static void Log(string message, LogSeverity severity, bool insertNewLineBefore = false)
 		{
-			Task.Run(async () =>
-			{
-				string formattedMessage = FormatMessage(message, severity);
+			string formattedMessage = FormatMessage(message, severity);
 
-				try
-				{
-					await File.AppendAllTextAsync(LogPath, formattedMessage + Environment.NewLine);
-					Debug.WriteLine(formattedMessage);
-				}
-				catch (Exception ex)
-				{
-					Debug.WriteLine($"Logging failed: ({ex.GetType().Name}) {ex.Message}");
-					Debug.WriteLine($"Log message: {formattedMessage}");
-				}
-			});
+			if (insertNewLineBefore && File.Exists(FilePath))
+				formattedMessage = Environment.NewLine + formattedMessage;
+
+			try
+			{
+				if (!Directory.Exists(LogDirectory))
+					Directory.CreateDirectory(LogDirectory);
+
+				File.AppendAllText(FilePath, formattedMessage + Environment.NewLine);
+				Debug.WriteLine(formattedMessage);
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine($"Logging failed: ({ex.GetType().Name}) {ex.Message}");
+				Debug.WriteLine($"Log message: {formattedMessage}");
+			}
 		}
+
+		public static void Log(string description, Exception ex)
+			=> Log($"{description}: ({ex.GetType().Name}) {ex.Message}", LogSeverity.Error);
 	}
 }

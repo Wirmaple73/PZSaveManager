@@ -9,13 +9,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using SavepointManager.Properties;
 
 namespace SavepointManager.Forms
 {
 	public partial class SavingProgressForm : Form
 	{
 		public Save? Save { get; set; }
-		public bool UseCompression { get; set; }
+		public string? ErrorMessage { get; private set; } = null;
+
 
 		private readonly CancellationTokenSource tokenSource = new();
 		private DialogResult result = DialogResult.None;
@@ -25,19 +27,30 @@ namespace SavepointManager.Forms
 		private async void ArchiveProgressForm_Load(object sender, EventArgs e)
 		{
 			this.Text = $"Saving {Save!.AssociatedWorld.Name}";
+
 			Save.ArchiveProgressChanged += Save_ArchiveProgressChanged;
 			Save.ExportStarted += Save_ExportStarted;
 
 			try
 			{
-				await Save.ExportAsync(UseCompression, tokenSource.Token);
+				await Save.ExportAsync(Settings.Default.UseCompression, tokenSource.Token);
 				result = DialogResult.OK;
 			}
 			catch (TaskCanceledException)
 			{
+				result = DialogResult.Cancel;
+			}
+			catch (Exception ex)
+			{
+				result = DialogResult.Cancel;
+				ErrorMessage = ex.Message;
+
+				Logger.Log($"The world {Save.AssociatedWorld} could not be exported", ex);
+			}
+			finally
+			{
 				Save.ArchiveProgressChanged -= Save_ArchiveProgressChanged;
 				Save.ExportStarted -= Save_ExportStarted;
-				result = DialogResult.Cancel;
 			}
 
 			this.Close();
@@ -47,7 +60,7 @@ namespace SavepointManager.Forms
 		{
 			this.Invoke(() =>
 			{
-				status.Text = UseCompression ? "Compressing and exporting archive..." : "Exporting archive...";
+				status.Text = Settings.Default.UseCompression ? "Compressing and exporting archive..." : "Exporting archive...";
 				progressBar.Style = ProgressBarStyle.Marquee;
 			});
 		}

@@ -1,4 +1,6 @@
-﻿using SharpCompress.Archives;
+﻿using SavepointManager.Forms;
+using SavepointManager.Properties;
+using SharpCompress.Archives;
 using SharpCompress.Archives.Tar;
 using SharpCompress.Archives.Zip;
 using SharpCompress.Common;
@@ -7,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -15,7 +18,7 @@ namespace SavepointManager.Classes
 {
 	public class World
 	{
-		private static readonly string BaseDirectory = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Zomboid");
+		public static readonly string BaseDirectory = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Zomboid");
 		public static readonly string WorldDirectory = System.IO.Path.Combine(BaseDirectory, "Saves");
 
 		private const string LockedFileName = "players.db";
@@ -66,6 +69,9 @@ namespace SavepointManager.Classes
 			get
 			{
 				var saves = new List<Save>();
+
+				if (!Directory.Exists(Save.BackupPath))
+					return saves;
 
 				foreach (string folderPath in Directory.GetDirectories(Save.BackupPath))
 				{
@@ -187,16 +193,53 @@ namespace SavepointManager.Classes
 
 			foreach (var gamemodeFolder in gamemodes)
 			{
-				if (gamemodeFolder == Save.BackupPath)  // Don't include backed-up worlds
-					continue;
-
 				var worldFolders = Directory.GetDirectories(gamemodeFolder);
 
 				foreach (var world in worldFolders)
-					worlds.Add(new(System.IO.Path.GetFileName(world), world, System.IO.Path.GetFileName(gamemodeFolder)));
+				{
+					string tarPath = System.IO.Path.Combine(world, $"{Save.ArchiveFileName}.tar");
+					string zipPath = System.IO.Path.Combine(world, $"{Save.ArchiveFileName}.zip");
+
+					// Filter out backups
+					if (!File.Exists(tarPath) && !File.Exists(zipPath))
+						worlds.Add(new(System.IO.Path.GetFileName(world), world, System.IO.Path.GetFileName(gamemodeFolder)));
+				}
 			}
 
 			return worlds;
+		}
+
+		public static void SaveActiveWorld(string description, CancellationTokenSource token)
+		{
+			Task.Run(async () =>
+			{
+				var activeWorld = FetchAll().FirstOrDefault(w => w.IsActive);
+
+				if (activeWorld is null)
+				{
+					Logger.Log("No world is currently active. Saving has been canceled.", LogSeverity.Info);
+					return;
+				}
+
+				var save = new Save(activeWorld, null, description, DateTime.Now, new MemoryStream());
+				SoundPlayer.PlaySaveSound(SystemSounds.Asterisk);
+
+				try
+				{
+					await save.ExportAsync(false, token.Token);
+					SoundPlayer.PlaySaveSound(SystemSounds.Asterisk);
+				}
+				catch (TaskCanceledException)
+				{
+					Logger.Log($"Saving has been aborted by the user.", LogSeverity.Info);
+					SoundPlayer.PlaySaveSound(SystemSounds.Hand);
+				}
+				catch (Exception ex)
+				{
+					Logger.Log($"Could not save the world {activeWorld.Name}", ex);
+					SoundPlayer.PlaySaveSound(SystemSounds.Hand);
+				}
+			}, token.Token);
 		}
 	}
 }

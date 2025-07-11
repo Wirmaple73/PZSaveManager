@@ -29,7 +29,6 @@
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-			pagePanel = new Panel();
 			menuStrip1 = new MenuStrip();
 			fileToolStripMenuItem = new ToolStripMenuItem();
 			exitToolStripMenuItem = new ToolStripMenuItem();
@@ -38,19 +37,13 @@
 			helpToolStripMenuItem = new ToolStripMenuItem();
 			checkForupdatesToolStripMenuItem = new ToolStripMenuItem();
 			aboutToolStripMenuItem = new ToolStripMenuItem();
+			pagePanel = new Panel();
 			menuStrip1.SuspendLayout();
 			SuspendLayout();
 			// 
-			// pagePanel
-			// 
-			pagePanel.Dock = DockStyle.Fill;
-			pagePanel.Location = new Point(0, 24);
-			pagePanel.Name = "pagePanel";
-			pagePanel.Size = new Size(734, 537);
-			pagePanel.TabIndex = 0;
-			// 
 			// menuStrip1
 			// 
+			menuStrip1.BackColor = SystemColors.ControlLightLight;
 			menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, optionsToolStripMenuItem, helpToolStripMenuItem });
 			menuStrip1.Location = new Point(0, 0);
 			menuStrip1.Name = "menuStrip1";
@@ -106,6 +99,14 @@
 			aboutToolStripMenuItem.Size = new Size(170, 22);
 			aboutToolStripMenuItem.Text = "&About...";
 			// 
+			// pagePanel
+			// 
+			pagePanel.Dock = DockStyle.Fill;
+			pagePanel.Location = new Point(0, 24);
+			pagePanel.Name = "pagePanel";
+			pagePanel.Size = new Size(734, 537);
+			pagePanel.TabIndex = 0;
+			// 
 			// MainForm
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -116,9 +117,10 @@
 			Icon = (Icon)resources.GetObject("$this.Icon");
 			KeyPreview = true;
 			MainMenuStrip = menuStrip1;
-			MinimumSize = new Size(400, 530);
+			MinimumSize = new Size(400, 570);
 			Name = "MainForm";
 			Text = "Project Zomboid Save Manager";
+			FormClosing += MainForm_FormClosing;
 			menuStrip1.ResumeLayout(false);
 			menuStrip1.PerformLayout();
 			ResumeLayout(false);
@@ -126,8 +128,6 @@
 		}
 
 		#endregion
-
-		private Panel pagePanel;
 		private MenuStrip menuStrip1;
 		private ToolStripMenuItem fileToolStripMenuItem;
 		private ToolStripMenuItem exitToolStripMenuItem;
@@ -136,5 +136,6 @@
 		private ToolStripMenuItem helpToolStripMenuItem;
 		private ToolStripMenuItem checkForupdatesToolStripMenuItem;
 		private ToolStripMenuItem aboutToolStripMenuItem;
+		private Panel pagePanel;
 	}
 }

@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using SavepointManager.Classes;
 using SavepointManager.Pages;
+using SavepointManager.Properties;
+using NHotkey.WindowsForms;
+using NHotkey;
 
 namespace SavepointManager.Forms
 {
@@ -21,13 +24,17 @@ namespace SavepointManager.Forms
 		public MainForm()
 		{
 			InitializeComponent();
-
 			FormPageLoader.Load(pagePanel, worldSelectionPage);
 
 			worldSelectionPage.NextButton.Click += NextButton_Click;
 			saveSelectionPage.BackButton.Click += BackButton_Click;
 
 			this.AcceptButton = worldSelectionPage.NextButton;
+
+			SaveHelper.UpdateAutosaveTimer();
+
+			if (!SaveHelper.UpdateHotkeys() && MessageBoxManager.ShowConfirmation("One of the save hotkeys could not be loaded properly. Would you like to open the save options now?", "Save Hotkey Error", isYesDefault: true))
+				configureSaveOptionsToolStripMenuItem_Click(this, EventArgs.Empty);
 		}
 
 		private void BackButton_Click(object? sender, EventArgs e)
@@ -42,11 +49,34 @@ namespace SavepointManager.Forms
 			saveSelectionPage.SelectedWorld = worldSelectionPage.SelectedWorld!;
 		}
 
-		private void exitToolStripMenuItem_Click(object sender, EventArgs e) => this.Close();
-
 		private void configureSaveOptionsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			new SaveOptionsForm().ShowDialog();
+			if (new SaveOptionsForm().ShowDialog() == DialogResult.OK)
+			{
+				SaveHelper.UpdateHotkeys();
+				SaveHelper.UpdateAutosaveTimer();
+			}
+		}
+
+		private void exitToolStripMenuItem_Click(object sender, EventArgs e) => this.Close();
+
+		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			if (SaveHelper.GetKeyFromString(Settings.Default.SaveHotkey).Key is null && !Settings.Default.EnableAutosave)
+				return;
+
+			if (MessageBoxManager.ShowConfirmation("Are you sure you want to quit? The program must be kept running in the background in order to perform manual or automatic saves!", "Exit Confirmation"))
+			{
+				SaveHelper.UnbindAll();
+				Settings.Default.Save();
+
+				Logger.Log("All settings have been saved.", LogSeverity.Info);
+				Logger.Log("Application shutting down.", LogSeverity.Info);
+			}
+			else
+			{
+				e.Cancel = true;
+			}
 		}
 	}
 }

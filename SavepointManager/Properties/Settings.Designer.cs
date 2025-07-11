@@ -49,7 +49,7 @@ namespace SavepointManager.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("None")]
         public string SaveHotkey {
             get {
                 return ((string)(this["SaveHotkey"]));
@@ -85,13 +85,25 @@ namespace SavepointManager.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("None")]
         public string AbortSaveHotkey {
             get {
                 return ((string)(this["AbortSaveHotkey"]));
             }
             set {
                 this["AbortSaveHotkey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UseSaveSounds {
+            get {
+                return ((bool)(this["UseSaveSounds"]));
+            }
+            set {
+                this["UseSaveSounds"] = value;
             }
         }
     }

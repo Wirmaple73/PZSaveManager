@@ -17,6 +17,7 @@ namespace SavepointManager.Forms
 		public Save? SelectedSave { get; set; }
 		public bool? IsOriginalWorldRestored { get; private set; } = null;
 		public bool? IsRedundantBackupDeleted { get; private set; } = null;
+		public string? ErrorMessage { get; private set; } = null;
 
 		private DialogResult result = DialogResult.None;
 
@@ -24,11 +25,20 @@ namespace SavepointManager.Forms
 
 		private async void RestorationProgressForm_Load(object sender, EventArgs e)
 		{
+			await RestoreAsync();
+			this.Close();
+		}
+
+		private async Task RestoreAsync()
+		{
 			if (SelectedSave is null)
 				throw new NullReferenceException("The selected save is null.");
 
-			this.Text = $"Restoring {SelectedSave.AssociatedWorld.Name}";
-			status.Text = "Backing up current unsaved progress...";
+			this.Invoke(() =>
+			{
+				this.Text = $"Restoring {SelectedSave.AssociatedWorld.Name}";
+				status.Text = "Backing up current unsaved progress...";
+			});
 
 			try
 			{
@@ -36,6 +46,7 @@ namespace SavepointManager.Forms
 				{
 					await Task.Run(() =>
 					{
+						// Delete the old save backup
 						if (Directory.Exists(SelectedSave.AssociatedWorld.BackupPath))
 							Directory.Delete(SelectedSave.AssociatedWorld.BackupPath, true);
 
@@ -43,24 +54,26 @@ namespace SavepointManager.Forms
 						Directory.CreateDirectory(SelectedSave.AssociatedWorld.Path);
 					});
 				}
-				catch (Exception ex)
+				catch (Exception exc)
 				{
-					throw new SaveBackupException("Could not rename the original world.", ex);
+					throw new SaveBackupException("Could not rename the original world.", exc);
 				}
 
-				progressBar.Style = ProgressBarStyle.Continuous;
-
+				this.Invoke(() => progressBar.Style = ProgressBarStyle.Continuous);
 				SelectedSave.ArchiveProgressChanged += SelectedSave_ArchiveProgressChanged;
-				await SelectedSave.RestoreAsync();
 
+				await SelectedSave.RestoreAsync();
 				result = DialogResult.OK;
 			}
 			catch (SaveExtractionException ex)
 			{
 				// The original world folder is now likely corrupted
-				status.Text = "Save restoration failed. Recovering your current unsaved progress...";
-				progressBar.Style = ProgressBarStyle.Continuous;
-				progressBar.Value = 0;
+
+				this.Invoke(() =>
+				{
+					status.Text = "Save restoration failed. Recovering your current unsaved progress...";
+					progressBar.Style = ProgressBarStyle.Marquee;
+				});
 
 				try
 				{
@@ -75,7 +88,6 @@ namespace SavepointManager.Forms
 				}
 
 				HandleException(ex);
-				throw;
 			}
 			catch (Exception ex) /* when (ex is WorldActiveException or ArchivePathNullException or InvalidSaveArchiveException or SaveBackupException) */
 			{
@@ -85,10 +97,15 @@ namespace SavepointManager.Forms
 			}
 			finally
 			{
+				SelectedSave.ArchiveProgressChanged -= SelectedSave_ArchiveProgressChanged;
+
 				if (result != DialogResult.Cancel)  // If everything went smoothly
 				{
-					status.Text = "Deleting temporary world backup...";
-					progressBar.Style = ProgressBarStyle.Marquee;
+					this.Invoke(() =>
+					{
+						status.Text = "Deleting temporary world backup...";
+						progressBar.Style = ProgressBarStyle.Marquee;
+					});
 
 					try
 					{
@@ -101,8 +118,13 @@ namespace SavepointManager.Forms
 						IsRedundantBackupDeleted = false;
 					}
 				}
+			}
 
-				this.Close();
+			void HandleException(Exception ex)
+			{
+				Logger.Log("Unable to restore save data", ex is SaveExtractionException ? ex.InnerException! : ex);
+				result = DialogResult.Cancel;
+				ErrorMessage = ex.Message;
 			}
 		}
 
@@ -119,17 +141,11 @@ namespace SavepointManager.Forms
 
 		private void RestorationProgressForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			// Don't allow the user to halt the extraction process
+			// Don't allow the user to halt the extraction process till it's done
 			if (result == DialogResult.None)
 				e.Cancel = true;
 
 			this.DialogResult = result;
-		}
-
-		private void HandleException(Exception ex)
-		{
-			Logger.Log($"Unable to restore save data: ({ex.GetType().Name}) {ex.Message}", LogSeverity.Error);
-			result = DialogResult.Cancel;
 		}
 	}
 }

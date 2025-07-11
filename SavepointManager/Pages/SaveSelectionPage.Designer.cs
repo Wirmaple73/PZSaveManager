@@ -41,7 +41,10 @@
 			label3 = new Label();
 			savePreview = new PictureBox();
 			refreshListButton = new Button();
+			saveLabel = new Label();
+			saveLabelIcon = new PictureBox();
 			((System.ComponentModel.ISupportInitialize)savePreview).BeginInit();
+			((System.ComponentModel.ISupportInitialize)saveLabelIcon).BeginInit();
 			SuspendLayout();
 			// 
 			// label1
@@ -172,10 +175,34 @@
 			refreshListButton.UseVisualStyleBackColor = true;
 			refreshListButton.Click += refreshListButton_Click;
 			// 
+			// saveLabel
+			// 
+			saveLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+			saveLabel.AutoEllipsis = true;
+			saveLabel.Location = new Point(175, 493);
+			saveLabel.Name = "saveLabel";
+			saveLabel.Size = new Size(543, 40);
+			saveLabel.TabIndex = 22;
+			saveLabel.Text = "No saves have been created yet. If this is not the case and you have changed the save backup path recently, please make sure it is set correctly by navigating to Options > Configure save options.";
+			saveLabel.Visible = false;
+			// 
+			// saveLabelIcon
+			// 
+			saveLabelIcon.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+			saveLabelIcon.Location = new Point(141, 493);
+			saveLabelIcon.Name = "saveLabelIcon";
+			saveLabelIcon.Size = new Size(28, 28);
+			saveLabelIcon.SizeMode = PictureBoxSizeMode.StretchImage;
+			saveLabelIcon.TabIndex = 23;
+			saveLabelIcon.TabStop = false;
+			saveLabelIcon.Visible = false;
+			// 
 			// SaveSelectionPage
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
+			Controls.Add(saveLabelIcon);
+			Controls.Add(saveLabel);
 			Controls.Add(refreshListButton);
 			Controls.Add(savePreview);
 			Controls.Add(label3);
@@ -190,6 +217,7 @@
 			Name = "SaveSelectionPage";
 			Size = new Size(734, 537);
 			((System.ComponentModel.ISupportInitialize)savePreview).EndInit();
+			((System.ComponentModel.ISupportInitialize)saveLabelIcon).EndInit();
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -209,5 +237,7 @@
 		private Label label3;
 		private PictureBox savePreview;
 		private Button refreshListButton;
+		private Label saveLabel;
+		private PictureBox saveLabelIcon;
 	}
 }

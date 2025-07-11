@@ -13,19 +13,12 @@ namespace SavepointManager.Forms
 	public partial class NewSaveForm : Form
 	{
 		public string? SaveDescription { get; private set; }
-		public bool UseCompression => useCompression.Checked;
 
-		public NewSaveForm()
-		{
-			InitializeComponent();
-			useCompression.Checked = Properties.Settings.Default.UseCompression;
-		}
+		public NewSaveForm() => InitializeComponent();
 
 		private void okButton_Click(object sender, EventArgs e)
 		{
 			SaveDescription = saveDescription.Text;
-			Properties.Settings.Default.UseCompression = useCompression.Checked;
-			Properties.Settings.Default.Save();
 
 			this.DialogResult = DialogResult.OK;
 			this.Close();
