@@ -33,6 +33,8 @@
 			label3 = new Label();
 			cancelButton = new Button();
 			status = new Label();
+			progress = new Label();
+			label4 = new Label();
 			SuspendLayout();
 			// 
 			// label1
@@ -66,7 +68,7 @@
 			// cancelButton
 			// 
 			cancelButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			cancelButton.Location = new Point(326, 81);
+			cancelButton.Location = new Point(326, 111);
 			cancelButton.Name = "cancelButton";
 			cancelButton.Size = new Size(86, 28);
 			cancelButton.TabIndex = 4;
@@ -76,18 +78,38 @@
 			// status
 			// 
 			status.AutoSize = true;
-			status.Location = new Point(47, 70);
+			status.Location = new Point(60, 70);
 			status.Name = "status";
 			status.Size = new Size(39, 15);
 			status.TabIndex = 6;
 			status.Text = "Status";
+			// 
+			// progress
+			// 
+			progress.AutoSize = true;
+			progress.Location = new Point(60, 89);
+			progress.Name = "progress";
+			progress.Size = new Size(52, 15);
+			progress.TabIndex = 8;
+			progress.Text = "Progress";
+			// 
+			// label4
+			// 
+			label4.AutoSize = true;
+			label4.Location = new Point(8, 89);
+			label4.Name = "label4";
+			label4.Size = new Size(55, 15);
+			label4.TabIndex = 7;
+			label4.Text = "Progress:";
 			// 
 			// SavingProgressForm
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			CancelButton = cancelButton;
-			ClientSize = new Size(424, 121);
+			ClientSize = new Size(424, 151);
+			Controls.Add(progress);
+			Controls.Add(label4);
 			Controls.Add(status);
 			Controls.Add(cancelButton);
 			Controls.Add(label3);
@@ -100,7 +122,7 @@
 			ShowIcon = false;
 			Text = "Saving";
 			FormClosing += ArchiveProgressForm_FormClosing;
-			Load += ArchiveProgressForm_Load;
+			Shown += SavingProgressForm_Shown;
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -112,5 +134,7 @@
 		private Label label3;
 		private Button cancelButton;
 		private Label status;
+		private Label progress;
+		private Label label4;
 	}
 }

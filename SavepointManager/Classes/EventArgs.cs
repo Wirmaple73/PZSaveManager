@@ -17,4 +17,11 @@ namespace SavepointManager.Classes
 			TotalFiles = totalFiles;
 		}
 	}
+
+	public class ArchiveStatusChangedEventArgs : EventArgs
+	{
+		public ArchiveStatus Status { get; }
+
+		public ArchiveStatusChangedEventArgs(ArchiveStatus status) => Status = status;
+	}
 }

@@ -13,6 +13,7 @@ using SharpCompress.Archives.Tar;
 using SharpCompress.Readers;
 using System.Diagnostics;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
+using System.Collections.Concurrent;
 
 namespace SavepointManager.Classes
 {
@@ -29,7 +30,7 @@ namespace SavepointManager.Classes
 		public static readonly string DefaultBackupPath = Path.Combine(World.BaseDirectory, "Backups");
 
 		public static string BackupPath => Settings.Default.SavePath.Length > 0 ? Settings.Default.SavePath : DefaultBackupPath;
-		public static int ProgressReportThreshold { get; } = 100;  // Report progress every 50 files
+		public static int ProgressReportThreshold { get; } = 50;  // Report progress every 50 files
 
 		public World AssociatedWorld { get; }
 		public string? ArchivePath { get; }
@@ -66,11 +67,11 @@ namespace SavepointManager.Classes
 				if (!ZipArchive.IsZipFile(ArchivePath) && !TarArchive.IsTarFile(ArchivePath))
 					throw new InvalidSaveArchiveException("The specified file is not a real zip or TAR archive.");
 
-				Logger.Log($"Beginning to restore {ArchivePath}...", LogSeverity.Info);
-				var startTime = DateTime.Now;
-
 				try
 				{
+					Logger.Log($"Beginning to restore {ArchivePath}...", LogSeverity.Info);
+					var startTime = DateTime.Now;
+
 					using var stream = File.OpenRead(ArchivePath);
 					using var archive = ArchiveFactory.Open(stream);
 
@@ -136,6 +137,9 @@ namespace SavepointManager.Classes
 				SetSaveState(true, true);
 			}
 
+			string saveName = $"{AssociatedWorld.Name} {DateTime.Now:yyyy-MM-dd HH-mm-ss fffff}";  // ISO 8601 gang stay winning
+			string saveDir = Path.Combine(BackupPath, saveName);
+
 			try
 			{
 				await Task.Run(() =>
@@ -146,9 +150,6 @@ namespace SavepointManager.Classes
 					Logger.Log($"Beginning to export {AssociatedWorld.Name}... (compression {(useCompression ? "enabled" : "disabled")})", LogSeverity.Info);
 					var startTime = DateTime.Now;
 
-					string saveName = $"{AssociatedWorld.Name} {DateTime.Now:yyyy-MM-dd HH-mm-ss fffff}";  // ISO 8601 gang stay winning
-					string saveDir = Path.Combine(BackupPath, saveName);
-
 					Directory.CreateDirectory(saveDir);
 
 					string outputArchivePath = Path.Combine(saveDir, ArchiveFileName + (useCompression ? ".zip" : ".tar"));
@@ -156,15 +157,19 @@ namespace SavepointManager.Classes
 					string outputThumbPath = Path.Combine(saveDir, ThumbFileName);
 
 					var files = Directory.GetFiles(AssociatedWorld.Path, "*", SearchOption.AllDirectories);
-					int totalFiles = files.Length;
+					int totalFiles = files.Length, processedFiles = 0;
 
 					using IWritableArchive archive = useCompression ? ZipArchive.Create() : TarArchive.Create();
 
-					Bitmap? thumb = null;
-					bool isSaveThumbless = true;  // Speed up thumb check
+					var bag = new ConcurrentBag<(string EntryPath, MemoryStream Stream, long StreamLength, DateTime EntryDate)>();
 
-					// Add all save files to the archive
-					for (int i = 0; i < totalFiles; i++)
+					Logger.Log("Adding files from disk...", LogSeverity.Info);
+					ArchiveStatusChanged?.Invoke(this, new(ArchiveStatus.AddingFromDisk));
+
+					var options = new ParallelOptions() { CancellationToken = token };
+					var thumb = GetSaveThumb();
+
+					Parallel.For(0, totalFiles, options, i =>
 					{
 						var ms = new MemoryStream();
 
@@ -177,22 +182,28 @@ namespace SavepointManager.Classes
 						string relativePath = Path.GetRelativePath(AssociatedWorld.Path, files[i]);  // e.g. "folder/file.dat"
 						string entryPath = Path.Combine(AssociatedWorld.Name, relativePath).Replace('\\', '/');  // e.g. WorldName/folder/file.dat
 
-						archive.AddEntry(entryPath, ms, true, ms.Length, File.GetLastWriteTime(files[i]));
+						bag.Add((entryPath, ms, ms.Length, File.GetLastWriteTime(files[i])));
+						int processedFilesNew = Interlocked.Increment(ref processedFiles);
 
-						// The screen should be captured when we're adding 'players.db' for optimal accuracy
-						if (isSaveThumbless && relativePath == World.ThumbName)
-						{
-							thumb = GetSaveThumb();
-							isSaveThumbless = false;
-						}
+						if (processedFilesNew % ProgressReportThreshold == 0)
+							ArchiveProgressChanged?.Invoke(this, new(processedFilesNew, totalFiles));
+					});
 
-						if (i % ProgressReportThreshold == 0)
+					processedFiles = 0;
+
+					Logger.Log("Adding files to archive...", LogSeverity.Info);
+					ArchiveStatusChanged?.Invoke(this, new(ArchiveStatus.AddingToArchive));
+
+					while (bag.TryTake(out var entry))
+					{
+						archive.AddEntry(entry.EntryPath, entry.Stream, true, entry.StreamLength, entry.EntryDate);
+
+						if (++processedFiles % ProgressReportThreshold == 0)
 						{
 							if (token.IsCancellationRequested)
-								throw new TaskCanceledException();
+								throw new OperationCanceledException();
 
-							ArchiveProgressChanged?.Invoke(this, new(i, totalFiles));
-							Logger.Log($"{i} out of {totalFiles} files processed.", LogSeverity.Info);
+							ArchiveProgressChanged?.Invoke(this, new(processedFiles, totalFiles));
 						}
 					}
 
@@ -200,7 +211,7 @@ namespace SavepointManager.Classes
 					SetSaveState(true, false);
 					Logger.Log("Save is now uncancellable. Exporting the archive...", LogSeverity.Info);
 
-					ExportStarted?.Invoke(this, EventArgs.Empty);
+					ArchiveStatusChanged?.Invoke(this, new(ArchiveStatus.Exporting));
 					archive.SaveTo(outputArchivePath, new(useCompression ? CompressionType.Deflate : CompressionType.None));
 
 					// Save the metadata and thumb
@@ -240,6 +251,15 @@ namespace SavepointManager.Classes
 			}
 			catch
 			{
+				try
+				{
+					Directory.Delete(saveDir, true);
+				}
+				catch (Exception ex)
+				{
+					Logger.Log("The save directory could not be deleted", ex);
+				}
+
 				SetSaveState(false, true);
 				throw;
 			}
@@ -258,6 +278,6 @@ namespace SavepointManager.Classes
 		public void Delete() => Directory.Delete(Directory.GetParent(ArchivePath!)!.FullName, true);
 
 		public event EventHandler<ArchiveProgressEventArgs>? ArchiveProgressChanged;
-		public event EventHandler<EventArgs>? ExportStarted;
+		public event EventHandler<ArchiveStatusChangedEventArgs>? ArchiveStatusChanged;
 	}
 }

@@ -226,9 +226,8 @@ namespace SavepointManager.Classes
 					await save.ExportAsync(false, token.Token);
 					SoundPlayer.Shared.PlaySaveEffect(SoundEffect.SaveComplete);
 				}
-				catch (TaskCanceledException)
+				catch (OperationCanceledException)
 				{
-					Logger.Log($"Saving has been aborted by the user.", LogSeverity.Info);
 					SoundPlayer.Shared.PlaySaveEffect(SoundEffect.SaveCanceled);
 				}
 				catch (Exception ex)

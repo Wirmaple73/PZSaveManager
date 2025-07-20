@@ -24,21 +24,22 @@ namespace SavepointManager.Forms
 
 		public SavingProgressForm() => InitializeComponent();
 
-		private async void ArchiveProgressForm_Load(object sender, EventArgs e)
+		private async void SavingProgressForm_Shown(object sender, EventArgs e)
 		{
 			this.Text = $"Saving {Save!.AssociatedWorld.Name}";
 
 			Save.ArchiveProgressChanged += Save_ArchiveProgressChanged;
-			Save.ExportStarted += Save_ExportStarted;
+			Save.ArchiveStatusChanged += Save_ArchiveStatusChanged;
 
 			try
 			{
 				await Save.ExportAsync(Settings.Default.UseCompression, tokenSource.Token);
 				result = DialogResult.OK;
 			}
-			catch (TaskCanceledException)
+			catch (OperationCanceledException)
 			{
 				result = DialogResult.OK;
+				Logger.Log($"Saving has been canceled by the user.", LogSeverity.Info);
 			}
 			catch (Exception ex)
 			{
@@ -50,18 +51,26 @@ namespace SavepointManager.Forms
 			finally
 			{
 				Save.ArchiveProgressChanged -= Save_ArchiveProgressChanged;
-				Save.ExportStarted -= Save_ExportStarted;
+				Save.ArchiveStatusChanged -= Save_ArchiveStatusChanged;
 			}
 
 			this.Close();
 		}
 
-		private void Save_ExportStarted(object? sender, EventArgs e)
+		private void Save_ArchiveStatusChanged(object? sender, ArchiveStatusChangedEventArgs e)
 		{
 			this.Invoke(() =>
 			{
-				status.Text = Settings.Default.UseCompression ? "Compressing and exporting archive..." : "Exporting archive...";
-				progressBar.Style = ProgressBarStyle.Marquee;
+				(status.Text, progressBar.Style) = e.Status switch
+				{
+					ArchiveStatus.AddingFromDisk => ("Adding files from disk...", ProgressBarStyle.Continuous),
+					ArchiveStatus.AddingToArchive => ("Adding files to archive...", ProgressBarStyle.Continuous),
+					ArchiveStatus.Exporting => (Settings.Default.UseCompression ? "Compressing and exporting archive..." : "Exporting archive...", ProgressBarStyle.Marquee),
+					_ => ("Unknown status", ProgressBarStyle.Marquee)
+				};
+
+				if (e.Status == ArchiveStatus.Exporting)
+					progress.Text = "~";
 			});
 		}
 
@@ -72,7 +81,7 @@ namespace SavepointManager.Forms
 				int percentDone = (int)((float)e.FilesProcessed / e.TotalFiles * 100);
 
 				progressBar.Value = percentDone;
-				status.Text = $"{e.FilesProcessed} out of {e.TotalFiles} files saved ({percentDone}% done)";
+				progress.Text = $"{e.FilesProcessed} out of {e.TotalFiles} files added ({percentDone}% done)";
 			});
 		}
 
