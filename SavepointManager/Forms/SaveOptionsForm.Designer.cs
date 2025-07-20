@@ -53,9 +53,16 @@
 			compressToolTip = new ToolTip(components);
 			folderBrowser = new FolderBrowserDialog();
 			resetButton = new Button();
+			groupBox4 = new GroupBox();
+			previewButton = new Button();
+			soundVolumeLabel = new Label();
+			soundVolume = new TrackBar();
+			label6 = new Label();
 			groupBox1.SuspendLayout();
 			groupBox2.SuspendLayout();
 			groupBox3.SuspendLayout();
+			groupBox4.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)soundVolume).BeginInit();
 			SuspendLayout();
 			// 
 			// groupBox1
@@ -65,7 +72,7 @@
 			groupBox1.Controls.Add(label1);
 			groupBox1.Controls.Add(label2);
 			groupBox1.Controls.Add(abortSaveHotkeys);
-			groupBox1.Location = new Point(12, 173);
+			groupBox1.Location = new Point(12, 309);
 			groupBox1.Name = "groupBox1";
 			groupBox1.Size = new Size(360, 100);
 			groupBox1.TabIndex = 0;
@@ -119,7 +126,7 @@
 			groupBox2.Controls.Add(autosaveInterval);
 			groupBox2.Controls.Add(label3);
 			groupBox2.Controls.Add(enableAutosave);
-			groupBox2.Location = new Point(12, 279);
+			groupBox2.Location = new Point(12, 415);
 			groupBox2.Name = "groupBox2";
 			groupBox2.Size = new Size(360, 87);
 			groupBox2.TabIndex = 1;
@@ -168,7 +175,7 @@
 			// okButton
 			// 
 			okButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			okButton.Location = new Point(171, 401);
+			okButton.Location = new Point(169, 521);
 			okButton.Name = "okButton";
 			okButton.Size = new Size(97, 28);
 			okButton.TabIndex = 6;
@@ -179,7 +186,7 @@
 			// cancelButton
 			// 
 			cancelButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			cancelButton.Location = new Point(278, 401);
+			cancelButton.Location = new Point(276, 521);
 			cancelButton.Name = "cancelButton";
 			cancelButton.Size = new Size(97, 28);
 			cancelButton.TabIndex = 7;
@@ -204,19 +211,19 @@
 			// useSaveSounds
 			// 
 			useSaveSounds.AutoSize = true;
-			useSaveSounds.Location = new Point(190, 121);
+			useSaveSounds.Location = new Point(16, 26);
 			useSaveSounds.Name = "useSaveSounds";
 			useSaveSounds.Size = new Size(161, 19);
-			useSaveSounds.TabIndex = 5;
+			useSaveSounds.TabIndex = 7;
 			useSaveSounds.Text = "Enable save sound effects";
 			toolTip.SetToolTip(useSaveSounds, "Plays sound effects when saving a world succeeds, fails, or gets canceled. This setting only affects the manual & automatic save functions.");
 			useSaveSounds.UseVisualStyleBackColor = true;
+			useSaveSounds.CheckedChanged += useSaveSounds_CheckedChanged;
 			// 
 			// groupBox3
 			// 
 			groupBox3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			groupBox3.Controls.Add(saveRelocationLabel);
-			groupBox3.Controls.Add(useSaveSounds);
 			groupBox3.Controls.Add(useCompression);
 			groupBox3.Controls.Add(browseButton);
 			groupBox3.Controls.Add(backupPath);
@@ -282,7 +289,7 @@
 			// resetButton
 			// 
 			resetButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-			resetButton.Location = new Point(12, 401);
+			resetButton.Location = new Point(11, 521);
 			resetButton.Name = "resetButton";
 			resetButton.Size = new Size(110, 28);
 			resetButton.TabIndex = 9;
@@ -290,13 +297,72 @@
 			resetButton.UseVisualStyleBackColor = true;
 			resetButton.Click += resetButton_Click;
 			// 
+			// groupBox4
+			// 
+			groupBox4.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			groupBox4.Controls.Add(previewButton);
+			groupBox4.Controls.Add(soundVolumeLabel);
+			groupBox4.Controls.Add(soundVolume);
+			groupBox4.Controls.Add(label6);
+			groupBox4.Controls.Add(useSaveSounds);
+			groupBox4.Location = new Point(12, 175);
+			groupBox4.Name = "groupBox4";
+			groupBox4.Size = new Size(360, 128);
+			groupBox4.TabIndex = 10;
+			groupBox4.TabStop = false;
+			groupBox4.Text = "Save Audio";
+			// 
+			// previewButton
+			// 
+			previewButton.Location = new Point(262, 23);
+			previewButton.Name = "previewButton";
+			previewButton.Size = new Size(83, 25);
+			previewButton.TabIndex = 12;
+			previewButton.Text = "Preview";
+			previewButton.UseVisualStyleBackColor = true;
+			previewButton.Click += previewButton_Click;
+			// 
+			// soundVolumeLabel
+			// 
+			soundVolumeLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			soundVolumeLabel.Location = new Point(321, 78);
+			soundVolumeLabel.Name = "soundVolumeLabel";
+			soundVolumeLabel.Size = new Size(38, 23);
+			soundVolumeLabel.TabIndex = 11;
+			soundVolumeLabel.Text = "100%";
+			soundVolumeLabel.TextAlign = ContentAlignment.MiddleCenter;
+			// 
+			// soundVolume
+			// 
+			soundVolume.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			soundVolume.LargeChange = 20;
+			soundVolume.Location = new Point(6, 80);
+			soundVolume.Maximum = 100;
+			soundVolume.Name = "soundVolume";
+			soundVolume.Size = new Size(318, 45);
+			soundVolume.SmallChange = 10;
+			soundVolume.TabIndex = 10;
+			soundVolume.TickFrequency = 10;
+			soundVolume.Value = 5;
+			soundVolume.ValueChanged += soundVolume_ValueChanged;
+			// 
+			// label6
+			// 
+			label6.AutoSize = true;
+			label6.Location = new Point(12, 60);
+			label6.Name = "label6";
+			label6.Size = new Size(87, 15);
+			label6.TabIndex = 9;
+			label6.Text = "Sound volume:";
+			// 
 			// SaveOptionsForm
 			// 
 			AcceptButton = okButton;
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			CancelButton = cancelButton;
-			ClientSize = new Size(384, 441);
+			ClientSize = new Size(384, 561);
+			Controls.Add(groupBox4);
 			Controls.Add(resetButton);
 			Controls.Add(groupBox3);
 			Controls.Add(cancelButton);
@@ -316,6 +382,9 @@
 			groupBox2.PerformLayout();
 			groupBox3.ResumeLayout(false);
 			groupBox3.PerformLayout();
+			groupBox4.ResumeLayout(false);
+			groupBox4.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)soundVolume).EndInit();
 			ResumeLayout(false);
 		}
 
@@ -341,8 +410,13 @@
 		private CheckBox useCompression;
 		private ToolTip compressToolTip;
 		private FolderBrowserDialog folderBrowser;
-		private CheckBox useSaveSounds;
 		private Button resetButton;
 		private Label saveRelocationLabel;
+		private GroupBox groupBox4;
+		private CheckBox useSaveSounds;
+		private Label label6;
+		private TrackBar soundVolume;
+		private Label soundVolumeLabel;
+		private Button previewButton;
 	}
 }

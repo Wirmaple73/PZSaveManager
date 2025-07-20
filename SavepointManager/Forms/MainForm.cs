@@ -11,8 +11,6 @@ using System.Windows.Forms;
 using SavepointManager.Classes;
 using SavepointManager.Pages;
 using SavepointManager.Properties;
-using NHotkey.WindowsForms;
-using NHotkey;
 
 namespace SavepointManager.Forms
 {
@@ -24,6 +22,8 @@ namespace SavepointManager.Forms
 		public MainForm()
 		{
 			InitializeComponent();
+			Application.ApplicationExit += Application_ApplicationExit;
+
 			FormPageLoader.Load(pagePanel, worldSelectionPage);
 
 			worldSelectionPage.NextButton.Click += NextButton_Click;
@@ -65,18 +65,24 @@ namespace SavepointManager.Forms
 			if (SaveHelper.GetKeyFromString(Settings.Default.SaveHotkey).Key is null && !Settings.Default.EnableAutosave)
 				return;
 
-			if (MessageBoxManager.ShowConfirmation("Are you sure you want to quit? The program must be kept running in the background in order to perform manual or automatic saves!", "Exit Confirmation"))
-			{
-				SaveHelper.UnbindAll();
-				Settings.Default.Save();
-
-				Logger.Log("All settings have been saved.", LogSeverity.Info);
-				Logger.Log("Application shutting down.", LogSeverity.Info);
-			}
-			else
-			{
+			if (!MessageBoxManager.ShowConfirmation("Are you sure you want to quit? The program must be kept running in the background in order to perform manual or automatic saves!", "Exit Confirmation"))
 				e.Cancel = true;
-			}
+		}
+
+		private void Application_ApplicationExit(object? sender, EventArgs e)
+		{
+			SaveHelper.UnbindAll();
+
+			Settings.Default.Save();
+			Logger.Log("All settings have been saved.", LogSeverity.Info);
+
+			SoundPlayer.Shared.Dispose();
+			SaveHelper.Dispose();
+
+			Logger.Log("All objects have been disposed.", LogSeverity.Info);
+			Logger.Log("Application shutting down.", LogSeverity.Info);
+
+			Logger.Dispose();
 		}
 	}
 }

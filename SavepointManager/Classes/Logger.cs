@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpCompress.Writers;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -12,27 +13,37 @@ namespace SavepointManager.Classes
 		private static readonly string LogDirectory = Path.Combine(Environment.CurrentDirectory, "Logs");
 		private static string FilePath => Path.Combine(LogDirectory, $"PZSaveManager {DateTime.Now:yyyy-MM-dd}.log");
 
-		private static string FormatMessage(string message, LogSeverity severity)
-			=> $"[{DateTime.Now:yyyy/MM/dd HH:mm:ss.fff}] {severity}: {message}";  // ISO 8601 gang stay winning
+		private static readonly StreamWriter? LogWriter = null;
 
 		static Logger()
 		{
-			Log($"Application started.", LogSeverity.Info, true);
-		}
-
-		public static void Log(string message, LogSeverity severity, bool insertNewLineBefore = false)
-		{
-			string formattedMessage = FormatMessage(message, severity);
-
-			if (insertNewLineBefore && File.Exists(FilePath))
-				formattedMessage = Environment.NewLine + formattedMessage;
-
 			try
 			{
 				if (!Directory.Exists(LogDirectory))
 					Directory.CreateDirectory(LogDirectory);
 
-				File.AppendAllText(FilePath, formattedMessage + Environment.NewLine);
+				bool prependNewLine = File.Exists(FilePath);
+
+				LogWriter = new(FilePath, true) { AutoFlush = true };
+				Log($"Application started.", LogSeverity.Info, prependNewLine);
+			}
+			catch (Exception ex)
+			{
+				Log("Could not open the log file", ex);
+			}
+		}
+
+		public static void Log(string message, LogSeverity severity, bool prependNewLine = false)
+		{
+			// ISO 8601 gang stay winning
+			string formattedMessage = $"[{DateTime.Now:yyyy/MM/dd HH:mm:ss.fff}] {severity}: {message}";
+
+			if (prependNewLine && File.Exists(FilePath))
+				formattedMessage = Environment.NewLine + formattedMessage;
+
+			try
+			{
+				LogWriter?.WriteLine(formattedMessage);
 				Debug.WriteLine(formattedMessage);
 			}
 			catch (Exception ex)
@@ -44,5 +55,8 @@ namespace SavepointManager.Classes
 
 		public static void Log(string description, Exception ex)
 			=> Log($"{description}: ({ex.GetType().Name}) {ex.Message}", LogSeverity.Error);
+
+		// You don't need an entire singleton just to dispose a single stream. A static method would do.
+		public static void Dispose() => LogWriter?.Dispose();
 	}
 }

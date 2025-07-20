@@ -33,11 +33,27 @@ namespace SavepointManager.Forms
 			backupPath.Text = Save.BackupPath;
 			useCompression.Checked = Settings.Default.UseCompression;
 			useSaveSounds.Checked = Settings.Default.UseSaveSounds;
+			soundVolume.Enabled = previewButton.Enabled = useSaveSounds.Checked;
+			soundVolume.Value = Settings.Default.SoundVolume;
 			saveHotkeys.Text = Settings.Default.SaveHotkey;
 			abortSaveHotkeys.Text = Settings.Default.AbortSaveHotkey;
 			autosaveInterval.Text = Settings.Default.AutosaveInterval.ToString();
 			enableAutosave.Checked = autosaveInterval.Enabled = Settings.Default.EnableAutosave;
+
+			soundVolume_ValueChanged(this, EventArgs.Empty);
 		}
+
+		private void useSaveSounds_CheckedChanged(object sender, EventArgs e)
+			=> soundVolume.Enabled = previewButton.Enabled = useSaveSounds.Checked;
+
+		private void enableAutosave_CheckedChanged(object sender, EventArgs e)
+			=> autosaveInterval.Enabled = enableAutosave.Checked;
+
+		private void previewButton_Click(object sender, EventArgs e)
+			=> SoundPlayer.Shared.Play(SoundEffect.SaveComplete, soundVolume.Value);
+
+		private void soundVolume_ValueChanged(object sender, EventArgs e)
+			=> soundVolumeLabel.Text = soundVolume.Value.ToString() + "%";
 
 		private void browseButton_Click(object sender, EventArgs e)
 		{
@@ -48,9 +64,6 @@ namespace SavepointManager.Forms
 				backupPath.Text = folderBrowser.SelectedPath;
 		}
 
-		private void enableAutosave_CheckedChanged(object sender, EventArgs e)
-			=> autosaveInterval.Enabled = enableAutosave.Checked;
-
 		private void okButton_Click(object sender, EventArgs e)
 		{
 			if (enableAutosave.Checked && (!int.TryParse(autosaveInterval.Text, out int interval) || interval <= 0))
@@ -58,6 +71,9 @@ namespace SavepointManager.Forms
 				MessageBoxManager.ShowError("The auto-save interval must be greater than zero.");
 				return;
 			}
+
+			if (soundVolume.Value == 0 && !MessageBoxManager.ShowConfirmation("The sound volume is set to zero. Would you like to continue anyway?", "Sound Volume Confirmation"))
+				return;
 
 			var saveKey = SaveHelper.GetKeyFromString(saveHotkeys.Text);
 			var abortKey = SaveHelper.GetKeyFromString(abortSaveHotkeys.Text);
@@ -118,6 +134,7 @@ namespace SavepointManager.Forms
 			Settings.Default.SavePath = backupPath.Text;
 			Settings.Default.UseCompression = useCompression.Checked;
 			Settings.Default.UseSaveSounds = useSaveSounds.Checked;
+			Settings.Default.SoundVolume = soundVolume.Value;
 			Settings.Default.SaveHotkey = saveHotkeys.Text;
 			Settings.Default.AbortSaveHotkey = abortSaveHotkeys.Text;
 			Settings.Default.EnableAutosave = enableAutosave.Checked;
@@ -134,6 +151,7 @@ namespace SavepointManager.Forms
 			backupPath.Text = Save.DefaultBackupPath;
 			useCompression.Checked = false;
 			useSaveSounds.Checked = true;
+			soundVolume.Value = 80;
 			saveHotkeys.Text = Keys.F5.ToString();
 			abortSaveHotkeys.Text = Keys.F6.ToString();
 			enableAutosave.Checked = true;

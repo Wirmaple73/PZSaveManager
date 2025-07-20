@@ -1,7 +1,6 @@
 ﻿using SavepointManager.Classes;
 using SavepointManager.Forms;
 using SavepointManager.Properties;
-using System.Globalization;
 using System.Media;
 
 namespace SavepointManager.Pages
@@ -103,12 +102,9 @@ namespace SavepointManager.Pages
 				return;
 
 			string description = newSaveForm.SaveDescription is not null && newSaveForm.SaveDescription.Length > 0 ?
-				newSaveForm.SaveDescription : Save.ManualSaveDescription;
+				newSaveForm.SaveDescription : Save.ExternalSaveDescription;
 
-			var progressForm = new SavingProgressForm()
-			{
-				Save = new Save(SelectedWorld!, null, description, DateTime.Now, new MemoryStream())
-			};
+			var progressForm = new SavingProgressForm() { Save = new(SelectedWorld!, description) };
 
 			if (Save.IsSaveInProgress)
 			{
@@ -170,7 +166,7 @@ namespace SavepointManager.Pages
 					message += $"Your current unsaved progress was previously backed up and now is safe, but couldn't be restored automatically. It has been saved at '{SelectedSave.AssociatedWorld.BackupPath}' and is playable in-game. You can safely rename it back to {SelectedSave.AssociatedWorld.Name} if you want to. Would you like to do so now?";
 
 					if (MessageBoxManager.ShowConfirmation(message, "Browse Save Confirmation"))
-						FileExplorer.Browse(World.WorldDirectory);
+						FileExplorer.Browse(SelectedSave.AssociatedWorld.GamemodePath);
 				}
 			}
 		}
@@ -185,7 +181,7 @@ namespace SavepointManager.Pages
 
 			try
 			{
-				Directory.Delete(Directory.GetParent(SelectedSave.ArchivePath!)!.FullName, true);
+				SelectedSave.Delete();
 				UpdateSaveList();
 			}
 			catch
@@ -196,6 +192,6 @@ namespace SavepointManager.Pages
 
 		private void SetSaveButtonsEnabled(bool value) => restoreSaveButton.Enabled = deleteSaveButton.Enabled = value;
 
-		private void ShowSaveInProgressError() => MessageBoxManager.ShowError("Another save process is already in progress. Please wait until it is completed.");
+		private static void ShowSaveInProgressError() => MessageBoxManager.ShowError("Another save process is already in progress. Please wait until it is completed.");
 	}
 }

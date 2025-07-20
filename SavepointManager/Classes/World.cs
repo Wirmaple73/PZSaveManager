@@ -16,7 +16,7 @@ using System.Xml.Linq;
 
 namespace SavepointManager.Classes
 {
-	public class World
+	public class World : IEquatable<World>
 	{
 		public static readonly string BaseDirectory = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Zomboid");
 		public static readonly string WorldDirectory = System.IO.Path.Combine(BaseDirectory, "Saves");
@@ -32,8 +32,6 @@ namespace SavepointManager.Classes
 		public string Gamemode { get; }
 
 		public string GamemodePath => System.IO.Path.Combine(WorldDirectory, Gamemode);
-
-		// Append the backup suffix to the world folder's name
 		public string BackupPath => System.IO.Path.Combine(GamemodePath, Name + BackupSuffix);
 
 		public bool IsActive
@@ -48,10 +46,9 @@ namespace SavepointManager.Classes
 				try
 				{
 					// If the file 'players.db' is locked by the game, then the world is active
-					using (File.Open(lockedFilePath, FileMode.Open, FileAccess.Read, FileShare.None))
-					{
-						return false;
-					}
+
+					using (File.Open(lockedFilePath, FileMode.Open, FileAccess.Read, FileShare.None)) { }
+					return false;
 				}
 				catch (IOException)
 				{
@@ -144,7 +141,7 @@ namespace SavepointManager.Classes
 					date ??= File.GetLastWriteTime(archivePath);
 					date = new DateTime(date.Value.Year, date.Value.Month, date.Value.Day, date.Value.Hour, date.Value.Minute, date.Value.Second);
 
-					saves.Add(new Save(this, archivePath, description ?? "No description", date.Value, thumb));
+					saves.Add(new Save(this, description ?? "No description", archivePath, date.Value, thumb));
 
 					string? GetArchivePath()
 					{
@@ -170,7 +167,7 @@ namespace SavepointManager.Classes
 				}
 
 				return saves;
-            }
+			}
 		}
 
 		public World(string name, string path, string gamemode)
@@ -221,25 +218,36 @@ namespace SavepointManager.Classes
 					return;
 				}
 
-				var save = new Save(activeWorld, null, description, DateTime.Now, new MemoryStream());
-				SoundPlayer.PlaySaveSound(SystemSounds.Asterisk);
+				var save = new Save(activeWorld, description);
+				SoundPlayer.Shared.PlaySaveEffect(SoundEffect.Saving);
 
 				try
 				{
 					await save.ExportAsync(false, token.Token);
-					SoundPlayer.PlaySaveSound(SystemSounds.Asterisk);
+					SoundPlayer.Shared.PlaySaveEffect(SoundEffect.SaveComplete);
 				}
 				catch (TaskCanceledException)
 				{
 					Logger.Log($"Saving has been aborted by the user.", LogSeverity.Info);
-					SoundPlayer.PlaySaveSound(SystemSounds.Hand);
+					SoundPlayer.Shared.PlaySaveEffect(SoundEffect.SaveCanceled);
 				}
 				catch (Exception ex)
 				{
 					Logger.Log($"Could not save the world {activeWorld.Name}", ex);
-					SoundPlayer.PlaySaveSound(SystemSounds.Hand);
+					SoundPlayer.Shared.PlaySaveEffect(SoundEffect.SaveFailure);
 				}
 			}, token.Token);
+		}
+
+		public bool Equals(World? other) => other is not null && Name == other.Name && Gamemode == other.Gamemode;
+		public override bool Equals(object? obj) => obj is World w && Equals(w);
+
+		public static bool operator ==(World left, World right) => left.Equals(right);
+		public static bool operator !=(World left, World right) => !(left == right);
+
+		public override int GetHashCode()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

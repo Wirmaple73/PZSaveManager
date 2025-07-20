@@ -32,6 +32,7 @@
 			label3 = new Label();
 			progressBar = new ProgressBar();
 			label1 = new Label();
+			label2 = new Label();
 			SuspendLayout();
 			// 
 			// status
@@ -54,6 +55,7 @@
 			// 
 			// progressBar
 			// 
+			progressBar.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			progressBar.Location = new Point(12, 32);
 			progressBar.MarqueeAnimationSpeed = 10;
 			progressBar.Name = "progressBar";
@@ -70,12 +72,23 @@
 			label1.TabIndex = 7;
 			label1.Text = "Please wait...";
 			// 
+			// label2
+			// 
+			label2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+			label2.AutoSize = true;
+			label2.Location = new Point(8, 105);
+			label2.Name = "label2";
+			label2.Size = new Size(368, 15);
+			label2.TabIndex = 14;
+			label2.Text = "Please do not open the world in-game until this process is complete.";
+			// 
 			// RestorationProgressForm
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(424, 101);
+			ClientSize = new Size(424, 131);
 			ControlBox = false;
+			Controls.Add(label2);
 			Controls.Add(status);
 			Controls.Add(label3);
 			Controls.Add(progressBar);
@@ -98,5 +111,6 @@
 		private Label label3;
 		private ProgressBar progressBar;
 		private Label label1;
+		private Label label2;
 	}
 }

@@ -118,7 +118,43 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="AlreadySaving" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Audio\AlreadySaving.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="NoPreview" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\NoPreview.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>..\Resources\Images\NoPreview.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SaveCanceled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Audio\SaveCanceled.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="SaveComplete" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Audio\SaveComplete.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="SaveFailure" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Audio\SaveFailure.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="SaveNotCanceled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Audio\SaveNotCanceled.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Saving" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Audio\Saving.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Spam1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Audio\Spam\Spam1.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Spam2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Audio\Spam\Spam2.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Spam3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Audio\Spam\Spam3.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Spam4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Audio\Spam\Spam4.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Spam5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Audio\Spam\Spam5.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Spam6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Audio\Spam\Spam6.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

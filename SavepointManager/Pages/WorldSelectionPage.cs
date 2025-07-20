@@ -17,7 +17,7 @@ namespace SavepointManager.Forms
 	{
 		private List<World> Worlds { get; set; } = new();
 
-		public World? SelectedWorld => Worlds.Find(world => world.Name == worldList.SelectedItems[0].Text);
+		public World? SelectedWorld => Worlds.Find(world => world.Name == worldList.SelectedItems[0].Text && world.Gamemode == worldList.SelectedItems[0].SubItems[1].Text);
 		public Button NextButton => nextButton;
 
 		public WorldSelectionPage()
@@ -107,7 +107,7 @@ namespace SavepointManager.Forms
 
 			if (SelectedWorld is not null)
 			{
-				string thumbPath = Path.Combine(SelectedWorld.Path, World.ThumbName);
+				string thumbPath = Path.Combine(SelectedWorld.Path!, World.ThumbName);
 
 				if (File.Exists(thumbPath))
 					worldPreview.ImageLocation = thumbPath;

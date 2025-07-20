@@ -16,6 +16,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Audio\AlreadySaving.wav" />
+    <None Remove="Resources\Audio\SaveCanceled.wav" />
+    <None Remove="Resources\Audio\SaveComplete.wav" />
+    <None Remove="Resources\Audio\SaveFailure.wav" />
+    <None Remove="Resources\Audio\SaveNotCanceled.wav" />
+    <None Remove="Resources\Audio\Saving.wav" />
+    <None Remove="Resources\Audio\Spam\Spam1.wav" />
+    <None Remove="Resources\Audio\Spam\Spam2.wav" />
+    <None Remove="Resources\Audio\Spam\Spam3.wav" />
+    <None Remove="Resources\Audio\Spam\Spam4.wav" />
+    <None Remove="Resources\Audio\Spam\Spam5.wav" />
+    <None Remove="Resources\Audio\Spam\Spam6.wav" />
     <None Remove="Resources\NoPreview.png" />
   </ItemGroup>
 
@@ -24,10 +36,23 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\NoPreview.png" />
+    <EmbeddedResource Include="Resources\Audio\AlreadySaving.wav" />
+    <EmbeddedResource Include="Resources\Audio\SaveCanceled.wav" />
+    <EmbeddedResource Include="Resources\Audio\SaveComplete.wav" />
+    <EmbeddedResource Include="Resources\Audio\SaveFailure.wav" />
+    <EmbeddedResource Include="Resources\Audio\SaveNotCanceled.wav" />
+    <EmbeddedResource Include="Resources\Audio\Saving.wav" />
+    <EmbeddedResource Include="Resources\Audio\Spam\Spam1.wav" />
+    <EmbeddedResource Include="Resources\Audio\Spam\Spam2.wav" />
+    <EmbeddedResource Include="Resources\Audio\Spam\Spam3.wav" />
+    <EmbeddedResource Include="Resources\Audio\Spam\Spam4.wav" />
+    <EmbeddedResource Include="Resources\Audio\Spam\Spam5.wav" />
+    <EmbeddedResource Include="Resources\Audio\Spam\Spam6.wav" />
+    <EmbeddedResource Include="Resources\Images\NoPreview.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="NHotkey.WindowsForms" Version="3.0.0" />
     <PackageReference Include="SharpCompress" Version="0.40.0" />
   </ItemGroup>

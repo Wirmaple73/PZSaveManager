@@ -38,7 +38,7 @@ namespace SavepointManager.Forms
 			}
 			catch (TaskCanceledException)
 			{
-				result = DialogResult.Cancel;
+				result = DialogResult.OK;
 			}
 			catch (Exception ex)
 			{
@@ -67,10 +67,10 @@ namespace SavepointManager.Forms
 
 		private void Save_ArchiveProgressChanged(object? sender, ArchiveProgressEventArgs e)
 		{
-			int percentDone = (int)((float)e.FilesProcessed / e.TotalFiles * 100);
-
 			this.Invoke(() =>
 			{
+				int percentDone = (int)((float)e.FilesProcessed / e.TotalFiles * 100);
+
 				progressBar.Value = percentDone;
 				status.Text = $"{e.FilesProcessed} out of {e.TotalFiles} files saved ({percentDone}% done)";
 			});

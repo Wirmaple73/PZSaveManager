@@ -12,6 +12,7 @@ using SavepointManager.Classes.Exceptions;
 using SharpCompress.Archives.Tar;
 using SharpCompress.Readers;
 using System.Diagnostics;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace SavepointManager.Classes
 {
@@ -22,12 +23,13 @@ namespace SavepointManager.Classes
 		public const string ThumbFileName = "Thumb.png";
 
 		public const string ManualSaveDescription = "Manual save";
+		public const string ExternalSaveDescription = "External save";
 		public const string AutosaveDescription = "Auto-save";
 
 		public static readonly string DefaultBackupPath = Path.Combine(World.BaseDirectory, "Backups");
 
 		public static string BackupPath => Settings.Default.SavePath.Length > 0 ? Settings.Default.SavePath : DefaultBackupPath;
-		public static int ProgressReportThreshold { get; } = 50;  // Report progress every 50 files
+		public static int ProgressReportThreshold { get; } = 100;  // Report progress every 50 files
 
 		public World AssociatedWorld { get; }
 		public string? ArchivePath { get; }
@@ -36,23 +38,25 @@ namespace SavepointManager.Classes
 		public MemoryStream Thumb { get; }
 
 		public static bool IsSaveInProgress { get; private set; } = false;
+		public static bool IsSaveCancelable { get; private set; } = true;
+
 		private static readonly object saveLock = new();
 
-		public Save(World associatedWorld, string? archivePath, string description, DateTime date, MemoryStream thumb)
+		public Save(World associatedWorld, string description, string? archivePath, DateTime date, MemoryStream thumb)
 		{
 			AssociatedWorld = associatedWorld;
-			ArchivePath = archivePath;
 			Description = description;
+			ArchivePath = archivePath;
 			Date = date;
 			Thumb = thumb;
 		}
+
+		public Save(World associatedWorld, string description) : this(associatedWorld, description, null, DateTime.Now, new()) { }
 
 		public async Task RestoreAsync()
 		{
 			await Task.Run(() =>
 			{
-				Debug.WriteLine(Path.Combine(AssociatedWorld.Path, World.ThumbName));
-
 				if (AssociatedWorld.IsActive)
 					throw new WorldActiveException("The current world must not be active before proceeding.");
 
@@ -79,15 +83,19 @@ namespace SavepointManager.Classes
 					{
 						string outputPath = Path.Combine(AssociatedWorld.GamemodePath, entryArray[i].Key!);
 						string outputParentPath = Directory.GetParent(outputPath)!.FullName;
-						
-						if (!Directory.Exists(outputParentPath))
-							Directory.CreateDirectory(outputParentPath);
+
+						Directory.CreateDirectory(outputParentPath);
 
 						using (var fs = File.OpenWrite(outputPath))
 							entryArray[i].WriteTo(fs);
 
 						if (i % ProgressReportThreshold == 0)
+						{
+							if (AssociatedWorld.IsActive)
+								throw new WorldActiveException("The current world must not be active before proceeding.");
+
 							ArchiveProgressChanged?.Invoke(this, new(i, totalFiles));
+						}
 					}
 
 					Logger.Log($"Restoration took {(DateTime.Now - startTime).TotalSeconds:f1}s.", LogSeverity.Info);
@@ -125,7 +133,7 @@ namespace SavepointManager.Classes
 				if (IsSaveInProgress)
 					throw new InvalidOperationException("Another save is already in progress. Please wait until it is completed.");
 
-				IsSaveInProgress = true;
+				SetSaveState(true, true);
 			}
 
 			try
@@ -141,8 +149,7 @@ namespace SavepointManager.Classes
 					string saveName = $"{AssociatedWorld.Name} {DateTime.Now:yyyy-MM-dd HH-mm-ss fffff}";  // ISO 8601 gang stay winning
 					string saveDir = Path.Combine(BackupPath, saveName);
 
-					if (!Directory.Exists(saveDir))
-						Directory.CreateDirectory(saveDir);
+					Directory.CreateDirectory(saveDir);
 
 					string outputArchivePath = Path.Combine(saveDir, ArchiveFileName + (useCompression ? ".zip" : ".tar"));
 					string outputXmlPath = Path.Combine(saveDir, MetadataFileName);
@@ -153,56 +160,50 @@ namespace SavepointManager.Classes
 
 					using IWritableArchive archive = useCompression ? ZipArchive.Create() : TarArchive.Create();
 
+					Bitmap? thumb = null;
+					bool isSaveThumbless = true;  // Speed up thumb check
+
 					// Add all save files to the archive
 					for (int i = 0; i < totalFiles; i++)
 					{
-						if (token.IsCancellationRequested)
-							throw new TaskCanceledException();
+						var ms = new MemoryStream();
+
+						// Copy every file to the memory to avoid archive corruption. The game actively messes with them.
+						using (var fs = new FileStream(files[i], FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+							fs.CopyTo(ms);
+
+						ms.Position = 0;
 
 						string relativePath = Path.GetRelativePath(AssociatedWorld.Path, files[i]);  // e.g. "folder/file.dat"
 						string entryPath = Path.Combine(AssociatedWorld.Name, relativePath).Replace('\\', '/');  // e.g. WorldName/folder/file.dat
 
-						// Prone to save corruption
-						//var fs = new FileStream(files[i], FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-						//archive.AddEntry(entryPath, fs, true, fs.Length, File.GetLastWriteTime(files[i]));
-
-						// Copy the stream to memory to avoid corruptions while the game messes with the files
-						using var fs = new FileStream(files[i], FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-						var ms = new MemoryStream();
-
-						fs.CopyTo(ms);
-						ms.Position = 0;
-
 						archive.AddEntry(entryPath, ms, true, ms.Length, File.GetLastWriteTime(files[i]));
 
+						// The screen should be captured when we're adding 'players.db' for optimal accuracy
+						if (isSaveThumbless && relativePath == World.ThumbName)
+						{
+							thumb = GetSaveThumb();
+							isSaveThumbless = false;
+						}
+
 						if (i % ProgressReportThreshold == 0)
+						{
+							if (token.IsCancellationRequested)
+								throw new TaskCanceledException();
+
 							ArchiveProgressChanged?.Invoke(this, new(i, totalFiles));
-					}
-
-					// Whenever the game has actively loaded a world, it doesn't update the thumb till the world is closed.
-					// We can take a screenshot ourselves to help the player better recognize the save later.
-					if (AssociatedWorld.IsActive)
-					{
-						var thumb = GameScreen.Capture();
-
-						if (thumb is not null)
-						{
-							using var fs = File.OpenWrite(outputThumbPath);
-
-							thumb = thumb.CropCenter(World.ThumbWidth, World.ThumbWidth);
-							thumb.Save(fs, System.Drawing.Imaging.ImageFormat.Png);
-						}
-						else
-						{
-							CopyOriginalThumb();
+							Logger.Log($"{i} out of {totalFiles} files processed.", LogSeverity.Info);
 						}
 					}
-					else
-					{
-						CopyOriginalThumb();
-					}
 
-					// Save the metadata
+					// Export the archive
+					SetSaveState(true, false);
+					Logger.Log("Save is now uncancellable. Exporting the archive...", LogSeverity.Info);
+
+					ExportStarted?.Invoke(this, EventArgs.Empty);
+					archive.SaveTo(outputArchivePath, new(useCompression ? CompressionType.Deflate : CompressionType.None));
+
+					// Save the metadata and thumb
 					var doc = new XDocument(
 						new XElement(XmlElementName.Metadata,
 							new XElement(XmlElementName.WorldName, AssociatedWorld.Name),
@@ -211,34 +212,50 @@ namespace SavepointManager.Classes
 						)
 					);
 
-					using (var xmlStream = File.OpenWrite(outputXmlPath))
-						doc.Save(xmlStream);
-
-					// Finally, export the archive
-					ExportStarted?.Invoke(this, EventArgs.Empty);
-					archive.SaveTo(outputArchivePath, new(useCompression ? CompressionType.Deflate : CompressionType.None));
+					doc.Save(outputXmlPath);
+					thumb?.Save(outputThumbPath, System.Drawing.Imaging.ImageFormat.Png);
+					thumb?.Dispose();
 
 					Logger.Log($"Successfully exported the world {AssociatedWorld.Name} in {(DateTime.Now - startTime).TotalSeconds:f1} seconds.", LogSeverity.Info);
 
-					void CopyOriginalThumb()
+					Bitmap? GetSaveThumb()
 					{
-						string originalPath = Path.Combine(AssociatedWorld.Path, World.ThumbName);
+						// Whenever the game has actively loaded a world, it doesn't update the thumb till the world is closed.
+						// We can take a screenshot ourselves to help the player better recognize the save.
+						if (AssociatedWorld.IsActive)
+						{
+							using var thumb = GameScreen.Capture();
+							return thumb is not null ? thumb.CropCenter(World.ThumbWidth, World.ThumbWidth) : GetOriginalThumb();
+						}
 
-						if (File.Exists(originalPath))
-							File.Copy(originalPath, outputThumbPath, true);
+						return GetOriginalThumb();
+
+						Bitmap? GetOriginalThumb()
+						{
+							string originalPath = Path.Combine(AssociatedWorld.Path, World.ThumbName);
+							return File.Exists(originalPath) ? new Bitmap(originalPath) : null;
+						}
 					}
 				}, token);
 			}
 			catch
 			{
-				IsSaveInProgress = false;
+				SetSaveState(false, true);
 				throw;
 			}
 			finally
 			{
-				IsSaveInProgress = false;
+				SetSaveState(false, true);
+			}
+
+			void SetSaveState(bool isInProgress, bool isCancelable)
+			{
+				IsSaveInProgress = isInProgress;
+				IsSaveCancelable = isCancelable;
 			}
 		}
+
+		public void Delete() => Directory.Delete(Directory.GetParent(ArchivePath!)!.FullName, true);
 
 		public event EventHandler<ArchiveProgressEventArgs>? ArchiveProgressChanged;
 		public event EventHandler<EventArgs>? ExportStarted;
