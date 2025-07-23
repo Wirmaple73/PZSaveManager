@@ -12,8 +12,8 @@ using SavepointManager.Classes.Exceptions;
 using SharpCompress.Archives.Tar;
 using SharpCompress.Readers;
 using System.Diagnostics;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 using System.Collections.Concurrent;
+using System.Buffers;
 
 namespace SavepointManager.Classes
 {
@@ -75,20 +75,20 @@ namespace SavepointManager.Classes
 					using var stream = File.OpenRead(ArchivePath);
 					using var archive = ArchiveFactory.Open(stream);
 
-					var entries = archive.Entries;
-					var entryArray = entries.ToArray();  // Evil exception dynamite warehouse
-
+					var entryArray = archive.Entries.ToArray();  // Evil exception dynamite warehouse
 					int totalFiles = entryArray.Length;
+
+					var streams = new ConcurrentBag<(string OutputPath, MemoryStream Stream)>();
+					UpdateArchiveStatus(ArchiveStatus.Extracting, "Extracting entries to memory...");
 
 					for (int i = 0; i < totalFiles; i++)
 					{
-						string outputPath = Path.Combine(AssociatedWorld.GamemodePath, entryArray[i].Key!);
-						string outputParentPath = Directory.GetParent(outputPath)!.FullName;
+						var ms = new MemoryStream();
+						
+						entryArray[i].WriteTo(ms);
+						ms.Position = 0;
 
-						Directory.CreateDirectory(outputParentPath);
-
-						using (var fs = File.OpenWrite(outputPath))
-							entryArray[i].WriteTo(fs);
+						streams.Add((Path.Combine(AssociatedWorld.GamemodePath, entryArray[i].Key!), ms));
 
 						if (i % ProgressReportThreshold == 0)
 						{
@@ -98,6 +98,30 @@ namespace SavepointManager.Classes
 							ArchiveProgressChanged?.Invoke(this, new(i, totalFiles));
 						}
 					}
+
+					UpdateArchiveStatus(ArchiveStatus.SavingToDisk, "Saving entries to disk...");
+					int filesProcessed = 0;
+
+					Parallel.ForEach(streams, entry =>
+					{
+						Directory.CreateDirectory(Directory.GetParent(entry.OutputPath)!.FullName);
+
+						using (entry.Stream)
+						{
+							using var fs = File.OpenWrite(entry.OutputPath);
+							entry.Stream.CopyTo(fs);
+						}
+
+						int filesProcessedNew = Interlocked.Increment(ref filesProcessed);
+
+						if (filesProcessedNew % ProgressReportThreshold == 0)
+						{
+							if (AssociatedWorld.IsActive)
+								throw new WorldActiveException("The current world must not be active before proceeding.");
+
+							ArchiveProgressChanged?.Invoke(this, new(filesProcessedNew, totalFiles));
+						}
+					});
 
 					Logger.Log($"Restoration took {(DateTime.Now - startTime).TotalSeconds:f1}s.", LogSeverity.Info);
 				}
@@ -144,8 +168,7 @@ namespace SavepointManager.Classes
 			{
 				await Task.Run(() =>
 				{
-					if (!Directory.Exists(BackupPath))
-						Directory.CreateDirectory(BackupPath);
+					Directory.CreateDirectory(BackupPath);
 
 					Logger.Log($"Beginning to export {AssociatedWorld.Name}... (compression {(useCompression ? "enabled" : "disabled")})", LogSeverity.Info);
 					var startTime = DateTime.Now;
@@ -161,15 +184,12 @@ namespace SavepointManager.Classes
 
 					using IWritableArchive archive = useCompression ? ZipArchive.Create() : TarArchive.Create();
 
-					var bag = new ConcurrentBag<(string EntryPath, MemoryStream Stream, long StreamLength, DateTime EntryDate)>();
-
-					Logger.Log("Adding files from disk...", LogSeverity.Info);
-					ArchiveStatusChanged?.Invoke(this, new(ArchiveStatus.AddingFromDisk));
-
-					var options = new ParallelOptions() { CancellationToken = token };
+					var bag = new ConcurrentBag<(string EntryPath, MemoryStream Stream, DateTime EntryDate)>();
+					
+					UpdateArchiveStatus(ArchiveStatus.AddingFromDisk, "Adding files from disk...");
 					var thumb = GetSaveThumb();
 
-					Parallel.For(0, totalFiles, options, i =>
+					Parallel.For(0, totalFiles, new() { CancellationToken = token }, i =>
 					{
 						var ms = new MemoryStream();
 
@@ -182,21 +202,19 @@ namespace SavepointManager.Classes
 						string relativePath = Path.GetRelativePath(AssociatedWorld.Path, files[i]);  // e.g. "folder/file.dat"
 						string entryPath = Path.Combine(AssociatedWorld.Name, relativePath).Replace('\\', '/');  // e.g. WorldName/folder/file.dat
 
-						bag.Add((entryPath, ms, ms.Length, File.GetLastWriteTime(files[i])));
+						bag.Add((entryPath, ms, File.GetLastWriteTime(files[i])));
 						int processedFilesNew = Interlocked.Increment(ref processedFiles);
 
 						if (processedFilesNew % ProgressReportThreshold == 0)
 							ArchiveProgressChanged?.Invoke(this, new(processedFilesNew, totalFiles));
 					});
 
+					UpdateArchiveStatus(ArchiveStatus.AddingToArchive, "Adding files to archive...");
 					processedFiles = 0;
-
-					Logger.Log("Adding files to archive...", LogSeverity.Info);
-					ArchiveStatusChanged?.Invoke(this, new(ArchiveStatus.AddingToArchive));
 
 					while (bag.TryTake(out var entry))
 					{
-						archive.AddEntry(entry.EntryPath, entry.Stream, true, entry.StreamLength, entry.EntryDate);
+						archive.AddEntry(entry.EntryPath, entry.Stream, true, entry.Stream.Length, entry.EntryDate);
 
 						if (++processedFiles % ProgressReportThreshold == 0)
 						{
@@ -209,9 +227,8 @@ namespace SavepointManager.Classes
 
 					// Export the archive
 					SetSaveState(true, false);
-					Logger.Log("Save is now uncancellable. Exporting the archive...", LogSeverity.Info);
+					UpdateArchiveStatus(ArchiveStatus.Exporting, "Save is now uncancellable. Exporting the archive...");
 
-					ArchiveStatusChanged?.Invoke(this, new(ArchiveStatus.Exporting));
 					archive.SaveTo(outputArchivePath, new(useCompression ? CompressionType.Deflate : CompressionType.None));
 
 					// Save the metadata and thumb
@@ -276,6 +293,12 @@ namespace SavepointManager.Classes
 		}
 
 		public void Delete() => Directory.Delete(Directory.GetParent(ArchivePath!)!.FullName, true);
+
+		private void UpdateArchiveStatus(ArchiveStatus status, string logMessage)
+		{
+			Logger.Log(logMessage, LogSeverity.Info);
+			ArchiveStatusChanged?.Invoke(this, new(status));
+		}
 
 		public event EventHandler<ArchiveProgressEventArgs>? ArchiveProgressChanged;
 		public event EventHandler<ArchiveStatusChangedEventArgs>? ArchiveStatusChanged;

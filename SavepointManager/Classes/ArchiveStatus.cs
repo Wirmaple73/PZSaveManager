@@ -8,6 +8,7 @@ namespace SavepointManager.Classes
 {
 	public enum ArchiveStatus
 	{
-		AddingFromDisk, AddingToArchive, Exporting
+		Extracting, SavingToDisk,					// Restoring
+		AddingFromDisk, AddingToArchive, Exporting	// Exporting
 	}
 }

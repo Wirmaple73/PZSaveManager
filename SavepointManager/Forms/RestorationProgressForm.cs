@@ -23,7 +23,7 @@ namespace SavepointManager.Forms
 
 		public RestorationProgressForm() => InitializeComponent();
 
-		private async void RestorationProgressForm_Load(object sender, EventArgs e)
+		private async void RestorationProgressForm_Shown(object sender, EventArgs e)
 		{
 			await RestoreAsync();
 			this.Close();
@@ -34,11 +34,7 @@ namespace SavepointManager.Forms
 			if (SelectedSave is null)
 				throw new NullReferenceException("The selected save is null.");
 
-			this.Invoke(() =>
-			{
-				this.Text = $"Restoring {SelectedSave.AssociatedWorld.Name}";
-				status.Text = "Backing up current unsaved progress...";
-			});
+			this.Invoke(() => this.Text = $"Restoring {SelectedSave.AssociatedWorld.Name}");
 
 			try
 			{
@@ -60,7 +56,9 @@ namespace SavepointManager.Forms
 				}
 
 				this.Invoke(() => progressBar.Style = ProgressBarStyle.Continuous);
+
 				SelectedSave.ArchiveProgressChanged += SelectedSave_ArchiveProgressChanged;
+				SelectedSave.ArchiveStatusChanged += SelectedSave_ArchiveStatusChanged;
 
 				await SelectedSave.RestoreAsync();
 				result = DialogResult.OK;
@@ -98,12 +96,15 @@ namespace SavepointManager.Forms
 			finally
 			{
 				SelectedSave.ArchiveProgressChanged -= SelectedSave_ArchiveProgressChanged;
+				SelectedSave.ArchiveStatusChanged -= SelectedSave_ArchiveStatusChanged;
 
 				if (result != DialogResult.Cancel)  // If everything went smoothly
 				{
 					this.Invoke(() =>
 					{
 						status.Text = "Deleting temporary world backup...";
+						progress.Text = "~";
+
 						progressBar.Style = ProgressBarStyle.Marquee;
 					});
 
@@ -128,6 +129,21 @@ namespace SavepointManager.Forms
 			}
 		}
 
+		private void SelectedSave_ArchiveStatusChanged(object? sender, ArchiveStatusChangedEventArgs e)
+		{
+			this.Invoke(() =>
+			{
+				progressBar.Style = ProgressBarStyle.Continuous;
+
+				status.Text = e.Status switch
+				{
+					ArchiveStatus.Extracting => "Extracting entries...",
+					ArchiveStatus.SavingToDisk => "Saving entries to disk...",
+					_ => "Unknown status"
+				};
+			});
+		}
+
 		private void SelectedSave_ArchiveProgressChanged(object? sender, ArchiveProgressEventArgs e)
 		{
 			int percentDone = (int)((float)e.FilesProcessed / e.TotalFiles * 100);
@@ -135,7 +151,7 @@ namespace SavepointManager.Forms
 			this.Invoke(() =>
 			{
 				progressBar.Value = percentDone;
-				status.Text = $"{e.FilesProcessed} out of {e.TotalFiles} files restored ({percentDone}% done)";
+				progress.Text = $"{e.FilesProcessed} out of {e.TotalFiles} files processed ({percentDone}% done)";
 			});
 		}
 

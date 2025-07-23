@@ -80,18 +80,18 @@
 			status.AutoSize = true;
 			status.Location = new Point(60, 70);
 			status.Name = "status";
-			status.Size = new Size(39, 15);
+			status.Size = new Size(121, 15);
 			status.TabIndex = 6;
-			status.Text = "Status";
+			status.Text = "Beginning to export...";
 			// 
 			// progress
 			// 
 			progress.AutoSize = true;
 			progress.Location = new Point(60, 89);
 			progress.Name = "progress";
-			progress.Size = new Size(52, 15);
+			progress.Size = new Size(76, 15);
 			progress.TabIndex = 8;
-			progress.Text = "Progress";
+			progress.Text = "Calculating...";
 			// 
 			// label4
 			// 

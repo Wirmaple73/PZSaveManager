@@ -49,7 +49,7 @@ namespace SavepointManager.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("None")]
+        [global::System.Configuration.DefaultSettingValueAttribute("F5")]
         public string SaveHotkey {
             get {
                 return ((string)(this["SaveHotkey"]));
@@ -85,7 +85,7 @@ namespace SavepointManager.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("None")]
+        [global::System.Configuration.DefaultSettingValueAttribute("F6")]
         public string AbortSaveHotkey {
             get {
                 return ((string)(this["AbortSaveHotkey"]));

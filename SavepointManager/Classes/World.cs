@@ -31,8 +31,8 @@ namespace SavepointManager.Classes
 		public string Path { get; }
 		public string Gamemode { get; }
 
-		public string GamemodePath => System.IO.Path.Combine(WorldDirectory, Gamemode);
-		public string BackupPath => System.IO.Path.Combine(GamemodePath, Name + BackupSuffix);
+		public string GamemodePath { get; }
+		public string BackupPath { get; }
 
 		public bool IsActive
 		{
@@ -175,6 +175,8 @@ namespace SavepointManager.Classes
 			Name = name;
 			Path = path;
 			Gamemode = gamemode;
+			GamemodePath = System.IO.Path.Combine(WorldDirectory, Gamemode);
+			BackupPath = System.IO.Path.Combine(GamemodePath, Name + BackupSuffix);
 		}
 
 		public static List<World> FetchAll()

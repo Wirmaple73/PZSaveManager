@@ -33,16 +33,18 @@
 			progressBar = new ProgressBar();
 			label1 = new Label();
 			label2 = new Label();
+			progress = new Label();
+			label4 = new Label();
 			SuspendLayout();
 			// 
 			// status
 			// 
 			status.AutoSize = true;
-			status.Location = new Point(47, 70);
+			status.Location = new Point(60, 70);
 			status.Name = "status";
-			status.Size = new Size(189, 15);
+			status.Size = new Size(211, 15);
 			status.TabIndex = 13;
-			status.Text = "Backing up current unsaved data...";
+			status.Text = "Backing up current unsaved progress...";
 			// 
 			// label3
 			// 
@@ -76,18 +78,38 @@
 			// 
 			label2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
 			label2.AutoSize = true;
-			label2.Location = new Point(8, 105);
+			label2.Location = new Point(8, 145);
 			label2.Name = "label2";
 			label2.Size = new Size(368, 15);
 			label2.TabIndex = 14;
 			label2.Text = "Please do not open the world in-game until this process is complete.";
 			// 
+			// progress
+			// 
+			progress.AutoSize = true;
+			progress.Location = new Point(60, 89);
+			progress.Name = "progress";
+			progress.Size = new Size(76, 15);
+			progress.TabIndex = 18;
+			progress.Text = "Calculating...";
+			// 
+			// label4
+			// 
+			label4.AutoSize = true;
+			label4.Location = new Point(8, 89);
+			label4.Name = "label4";
+			label4.Size = new Size(55, 15);
+			label4.TabIndex = 17;
+			label4.Text = "Progress:";
+			// 
 			// RestorationProgressForm
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(424, 131);
+			ClientSize = new Size(424, 171);
 			ControlBox = false;
+			Controls.Add(progress);
+			Controls.Add(label4);
 			Controls.Add(label2);
 			Controls.Add(status);
 			Controls.Add(label3);
@@ -100,7 +122,7 @@
 			ShowIcon = false;
 			Text = "Restoring";
 			FormClosing += RestorationProgressForm_FormClosing;
-			Load += RestorationProgressForm_Load;
+			Shown += RestorationProgressForm_Shown;
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -112,5 +134,7 @@
 		private ProgressBar progressBar;
 		private Label label1;
 		private Label label2;
+		private Label progress;
+		private Label label4;
 	}
 }
