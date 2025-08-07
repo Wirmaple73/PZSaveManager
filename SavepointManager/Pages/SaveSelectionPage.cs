@@ -40,15 +40,19 @@ namespace SavepointManager.Pages
 		{
 			InitializeComponent();
 			saveLabelIcon.Image = SystemIcons.Asterisk.ToBitmap();
+
+			SaveOptionsForm.SaveBackupPathChanged += (s, e) => UpdateSaveList();
 		}
 
-		private void UpdateSaveList(bool refillList = true)
+		private void UpdateSaveList()
 		{
-			saves = SelectedWorld!.Saves.ToList();
-			saves.Reverse();  // Reversed to sort saves by newest date
+			// TODO: Suspend layout
 
-			if (!refillList)
+			if (SelectedWorld is null)
 				return;
+
+			saves = SelectedWorld.Saves.ToList();
+			saves.Reverse();  // Reversed to sort saves by newest date
 
 			saveList.Items.Clear();
 			savePreview.Image = null;
@@ -71,10 +75,8 @@ namespace SavepointManager.Pages
 
 			saveList.Focus();
 
-			long totalBytes = saves.Sum(s => s.ArchivePath is not null ? new FileInfo(s.ArchivePath).Length : 0);
-			long freeBytes = new DriveInfo(Save.BackupPath).AvailableFreeSpace;
-
-			diskUsage.Text = (totalBytes < 1e+9 ? $"{totalBytes / 1e+6:f1} MB" : $"{totalBytes / 1e+9:f1} GB") + $" ({freeBytes / 1e+9:f1} GB free)";
+			long totalBytes = Save.DiskInfo.GetOccupiedSaveSize(SelectedWorld);
+			diskUsage.Text = (totalBytes < 1e+9 ? $"{totalBytes / 1e+6:f1} MB" : $"{totalBytes / 1e+9:f1} GB") + $" ({Save.DiskInfo.AvailableDiskSpace / 1e+9:f1} GB free on disk)";
 		}
 
 		private void saveList_SelectedIndexChanged(object sender, EventArgs e)
@@ -141,7 +143,7 @@ namespace SavepointManager.Pages
 
 		private void restoreSaveButton_Click(object sender, EventArgs e)
 		{
-			UpdateSaveList(false);
+			// UpdateSaveList(false);
 
 			if (SelectedWorld is null || SelectedSave is null)
 				return;
@@ -230,5 +232,8 @@ namespace SavepointManager.Pages
 		private void SetSaveButtonsEnabled(bool value) => restoreSaveButton.Enabled = renameSaveButton.Enabled = deleteSaveButton.Enabled = value;
 
 		private static void ShowSaveInProgressError() => MessageBoxManager.ShowError("Another save process is already in progress. Please wait until it is completed.");
+
+		private void listContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+			=> restoreToolStripMenuItem.Enabled = renameToolStripMenuItem.Enabled = deleteToolStripMenuItem.Enabled = SelectedSave is not null;
 	}
 }

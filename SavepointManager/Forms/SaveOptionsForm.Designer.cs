@@ -175,6 +175,7 @@
 			// okButton
 			// 
 			okButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+			okButton.FlatStyle = FlatStyle.System;
 			okButton.Location = new Point(169, 521);
 			okButton.Name = "okButton";
 			okButton.Size = new Size(97, 28);
@@ -186,6 +187,7 @@
 			// cancelButton
 			// 
 			cancelButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+			cancelButton.FlatStyle = FlatStyle.System;
 			cancelButton.Location = new Point(276, 521);
 			cancelButton.Name = "cancelButton";
 			cancelButton.Size = new Size(97, 28);
@@ -256,6 +258,7 @@
 			// 
 			// browseButton
 			// 
+			browseButton.FlatStyle = FlatStyle.System;
 			browseButton.Location = new Point(262, 44);
 			browseButton.Name = "browseButton";
 			browseButton.Size = new Size(83, 25);
@@ -289,6 +292,7 @@
 			// resetButton
 			// 
 			resetButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+			resetButton.FlatStyle = FlatStyle.System;
 			resetButton.Location = new Point(11, 521);
 			resetButton.Name = "resetButton";
 			resetButton.Size = new Size(110, 28);
@@ -314,6 +318,7 @@
 			// 
 			// previewButton
 			// 
+			previewButton.FlatStyle = FlatStyle.System;
 			previewButton.Location = new Point(262, 23);
 			previewButton.Name = "previewButton";
 			previewButton.Size = new Size(83, 25);

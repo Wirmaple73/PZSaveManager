@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SaveSelectionPage));
 			label2 = new Label();
 			worldName = new Label();
@@ -44,13 +45,21 @@
 			restoreSaveButton = new ToolStripButton();
 			renameSaveButton = new ToolStripButton();
 			deleteSaveButton = new ToolStripButton();
-			toolStrip1 = new ToolStrip();
+			toolStrip = new ToolStrip();
 			columnHeader1 = new ColumnHeader();
 			columnHeader2 = new ColumnHeader();
 			saveList = new ListView();
+			listContextMenu = new ContextMenuStrip(components);
+			refreshToolStripMenuItem = new ToolStripMenuItem();
+			toolStripMenuItem1 = new ToolStripSeparator();
+			newToolStripMenuItem = new ToolStripMenuItem();
+			restoreToolStripMenuItem = new ToolStripMenuItem();
+			renameToolStripMenuItem = new ToolStripMenuItem();
+			deleteToolStripMenuItem = new ToolStripMenuItem();
 			((System.ComponentModel.ISupportInitialize)savePreview).BeginInit();
 			((System.ComponentModel.ISupportInitialize)saveLabelIcon).BeginInit();
-			toolStrip1.SuspendLayout();
+			toolStrip.SuspendLayout();
+			listContextMenu.SuspendLayout();
 			SuspendLayout();
 			// 
 			// label2
@@ -68,14 +77,15 @@
 			worldName.AutoEllipsis = true;
 			worldName.Location = new Point(54, 31);
 			worldName.Name = "worldName";
-			worldName.Size = new Size(410, 15);
+			worldName.Size = new Size(372, 15);
 			worldName.TabIndex = 16;
-			worldName.Text = "World name";
+			worldName.Text = "Fetching...";
 			// 
 			// backButton
 			// 
 			backButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
 			backButton.DialogResult = DialogResult.OK;
+			backButton.FlatStyle = FlatStyle.System;
 			backButton.Location = new Point(15, 493);
 			backButton.Name = "backButton";
 			backButton.Size = new Size(112, 28);
@@ -130,7 +140,7 @@
 			label5.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			label5.AutoSize = true;
 			label5.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-			label5.Location = new Point(470, 31);
+			label5.Location = new Point(404, 31);
 			label5.Name = "label5";
 			label5.Size = new Size(97, 15);
 			label5.TabIndex = 25;
@@ -139,12 +149,13 @@
 			// diskUsage
 			// 
 			diskUsage.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			diskUsage.Location = new Point(564, 31);
+			diskUsage.AutoSize = true;
+			diskUsage.Location = new Point(499, 31);
 			diskUsage.Name = "diskUsage";
-			diskUsage.Size = new Size(152, 15);
+			diskUsage.Size = new Size(76, 15);
 			diskUsage.TabIndex = 26;
 			diskUsage.Text = "Calculating...";
-			diskUsage.TextAlign = ContentAlignment.MiddleRight;
+			diskUsage.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// refreshSaveButton
 			// 
@@ -179,8 +190,8 @@
 			restoreSaveButton.ImageTransparentColor = Color.Magenta;
 			restoreSaveButton.Name = "restoreSaveButton";
 			restoreSaveButton.Overflow = ToolStripItemOverflow.Never;
-			restoreSaveButton.Size = new Size(66, 22);
-			restoreSaveButton.Text = "Restore";
+			restoreSaveButton.Size = new Size(75, 22);
+			restoreSaveButton.Text = "Restore...";
 			restoreSaveButton.ToolTipText = "Restore the selected save";
 			restoreSaveButton.Click += restoreSaveButton_Click;
 			// 
@@ -201,20 +212,20 @@
 			deleteSaveButton.ImageTransparentColor = Color.Magenta;
 			deleteSaveButton.Name = "deleteSaveButton";
 			deleteSaveButton.Overflow = ToolStripItemOverflow.Never;
-			deleteSaveButton.Size = new Size(60, 22);
-			deleteSaveButton.Text = "Delete";
+			deleteSaveButton.Size = new Size(69, 22);
+			deleteSaveButton.Text = "Delete...";
 			deleteSaveButton.ToolTipText = "Delete the selected save";
 			deleteSaveButton.Click += deleteSaveButton_Click;
 			// 
-			// toolStrip1
+			// toolStrip
 			// 
-			toolStrip1.AllowMerge = false;
-			toolStrip1.CanOverflow = false;
-			toolStrip1.Items.AddRange(new ToolStripItem[] { refreshSaveButton, toolStripSeparator1, newSaveButton, restoreSaveButton, renameSaveButton, deleteSaveButton });
-			toolStrip1.Location = new Point(0, 0);
-			toolStrip1.Name = "toolStrip1";
-			toolStrip1.Size = new Size(734, 25);
-			toolStrip1.TabIndex = 27;
+			toolStrip.AllowMerge = false;
+			toolStrip.CanOverflow = false;
+			toolStrip.Items.AddRange(new ToolStripItem[] { refreshSaveButton, toolStripSeparator1, newSaveButton, restoreSaveButton, renameSaveButton, deleteSaveButton });
+			toolStrip.Location = new Point(0, 0);
+			toolStrip.Name = "toolStrip";
+			toolStrip.Size = new Size(734, 25);
+			toolStrip.TabIndex = 27;
 			// 
 			// columnHeader1
 			// 
@@ -228,10 +239,11 @@
 			// 
 			// saveList
 			// 
+			saveList.AllowColumnReorder = true;
 			saveList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 			saveList.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2 });
+			saveList.ContextMenuStrip = listContextMenu;
 			saveList.FullRowSelect = true;
-			saveList.HeaderStyle = ColumnHeaderStyle.Nonclickable;
 			saveList.Location = new Point(16, 56);
 			saveList.MultiSelect = false;
 			saveList.Name = "saveList";
@@ -241,11 +253,58 @@
 			saveList.View = View.Details;
 			saveList.SelectedIndexChanged += saveList_SelectedIndexChanged;
 			// 
+			// listContextMenu
+			// 
+			listContextMenu.Items.AddRange(new ToolStripItem[] { refreshToolStripMenuItem, toolStripMenuItem1, newToolStripMenuItem, restoreToolStripMenuItem, renameToolStripMenuItem, deleteToolStripMenuItem });
+			listContextMenu.Name = "listContextMenu";
+			listContextMenu.Size = new Size(127, 120);
+			listContextMenu.Opening += listContextMenu_Opening;
+			// 
+			// refreshToolStripMenuItem
+			// 
+			refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
+			refreshToolStripMenuItem.Size = new Size(126, 22);
+			refreshToolStripMenuItem.Text = "Refresh";
+			refreshToolStripMenuItem.Click += refreshListButton_Click;
+			// 
+			// toolStripMenuItem1
+			// 
+			toolStripMenuItem1.Name = "toolStripMenuItem1";
+			toolStripMenuItem1.Size = new Size(123, 6);
+			// 
+			// newToolStripMenuItem
+			// 
+			newToolStripMenuItem.Name = "newToolStripMenuItem";
+			newToolStripMenuItem.Size = new Size(126, 22);
+			newToolStripMenuItem.Text = "New...";
+			newToolStripMenuItem.Click += newSaveButton_Click;
+			// 
+			// restoreToolStripMenuItem
+			// 
+			restoreToolStripMenuItem.Name = "restoreToolStripMenuItem";
+			restoreToolStripMenuItem.Size = new Size(126, 22);
+			restoreToolStripMenuItem.Text = "Restore...";
+			restoreToolStripMenuItem.Click += restoreSaveButton_Click;
+			// 
+			// renameToolStripMenuItem
+			// 
+			renameToolStripMenuItem.Name = "renameToolStripMenuItem";
+			renameToolStripMenuItem.Size = new Size(126, 22);
+			renameToolStripMenuItem.Text = "Rename...";
+			renameToolStripMenuItem.Click += renameSaveButton_Click;
+			// 
+			// deleteToolStripMenuItem
+			// 
+			deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+			deleteToolStripMenuItem.Size = new Size(126, 22);
+			deleteToolStripMenuItem.Text = "Delete...";
+			deleteToolStripMenuItem.Click += deleteSaveButton_Click;
+			// 
 			// SaveSelectionPage
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			Controls.Add(toolStrip1);
+			Controls.Add(toolStrip);
 			Controls.Add(diskUsage);
 			Controls.Add(label5);
 			Controls.Add(label4);
@@ -260,8 +319,9 @@
 			Size = new Size(734, 537);
 			((System.ComponentModel.ISupportInitialize)savePreview).EndInit();
 			((System.ComponentModel.ISupportInitialize)saveLabelIcon).EndInit();
-			toolStrip1.ResumeLayout(false);
-			toolStrip1.PerformLayout();
+			toolStrip.ResumeLayout(false);
+			toolStrip.PerformLayout();
+			listContextMenu.ResumeLayout(false);
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -282,9 +342,16 @@
 		private ToolStripButton restoreSaveButton;
 		private ToolStripButton renameSaveButton;
 		private ToolStripButton deleteSaveButton;
-		private ToolStrip toolStrip1;
+		private ToolStrip toolStrip;
 		private ColumnHeader columnHeader1;
 		private ColumnHeader columnHeader2;
 		private ListView saveList;
+		private ContextMenuStrip listContextMenu;
+		private ToolStripMenuItem newToolStripMenuItem;
+		private ToolStripMenuItem restoreToolStripMenuItem;
+		private ToolStripMenuItem renameToolStripMenuItem;
+		private ToolStripMenuItem deleteToolStripMenuItem;
+		private ToolStripMenuItem refreshToolStripMenuItem;
+		private ToolStripSeparator toolStripMenuItem1;
 	}
 }

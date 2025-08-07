@@ -23,13 +23,20 @@ namespace SavepointManager.Forms
 		public WorldSelectionPage()
 		{
 			InitializeComponent();
-			UpdateSaveList();
+			UpdateWorldList();
 
 			errorLabelIcon.Image = SystemIcons.Error.ToBitmap();
+
+			SaveOptionsForm.SaveBackupPathChanged += PageLoaded;
+			PageLoader.OnPageLoaded += PageLoaded;
 		}
 
-		private void UpdateSaveList()
+		private void PageLoaded(object? sender, EventArgs e) => UpdateWorldList();
+
+		private void UpdateWorldList()
 		{
+			totalDiskUsage.Text = $"{Save.DiskInfo.TotalOccupiedSaveSize / 1e+9:f1} GB ({Save.DiskInfo.AvailableDiskSpace / 1e+9:f1} GB free on disk)";
+
 			try
 			{
 				Worlds = World.FetchAll().ToList();
@@ -121,6 +128,6 @@ namespace SavepointManager.Forms
 
 		private void worldList_DoubleClick(object sender, EventArgs e) => nextButton.PerformClick();
 
-		private void refreshButton_Click(object sender, EventArgs e) => UpdateSaveList();
+		private void refreshButton_Click(object sender, EventArgs e) => UpdateWorldList();
 	}
 }

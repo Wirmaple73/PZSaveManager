@@ -58,45 +58,32 @@ namespace SavepointManager.Classes
 		{
 			UnbindAll();
 
-			// Update the save key
-			var saveKey = GetKeyFromString(Settings.Default.SaveHotkey);
+			return RegisterHotkey(Settings.Default.SaveHotkey, SaveBind, "manual save", (s, e) => PerformSave(Save.ManualSaveDescription)) &&
+				   RegisterHotkey(Settings.Default.AbortSaveHotkey, AbortSaveBind, "abort save", (s, e) => AbortSave());
 
-			if (saveKey.IsErroneous)
-				return false;
 
-			if (saveKey.Key is null)  // The user has disabled manual save
+			static bool RegisterHotkey(string hotkeyString, string bindName, string hotkeyFunction, EventHandler<HotkeyEventArgs> handler)
+			{
+				var (key, isErroneous) = GetKeyByString(hotkeyString);
+
+				if (isErroneous)
+					return false;
+
+				if (key is null)  // The user has disabled this hotkey
+					return true;
+
+				if (IsHotkeyAvailable(key.Value))
+				{
+					HotkeyManager.Current.AddOrReplace(bindName, key.Value, handler);
+					Logger.Log($"Successfully binded {key.Value} to '{hotkeyFunction}'.", LogSeverity.Info);
+				}
+				else
+				{
+					return false;
+				}
+
 				return true;
-
-			if (IsHotkeyAvailable(saveKey.Key.Value))
-			{
-				HotkeyManager.Current.AddOrReplace(SaveBind, saveKey.Key.Value, (s, e) => PerformSave(Save.ManualSaveDescription));
-				Logger.Log($"Successfully binded {saveKey.Key.Value} to 'manual save'.", LogSeverity.Info);
 			}
-			else
-			{
-				return false;
-			}
-
-			// Update the abort key
-			var abortKey = GetKeyFromString(Settings.Default.AbortSaveHotkey);
-
-			if (abortKey.IsErroneous)
-				return false;
-
-			if (abortKey.Key is null)
-				return true;
-
-			if (IsHotkeyAvailable(abortKey.Key.Value))
-			{
-				HotkeyManager.Current.AddOrReplace(AbortSaveBind, abortKey.Key.Value, (s, e) => AbortSave());
-				Logger.Log($"Successfully binded {abortKey.Key.Value} to 'abort save'.", LogSeverity.Info);
-			}
-			else
-			{
-				return false;
-			}
-
-			return true;
 		}
 
 		public static void UpdateAutosaveTimer()
@@ -130,13 +117,13 @@ namespace SavepointManager.Classes
 
 		public static void UnbindAll()
 		{
-			Logger.Log("All hotkeys have been unbinded.", LogSeverity.Info);
-
 			HotkeyManager.Current.Remove(SaveBind);
 			HotkeyManager.Current.Remove(AbortSaveBind);
+
+			Logger.Log("All hotkeys have been unbinded.", LogSeverity.Info);
 		}
 
-		public static (Keys? Key, bool IsErroneous) GetKeyFromString(string keyString)
+		public static (Keys? Key, bool IsErroneous) GetKeyByString(string keyString)
 		{
 			if (keyString.Length > 0 && keyString != "None")
 				return Enum.TryParse(keyString, true, out Keys key) ? (key, false) : (null, true);
@@ -221,8 +208,8 @@ namespace SavepointManager.Classes
 
 				// Play the spam sound effect 30% louder than the sound volume, capping it at 100%
 				int volume = Math.Min(Settings.Default.SoundVolume + SoundBoostAmount, 100);
-				SpamPlayer.PlaySaveEffect(SpamEffects[Random.Shared.Next(SpamEffects.Length)], volume);
 
+				SpamPlayer.PlaySaveEffect(SpamEffects[Random.Shared.Next(SpamEffects.Length)], volume);
 				HotkeyTimer.Restart();
 			}
 		}

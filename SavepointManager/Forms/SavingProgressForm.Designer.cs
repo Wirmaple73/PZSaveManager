@@ -68,6 +68,7 @@
 			// cancelButton
 			// 
 			cancelButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+			cancelButton.FlatStyle = FlatStyle.System;
 			cancelButton.Location = new Point(326, 111);
 			cancelButton.Name = "cancelButton";
 			cancelButton.Size = new Size(86, 28);

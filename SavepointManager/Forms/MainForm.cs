@@ -31,6 +31,7 @@ namespace SavepointManager.Forms
 			if (!SaveHelper.UpdateHotkeys() && MessageBoxManager.ShowConfirmation("One of the save hotkeys could not be loaded properly. Would you like to open the save options now?", "Save Hotkey Error", isYesDefault: true))
 				configureSaveOptionsToolStripMenuItem_Click(this, EventArgs.Empty);
 
+
 			void InitializeApplication()
 			{
 				Application.ApplicationExit += Application_ApplicationExit;
@@ -39,7 +40,7 @@ namespace SavepointManager.Forms
 				saveSelectionPage.BackButton.Click += BackButton_Click;
 
 				this.AcceptButton = worldSelectionPage.NextButton;
-				pagePanel.LoadPage(worldSelectionPage);
+				PageLoader.Load(pagePanel, worldSelectionPage);
 			}
 
 			void CheckForInsufficientDiskSpace()
@@ -54,13 +55,13 @@ namespace SavepointManager.Forms
 
 		private void BackButton_Click(object? sender, EventArgs e)
 		{
-			pagePanel.LoadPage(worldSelectionPage);
+			PageLoader.Load(pagePanel, worldSelectionPage);
 			this.CancelButton = saveSelectionPage.BackButton;
 		}
 
 		private void NextButton_Click(object? sender, EventArgs e)
 		{
-			pagePanel.LoadPage(saveSelectionPage);
+			PageLoader.Load(pagePanel, saveSelectionPage);
 			saveSelectionPage.SelectedWorld = worldSelectionPage.SelectedWorld!;
 		}
 
@@ -79,7 +80,7 @@ namespace SavepointManager.Forms
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			if (SaveHelper.GetKeyFromString(Settings.Default.SaveHotkey).Key is null && !Settings.Default.EnableAutosave)
+			if (SaveHelper.GetKeyByString(Settings.Default.SaveHotkey).Key is null && !Settings.Default.EnableAutosave)
 				return;
 
 			if (!MessageBoxManager.ShowConfirmation("Are you sure you want to quit? The program must be kept running in the background in order to perform manual or automatic saves!", "Exit Confirmation"))

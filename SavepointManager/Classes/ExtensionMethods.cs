@@ -20,13 +20,5 @@ namespace SavepointManager.Classes
 			var cropRect = new Rectangle(x, y, width, height);
 			return source.Clone(cropRect, source.PixelFormat);
 		}
-
-		public static void LoadPage(this Control host, UserControl page)
-		{
-			page.Dock = DockStyle.Fill;
-
-			host.Controls.Clear();
-			host.Controls.Add(page);
-		}
 	}
 }

@@ -58,6 +58,8 @@ namespace SavepointManager.Forms
 
 					try
 					{
+						Logger.Log($"Beginning to move directory {path}...", LogSeverity.Info);
+
 						// Directory.Move is unable to move folders to another drive. VB is a hidden treasure.
 						Microsoft.VisualBasic.FileIO.FileSystem.MoveDirectory(path, destPath);
 					}

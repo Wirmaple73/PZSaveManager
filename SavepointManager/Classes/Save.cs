@@ -19,6 +19,17 @@ namespace SavepointManager.Classes
 {
 	public class Save
 	{
+		public static class DiskInfo
+		{
+			// All units are in bytes
+			public static long AvailableDiskSpace => new DriveInfo(BackupPath).AvailableFreeSpace;
+			public static long TotalOccupiedSaveSize
+				=> new DirectoryInfo(BackupPath).EnumerateFiles("*", SearchOption.AllDirectories).Sum(file => file.Length);
+
+			public static long GetOccupiedSaveSize(World world)
+				=> world.Saves.Sum(s => s.ArchivePath is not null ? new FileInfo(s.ArchivePath).Length : 0);
+		}
+
 		public const string ArchiveFileName = "Save";
 		public const string MetadataFileName = "Metadata.xml";
 		public const string ThumbFileName = "Thumb.png";
@@ -32,9 +43,6 @@ namespace SavepointManager.Classes
 
 		public static string BackupPath => Settings.Default.SavePath.Length > 0 ? Settings.Default.SavePath : DefaultBackupPath;
 		public static int ProgressReportThreshold { get; } = 50;  // Report progress every 50 files
-
-		public static long AvailableSaveDiskSpace = new DriveInfo(BackupPath).AvailableFreeSpace;
-		public static long TotalSaveDiskSpace = new DirectoryInfo(BackupPath).GetFiles("*", SearchOption.AllDirectories)
 
 		public World AssociatedWorld { get; }
 		public string? ArchivePath { get; }

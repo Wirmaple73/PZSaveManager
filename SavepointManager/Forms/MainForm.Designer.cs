@@ -29,7 +29,7 @@
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-			menuStrip1 = new MenuStrip();
+			menuStrip = new MenuStrip();
 			fileToolStripMenuItem = new ToolStripMenuItem();
 			exitToolStripMenuItem = new ToolStripMenuItem();
 			optionsToolStripMenuItem = new ToolStripMenuItem();
@@ -38,18 +38,18 @@
 			checkForUpdatesToolStripMenuItem = new ToolStripMenuItem();
 			aboutToolStripMenuItem = new ToolStripMenuItem();
 			pagePanel = new Panel();
-			menuStrip1.SuspendLayout();
+			menuStrip.SuspendLayout();
 			SuspendLayout();
 			// 
-			// menuStrip1
+			// menuStrip
 			// 
-			menuStrip1.BackColor = SystemColors.ControlLightLight;
-			menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, optionsToolStripMenuItem, helpToolStripMenuItem });
-			menuStrip1.Location = new Point(0, 0);
-			menuStrip1.Name = "menuStrip1";
-			menuStrip1.Size = new Size(734, 24);
-			menuStrip1.TabIndex = 1;
-			menuStrip1.Text = "menuStrip1";
+			menuStrip.BackColor = SystemColors.ControlLightLight;
+			menuStrip.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, optionsToolStripMenuItem, helpToolStripMenuItem });
+			menuStrip.Location = new Point(0, 0);
+			menuStrip.Name = "menuStrip";
+			menuStrip.Size = new Size(734, 24);
+			menuStrip.TabIndex = 1;
+			menuStrip.Text = "menuStrip";
 			// 
 			// fileToolStripMenuItem
 			// 
@@ -62,7 +62,7 @@
 			// 
 			exitToolStripMenuItem.Name = "exitToolStripMenuItem";
 			exitToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.F4;
-			exitToolStripMenuItem.Size = new Size(135, 22);
+			exitToolStripMenuItem.Size = new Size(180, 22);
 			exitToolStripMenuItem.Text = "&Exit";
 			exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
 			// 
@@ -114,23 +114,23 @@
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(734, 561);
 			Controls.Add(pagePanel);
-			Controls.Add(menuStrip1);
+			Controls.Add(menuStrip);
 			Icon = (Icon)resources.GetObject("$this.Icon");
 			KeyPreview = true;
-			MainMenuStrip = menuStrip1;
+			MainMenuStrip = menuStrip;
 			MinimumSize = new Size(400, 570);
 			Name = "MainForm";
 			Text = "Project Zomboid Save Manager";
 			FormClosing += MainForm_FormClosing;
 			Shown += MainForm_Shown;
-			menuStrip1.ResumeLayout(false);
-			menuStrip1.PerformLayout();
+			menuStrip.ResumeLayout(false);
+			menuStrip.PerformLayout();
 			ResumeLayout(false);
 			PerformLayout();
 		}
 
 		#endregion
-		private MenuStrip menuStrip1;
+		private MenuStrip menuStrip;
 		private ToolStripMenuItem fileToolStripMenuItem;
 		private ToolStripMenuItem exitToolStripMenuItem;
 		private ToolStripMenuItem optionsToolStripMenuItem;

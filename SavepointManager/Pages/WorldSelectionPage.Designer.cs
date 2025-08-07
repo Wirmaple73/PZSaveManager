@@ -39,6 +39,8 @@
 			errorLabel = new Label();
 			errorLabelIcon = new PictureBox();
 			refreshButton = new Button();
+			totalDiskUsage = new Label();
+			label5 = new Label();
 			((System.ComponentModel.ISupportInitialize)worldPreview).BeginInit();
 			((System.ComponentModel.ISupportInitialize)errorLabelIcon).BeginInit();
 			SuspendLayout();
@@ -47,6 +49,7 @@
 			// 
 			nextButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
 			nextButton.DialogResult = DialogResult.OK;
+			nextButton.FlatStyle = FlatStyle.System;
 			nextButton.Location = new Point(15, 493);
 			nextButton.Name = "nextButton";
 			nextButton.Size = new Size(112, 28);
@@ -140,6 +143,7 @@
 			// 
 			refreshButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 			refreshButton.DialogResult = DialogResult.OK;
+			refreshButton.FlatStyle = FlatStyle.System;
 			refreshButton.Location = new Point(518, 448);
 			refreshButton.Name = "refreshButton";
 			refreshButton.Size = new Size(200, 28);
@@ -147,10 +151,34 @@
 			refreshButton.Text = "&Refresh list";
 			refreshButton.Click += refreshButton_Click;
 			// 
+			// totalDiskUsage
+			// 
+			totalDiskUsage.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			totalDiskUsage.AutoSize = true;
+			totalDiskUsage.Location = new Point(500, 10);
+			totalDiskUsage.Name = "totalDiskUsage";
+			totalDiskUsage.Size = new Size(76, 15);
+			totalDiskUsage.TabIndex = 28;
+			totalDiskUsage.Text = "Calculating...";
+			totalDiskUsage.TextAlign = ContentAlignment.MiddleRight;
+			// 
+			// label5
+			// 
+			label5.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			label5.AutoSize = true;
+			label5.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+			label5.Location = new Point(377, 10);
+			label5.Name = "label5";
+			label5.Size = new Size(125, 15);
+			label5.TabIndex = 27;
+			label5.Text = "Total save disk usage:";
+			// 
 			// WorldSelectionPage
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
+			Controls.Add(totalDiskUsage);
+			Controls.Add(label5);
 			Controls.Add(refreshButton);
 			Controls.Add(errorLabelIcon);
 			Controls.Add(errorLabel);
@@ -179,5 +207,7 @@
 		private Label errorLabel;
 		private PictureBox errorLabelIcon;
 		private Button refreshButton;
+		private Label totalDiskUsage;
+		private Label label5;
 	}
 }

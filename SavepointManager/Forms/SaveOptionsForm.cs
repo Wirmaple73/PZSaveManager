@@ -75,8 +75,9 @@ namespace SavepointManager.Forms
 			if (soundVolume.Value == 0 && !MessageBoxManager.ShowConfirmation("The sound volume is set to zero. Would you like to continue anyway?", "Sound Volume Confirmation"))
 				return;
 
-			var saveKey = SaveHelper.GetKeyFromString(saveHotkeys.Text);
-			var abortKey = SaveHelper.GetKeyFromString(abortSaveHotkeys.Text);
+			// Validate hotkeys
+			var saveKey = SaveHelper.GetKeyByString(saveHotkeys.Text);
+			var abortKey = SaveHelper.GetKeyByString(abortSaveHotkeys.Text);
 
 			if (saveKey.IsErroneous || abortKey.IsErroneous)
 			{
@@ -86,25 +87,24 @@ namespace SavepointManager.Forms
 
 			SaveHelper.UnbindAll();
 
-			if (saveKey.Key is not null && saveKey.Key != Keys.None && !SaveHelper.IsHotkeyAvailable(saveKey.Key.Value))
-			{
-				MessageBoxManager.ShowError($"The specified hotkey for manual save ({saveKey.Key.Value}) could not be registered, probably because it's already in use by another process. Please select another one.");
+			if (!ValidateHotkey(saveKey.Key, "manual save") || !ValidateHotkey(abortKey.Key, "canceling saves"))
 				return;
-			}
-
-			if (abortKey.Key is not null && abortKey.Key != Keys.None && !SaveHelper.IsHotkeyAvailable(abortKey.Key.Value))
-			{
-				MessageBoxManager.ShowError($"The specified hotkey for aborting saves ({abortKey.Key.Value}) could not be registered, probably because it's already in use by another process. Please select another one.");
-				return;
-			}
 
 			if (saveKey.Key is not null && abortKey.Key is not null && saveKey.Key.Value == abortKey.Key.Value)
 			{
-				MessageBoxManager.ShowError("The 'manual save' and 'abort save' hotkeys are the same. Please make sure they are different from each other.");
+				MessageBoxManager.ShowError("The 'manual save' and 'abort save' functions are binded to the same hotkey. Please make sure they are binded to different hotkeys.");
 				return;
 			}
 
-			if (new DriveInfo(Save.BackupPath).AvailableFreeSpace < )
+			// Check for insufficient disk space
+			double requiredDiskSpace = Save.DiskInfo.TotalOccupiedSaveSize + 64e+6;  // Provide 64 MB of headroom
+			var destDrive = new DriveInfo(backupPath.Text);
+
+			if (destDrive.AvailableFreeSpace < requiredDiskSpace)
+			{
+				MessageBoxManager.ShowError($"There is not enough disk space on the target drive ({destDrive.Name}). You need to choose a drive with at least {requiredDiskSpace / 1e+9:f1} GB of free space to relocate your saves.");
+				return;
+			}
 
 			if (!Directory.Exists(backupPath.Text))
 			{
@@ -143,9 +143,22 @@ namespace SavepointManager.Forms
 			Settings.Default.AutosaveInterval = enableAutosave.Checked ? int.Parse(autosaveInterval.Text) : SaveHelper.DefaultAutosaveInterval;
 
 			Settings.Default.Save();
+			SaveBackupPathChanged?.Invoke(this, EventArgs.Empty);
 
 			this.DialogResult = DialogResult.OK;
 			this.Close();
+
+
+			static bool ValidateHotkey(Keys? hotkey, string hotkeyFunction)
+			{
+				if (hotkey is not null && hotkey != Keys.None && !SaveHelper.IsHotkeyAvailable(hotkey.Value))
+				{
+					MessageBoxManager.ShowError($"The specified hotkey for {hotkeyFunction} ({hotkey.Value}) could not be registered, probably because it's already in use by another process. Please select another one.");
+					return false;
+				}
+
+				return true;
+			}
 		}
 
 		private void resetButton_Click(object sender, EventArgs e)
@@ -159,5 +172,7 @@ namespace SavepointManager.Forms
 			enableAutosave.Checked = true;
 			autosaveInterval.Text = SaveHelper.DefaultAutosaveInterval.ToString();
 		}
+
+		public static event EventHandler<EventArgs>? SaveBackupPathChanged;
 	}
 }

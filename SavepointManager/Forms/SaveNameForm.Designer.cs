@@ -56,6 +56,7 @@
 			// okButton
 			// 
 			okButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+			okButton.FlatStyle = FlatStyle.System;
 			okButton.Location = new Point(306, 111);
 			okButton.Name = "okButton";
 			okButton.Size = new Size(86, 28);
@@ -76,6 +77,7 @@
 			// cancelButton
 			// 
 			cancelButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+			cancelButton.FlatStyle = FlatStyle.System;
 			cancelButton.Location = new Point(209, 111);
 			cancelButton.Name = "cancelButton";
 			cancelButton.Size = new Size(86, 28);
