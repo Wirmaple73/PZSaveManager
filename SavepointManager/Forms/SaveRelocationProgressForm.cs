@@ -21,7 +21,13 @@ namespace SavepointManager.Forms
 
 		private DialogResult result = DialogResult.None;
 
-		public SaveRelocationProgressForm() => InitializeComponent();
+		private readonly TaskbarProgressReporter reporter;
+
+		public SaveRelocationProgressForm()
+		{
+			InitializeComponent();
+			reporter = new(this.Handle);
+		}
 
 		private async void SaveRelocationProgressForm_Shown(object sender, EventArgs e)
 		{
@@ -65,6 +71,8 @@ namespace SavepointManager.Forms
 					}
 					catch (Exception ex)
 					{
+						reporter.State = TaskbarProgressReporter.TaskbarStates.Error;
+
 						Logger.Log($"The directory {path} could not be moved to {destPath}", ex);
 						ErrorMessage = ex.Message;
 
@@ -79,7 +87,7 @@ namespace SavepointManager.Forms
 						int percentDone = (int)((double)filesMovedNew / totalDirs * 100);
 
 						status.Text = $"{filesMovedNew} out of {totalDirs} folders moved ({percentDone}% done)";
-						progressBar.Value = percentDone;
+						progressBar.Value = reporter.Progress = percentDone;
 					});
 				});
 			});

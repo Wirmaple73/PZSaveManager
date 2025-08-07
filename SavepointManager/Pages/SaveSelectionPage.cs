@@ -130,9 +130,7 @@ namespace SavepointManager.Pages
 
 			if (progressForm.ShowDialog() == DialogResult.OK)
 			{
-				if (!Window.IsInForeground())
-					SystemSounds.Beep.Play();
-
+				WindowHelper.FlashIfMinimized();
 				UpdateSaveList();
 			}
 			else
@@ -161,6 +159,8 @@ namespace SavepointManager.Pages
 
 			if (progressForm.ShowDialog() == DialogResult.OK)
 			{
+				WindowHelper.FlashIfMinimized();
+
 				string message = $"The world {SelectedWorld.Name} has been successfully restored to {SelectedSave.Date:G}.";
 
 				if (!progressForm.IsRedundantBackupDeleted!.Value)

@@ -18,11 +18,15 @@ namespace SavepointManager.Forms
 		public Save? Save { get; set; }
 		public string? ErrorMessage { get; private set; } = null;
 
-
+		private readonly TaskbarProgressReporter reporter;
 		private readonly CancellationTokenSource tokenSource = new();
 		private DialogResult result = DialogResult.None;
 
-		public SavingProgressForm() => InitializeComponent();
+		public SavingProgressForm()
+		{
+			InitializeComponent();
+			reporter = new(this.Handle);
+		}
 
 		private async void SavingProgressForm_Shown(object sender, EventArgs e)
 		{
@@ -38,11 +42,15 @@ namespace SavepointManager.Forms
 			}
 			catch (OperationCanceledException)
 			{
+				reporter.State = TaskbarProgressReporter.TaskbarStates.Paused;
+
 				result = DialogResult.OK;
 				Logger.Log($"Saving has been canceled by the user.", LogSeverity.Info);
 			}
 			catch (Exception ex)
 			{
+				reporter.State = TaskbarProgressReporter.TaskbarStates.Error;
+
 				result = DialogResult.Cancel;
 				ErrorMessage = ex.Message;
 
@@ -71,6 +79,9 @@ namespace SavepointManager.Forms
 
 				if (e.Status == ArchiveStatus.Exporting)
 					progress.Text = "~";
+
+				if (progressBar.Style == ProgressBarStyle.Marquee)
+					reporter.State = TaskbarProgressReporter.TaskbarStates.Indeterminate;
 			});
 		}
 
@@ -80,7 +91,7 @@ namespace SavepointManager.Forms
 			{
 				int percentDone = (int)((float)e.FilesProcessed / e.TotalFiles * 100);
 
-				progressBar.Value = percentDone;
+				progressBar.Value = reporter.Progress = percentDone;
 				progress.Text = $"{e.FilesProcessed} out of {e.TotalFiles} files added ({percentDone}% done)";
 			});
 		}

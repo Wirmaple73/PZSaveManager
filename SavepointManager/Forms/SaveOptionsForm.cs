@@ -129,7 +129,10 @@ namespace SavepointManager.Forms
 					NewPath = backupPath.Text
 				};
 
-				if (form.ShowDialog() != DialogResult.OK && MessageBoxManager.ShowConfirmation($"Some backup folders could not be moved to the new backup path automatically. These folders have to be moved manually in order to be recognized by the program later. Would you like to browse and move the folders yourself now?\n\nError message: {form.ErrorMessage}", "Backup Path Error", MessageBoxIcon.Error, true))
+				var result = form.ShowDialog();
+				WindowHelper.FlashIfMinimized();
+
+				if (result != DialogResult.OK && MessageBoxManager.ShowConfirmation($"Some backup folders could not be moved to the new backup path automatically. These folders have to be moved manually in order to be recognized by the program later. Would you like to browse and move the folders yourself now?\n\nError message: {form.ErrorMessage}", "Backup Path Error", MessageBoxIcon.Error, true))
 					FileExplorer.Browse(Settings.Default.SavePath);
 			}
 

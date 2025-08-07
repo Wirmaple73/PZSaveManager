@@ -15,7 +15,7 @@ namespace SavepointManager.Classes
 		public static Bitmap? Capture()
 		{
 			// At least one game process must be active
-			if (!Window.IsInForeground(Game32ProcessName) && !Window.IsInForeground(Game64ProcessName))
+			if (!WindowHelper.IsInForeground(Game32ProcessName) && !WindowHelper.IsInForeground(Game64ProcessName))
 				return null;
 
 			var bmp = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
