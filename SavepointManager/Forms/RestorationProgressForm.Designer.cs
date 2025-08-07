@@ -78,7 +78,7 @@
 			// 
 			label2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
 			label2.AutoSize = true;
-			label2.Location = new Point(8, 145);
+			label2.Location = new Point(8, 125);
 			label2.Name = "label2";
 			label2.Size = new Size(368, 15);
 			label2.TabIndex = 14;
@@ -106,7 +106,7 @@
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(424, 171);
+			ClientSize = new Size(424, 151);
 			ControlBox = false;
 			Controls.Add(progress);
 			Controls.Add(label4);

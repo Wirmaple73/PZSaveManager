@@ -18,8 +18,9 @@ namespace SavepointManager.Classes
 			{
 				Process.Start("explorer.exe", path);
 			}
-			catch
+			catch (Exception ex)
 			{
+				Logger.Log($"Could not browse {path}", ex);
 				return false;
 			}
 

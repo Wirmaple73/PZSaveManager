@@ -58,7 +58,7 @@ namespace SavepointManager.Classes
 		}
 
 		public static void Log(string description, Exception ex)
-			=> Log($"{description}: ({ex.GetType().Name}) {ex.Message}", LogSeverity.Error);
+			=> Log($"{description}: ({ex.GetType().Name}) {ex.Message}\n{ex.StackTrace}\n", LogSeverity.Error);
 
 		// You don't need an entire singleton just to dispose a single stream. A static method does the trick.
 		public static void Dispose() => LogWriter?.Dispose();

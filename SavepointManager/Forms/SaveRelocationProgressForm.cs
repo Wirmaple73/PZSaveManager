@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -26,54 +27,62 @@ namespace SavepointManager.Forms
 		{
 			await MoveSaves();
 
+			if (result == DialogResult.None)
+				result = DialogResult.OK;
+
 			this.DialogResult = result;
 			this.Close();
 		}
 
 		private async Task MoveSaves()
 		{
+			var dt = DateTime.Now;
+
 			await Task.Run(() =>
 			{
 				// Copy all saves to the new folder
 				var savePaths = Directory.GetDirectories(OldPath, "*", SearchOption.TopDirectoryOnly);
-				int totalDirs = savePaths.Length;
+				int filesMoved = 0, totalDirs = savePaths.Length;
 
-				for (int i = 0; i < totalDirs; i++)
+				Logger.Log($"Beginning to relocate saves from {OldPath} to {NewPath}...", LogSeverity.Info);
+
+				Parallel.ForEach(savePaths, (string path, ParallelLoopState ls) =>
 				{
-					string tarPath = Path.Combine(savePaths[i], $"{Save.ArchiveFileName}.tar");
-					string zipPath = Path.Combine(savePaths[i], $"{Save.ArchiveFileName}.zip");
+					string tarPath = Path.Combine(path, $"{Save.ArchiveFileName}.tar");
+					string zipPath = Path.Combine(path, $"{Save.ArchiveFileName}.zip");
 
 					if (!File.Exists(tarPath) && !File.Exists(zipPath))
-						continue;
+						return;  // Continue
 
-					string destPath = Path.Combine(NewPath, new DirectoryInfo(savePaths[i]).Name);
+					string destPath = Path.Combine(NewPath, new DirectoryInfo(path).Name);
 
 					try
 					{
-						// Directory.Move sucks when it comes to moving folders to another drive
-						Microsoft.VisualBasic.FileIO.FileSystem.MoveDirectory(savePaths[i], destPath);
-
-						this.Invoke(() =>
-						{
-							int percentDone = (int)(((double)i + 1) / totalDirs * 100);
-
-							status.Text = $"{i + 1} out of {totalDirs} folders moved ({percentDone}% done)";
-							progressBar.Value = percentDone;
-						});
+						// Directory.Move is unable to move folders to another drive. VB is a hidden treasure.
+						Microsoft.VisualBasic.FileIO.FileSystem.MoveDirectory(path, destPath);
 					}
 					catch (Exception ex)
 					{
-						Logger.Log($"The directory {savePaths[i]} could not be moved to {destPath}", ex);
+						Logger.Log($"The directory {path} could not be moved to {destPath}", ex);
 						ErrorMessage = ex.Message;
 
 						result = DialogResult.Cancel;
-						break;
+						ls.Stop();  // Break
 					}
-				}
+
+					int filesMovedNew = Interlocked.Increment(ref filesMoved);
+
+					this.Invoke(() =>
+					{
+						int percentDone = (int)((double)filesMovedNew / totalDirs * 100);
+
+						status.Text = $"{filesMovedNew} out of {totalDirs} folders moved ({percentDone}% done)";
+						progressBar.Value = percentDone;
+					});
+				});
 			});
 
-			if (result == DialogResult.None)
-				result = DialogResult.OK;
+			Logger.Log($"Save relocation took {(DateTime.Now - dt).TotalSeconds:f1} seconds.", LogSeverity.Info);
 		}
 
 		private void SaveRelocationProgressForm_FormClosing(object sender, FormClosingEventArgs e)

@@ -19,39 +19,56 @@ namespace SavepointManager.Forms
 		private readonly WorldSelectionPage worldSelectionPage = new();
 		private readonly SaveSelectionPage saveSelectionPage = new();
 
-		public MainForm()
+		public MainForm() => InitializeComponent();
+
+		private void MainForm_Shown(object sender, EventArgs e)
 		{
-			InitializeComponent();
-			Application.ApplicationExit += Application_ApplicationExit;
-
-			FormPageLoader.Load(pagePanel, worldSelectionPage);
-
-			worldSelectionPage.NextButton.Click += NextButton_Click;
-			saveSelectionPage.BackButton.Click += BackButton_Click;
-
-			this.AcceptButton = worldSelectionPage.NextButton;
+			InitializeApplication();
+			CheckForInsufficientDiskSpace();
 
 			SaveHelper.UpdateAutosaveTimer();
 
 			if (!SaveHelper.UpdateHotkeys() && MessageBoxManager.ShowConfirmation("One of the save hotkeys could not be loaded properly. Would you like to open the save options now?", "Save Hotkey Error", isYesDefault: true))
 				configureSaveOptionsToolStripMenuItem_Click(this, EventArgs.Empty);
+
+			void InitializeApplication()
+			{
+				Application.ApplicationExit += Application_ApplicationExit;
+
+				worldSelectionPage.NextButton.Click += NextButton_Click;
+				saveSelectionPage.BackButton.Click += BackButton_Click;
+
+				this.AcceptButton = worldSelectionPage.NextButton;
+				pagePanel.LoadPage(worldSelectionPage);
+			}
+
+			void CheckForInsufficientDiskSpace()
+			{
+				const double LowDiskSpaceThreshold = 3;  // in gigabytes
+				double freeSpace = new DriveInfo(Save.BackupPath).AvailableFreeSpace / 1e+9;  // in gigabytes
+
+				if (freeSpace < LowDiskSpaceThreshold && MessageBoxManager.ShowConfirmation($"You are currently low on disk space (<{LowDiskSpaceThreshold} GB). This may cause newer saves to completely fill up your disk space. You are suggested to change the save backup path to another drive.\n\nWould you like to do that now?", "Low Disk Space", isYesDefault: true))
+					configureSaveOptionsToolStripMenuItem_Click(this, EventArgs.Empty);
+			}
 		}
 
 		private void BackButton_Click(object? sender, EventArgs e)
 		{
-			FormPageLoader.Load(pagePanel, worldSelectionPage);
+			pagePanel.LoadPage(worldSelectionPage);
 			this.CancelButton = saveSelectionPage.BackButton;
 		}
 
 		private void NextButton_Click(object? sender, EventArgs e)
 		{
-			FormPageLoader.Load(pagePanel, saveSelectionPage);
+			pagePanel.LoadPage(saveSelectionPage);
 			saveSelectionPage.SelectedWorld = worldSelectionPage.SelectedWorld!;
 		}
 
 		private void configureSaveOptionsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (new SaveOptionsForm().ShowDialog() == DialogResult.OK)
+			using var form = new SaveOptionsForm();
+
+			if (form.ShowDialog() == DialogResult.OK)
 			{
 				SaveHelper.UpdateHotkeys();
 				SaveHelper.UpdateAutosaveTimer();
@@ -79,10 +96,34 @@ namespace SavepointManager.Forms
 			SoundPlayer.Shared.Dispose();
 			SaveHelper.Dispose();
 
-			Logger.Log("All objects have been disposed.", LogSeverity.Info);
 			Logger.Log("Application shutting down.", LogSeverity.Info);
-
 			Logger.Dispose();
+		}
+
+		private async void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			Version newVersion;
+
+			try
+			{
+				newVersion = await VersionManager.GetLatestVersion();
+			}
+			catch (Exception ex)
+			{
+				Logger.Log("Could not check for updates", ex);
+				MessageBoxManager.ShowError("Could not check for updates. Please ensure you are connected to the internet properly and try again.");
+				return;
+			}
+
+			if (newVersion > VersionManager.CurrentVersion)
+			{
+				if (MessageBoxManager.ShowConfirmation("A new version is available. Would you like to open the download page now?", "Update Confirmation", MessageBoxIcon.Asterisk, true))
+					FileExplorer.Browse(VersionManager.RepoUrl);
+			}
+			else
+			{
+				MessageBoxManager.ShowInfo("You are currently running the latest version of the program.", "Update Check");
+			}
 		}
 	}
 }

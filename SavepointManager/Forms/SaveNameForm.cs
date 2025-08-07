@@ -10,16 +10,14 @@ using System.Windows.Forms;
 
 namespace SavepointManager.Forms
 {
-	public partial class NewSaveForm : Form
+	public partial class SaveNameForm : Form
 	{
-		public string? SaveDescription { get; private set; }
+		public string? SaveDescription { get => saveDescription.Text; set => saveDescription.Text = value; }
 
-		public NewSaveForm() => InitializeComponent();
+		public SaveNameForm() => InitializeComponent();
 
 		private void okButton_Click(object sender, EventArgs e)
 		{
-			SaveDescription = saveDescription.Text;
-
 			this.DialogResult = DialogResult.OK;
 			this.Close();
 		}

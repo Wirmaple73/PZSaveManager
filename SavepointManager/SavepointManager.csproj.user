@@ -16,7 +16,7 @@
     <Compile Update="Forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Forms\NewSaveForm.cs">
+    <Compile Update="Forms\SaveNameForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Pages\SaveSelectionPage.cs">

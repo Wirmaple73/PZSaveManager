@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SavepointManager.Classes
 {
-	public static class BitmapExtensions
+	public static class ExtensionMethods
 	{
 		public static Bitmap CropCenter(this Bitmap source, int width, int height)
 		{
@@ -19,6 +19,14 @@ namespace SavepointManager.Classes
 
 			var cropRect = new Rectangle(x, y, width, height);
 			return source.Clone(cropRect, source.PixelFormat);
+		}
+
+		public static void LoadPage(this Control host, UserControl page)
+		{
+			page.Dock = DockStyle.Fill;
+
+			host.Controls.Clear();
+			host.Controls.Add(page);
 		}
 	}
 }

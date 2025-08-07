@@ -17,7 +17,7 @@ namespace SavepointManager.Forms
 	{
 		private List<World> Worlds { get; set; } = new();
 
-		public World? SelectedWorld => Worlds.Find(world => world.Name == worldList.SelectedItems[0].Text && world.Gamemode == worldList.SelectedItems[0].SubItems[1].Text);
+		public World? SelectedWorld => worldList.SelectedIndices.Count > 0 ? worldList.SelectedItems[0].Tag as World : null;
 		public Button NextButton => nextButton;
 
 		public WorldSelectionPage()
@@ -32,7 +32,7 @@ namespace SavepointManager.Forms
 		{
 			try
 			{
-				Worlds = World.FetchAll();
+				Worlds = World.FetchAll().ToList();
 			}
 			catch (DirectoryNotFoundException ex)
 			{
@@ -77,7 +77,7 @@ namespace SavepointManager.Forms
 			void FillWorldList()
 			{
 				foreach (var world in Worlds)
-					worldList.Items.Add(new ListViewItem(new[] { world.Name, world.Gamemode, world.IsActive ? "Yes" : "No" }));
+					worldList.Items.Add(new ListViewItem(new[] { world.Name, world.Gamemode, world.IsActive ? "Yes" : "No" }) { Tag = world });
 
 				worldList.Items[0].Selected = true;
 			}

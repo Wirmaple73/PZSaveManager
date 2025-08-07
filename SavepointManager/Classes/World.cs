@@ -16,7 +16,7 @@ using System.Xml.Linq;
 
 namespace SavepointManager.Classes
 {
-	public class World : IEquatable<World>
+	public class World
 	{
 		public static readonly string BaseDirectory = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Zomboid");
 		public static readonly string WorldDirectory = System.IO.Path.Combine(BaseDirectory, "Saves");
@@ -61,14 +61,12 @@ namespace SavepointManager.Classes
 			}
 		}
 
-		public List<Save> Saves
+		public IEnumerable<Save> Saves
 		{
 			get
 			{
-				var saves = new List<Save>();
-
 				if (!Directory.Exists(Save.BackupPath))
-					return saves;
+					yield break;
 
 				foreach (string folderPath in Directory.GetDirectories(Save.BackupPath))
 				{
@@ -87,9 +85,7 @@ namespace SavepointManager.Classes
 					{
 						try
 						{
-							using var fs = File.OpenRead(metadataPath);
-							var xml = XElement.Load(fs);
-
+							var xml = XElement.Load(metadataPath);
 							var worldNameElement = xml.Element(XmlElementName.WorldName);
 
 							if (worldNameElement is not null)
@@ -141,7 +137,7 @@ namespace SavepointManager.Classes
 					date ??= File.GetLastWriteTime(archivePath);
 					date = new DateTime(date.Value.Year, date.Value.Month, date.Value.Day, date.Value.Hour, date.Value.Minute, date.Value.Second);
 
-					saves.Add(new Save(this, description ?? "No description", archivePath, date.Value, thumb));
+					yield return new(this, description ?? "No description", archivePath, date.Value, thumb);
 
 					string? GetArchivePath()
 					{
@@ -165,8 +161,6 @@ namespace SavepointManager.Classes
 						return firstEntryPath is not null && firstEntryPath.Contains('/') ? firstEntryPath.Split('/')[0] : null;
 					}
 				}
-
-				return saves;
 			}
 		}
 
@@ -179,7 +173,7 @@ namespace SavepointManager.Classes
 			BackupPath = System.IO.Path.Combine(GamemodePath, Name + BackupSuffix);
 		}
 
-		public static List<World> FetchAll()
+		public static IEnumerable<World> FetchAll()
 		{
 			if (!Directory.Exists(BaseDirectory))
 				throw new DirectoryNotFoundException("Could not locate the save folder. Project Zomboid is likely not installed.");
@@ -187,7 +181,6 @@ namespace SavepointManager.Classes
 			if (!Directory.Exists(WorldDirectory))
 				throw new DirectoryNotFoundException("Project Zomboid is installed, but the save folder could not be located.");
 
-			var worlds = new List<World>();
 			var gamemodes = Directory.GetDirectories(WorldDirectory);
 
 			foreach (var gamemodeFolder in gamemodes)
@@ -201,11 +194,9 @@ namespace SavepointManager.Classes
 
 					// Filter out backups
 					if (!File.Exists(tarPath) && !File.Exists(zipPath))
-						worlds.Add(new(System.IO.Path.GetFileName(world), world, System.IO.Path.GetFileName(gamemodeFolder)));
+						yield return new(System.IO.Path.GetFileName(world), world, System.IO.Path.GetFileName(gamemodeFolder));
 				}
 			}
-
-			return worlds;
 		}
 
 		public static void SaveActiveWorld(string description, CancellationTokenSource token)
@@ -238,17 +229,6 @@ namespace SavepointManager.Classes
 					SoundPlayer.Shared.PlaySaveEffect(SoundEffect.SaveFailure);
 				}
 			}, token.Token);
-		}
-
-		public bool Equals(World? other) => other is not null && Name == other.Name && Gamemode == other.Gamemode;
-		public override bool Equals(object? obj) => obj is World w && Equals(w);
-
-		public static bool operator ==(World left, World right) => left.Equals(right);
-		public static bool operator !=(World left, World right) => !(left == right);
-
-		public override int GetHashCode()
-		{
-			throw new NotImplementedException();
 		}
 	}
 }

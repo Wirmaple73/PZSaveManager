@@ -104,6 +104,8 @@ namespace SavepointManager.Forms
 				return;
 			}
 
+			if (new DriveInfo(Save.BackupPath).AvailableFreeSpace < )
+
 			if (!Directory.Exists(backupPath.Text))
 			{
 				try
@@ -121,7 +123,7 @@ namespace SavepointManager.Forms
 
 			if (backupPath.Text != Settings.Default.SavePath && Directory.Exists(Settings.Default.SavePath))  // If the user has changed the backup path
 			{
-				var form = new SaveRelocationProgressForm()
+				using var form = new SaveRelocationProgressForm()
 				{
 					OldPath = Settings.Default.SavePath,
 					NewPath = backupPath.Text

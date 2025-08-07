@@ -1,6 +1,6 @@
 ﻿namespace SavepointManager.Forms
 {
-	partial class NewSaveForm
+	partial class SaveNameForm
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -50,13 +50,13 @@
 			saveDescription.Location = new Point(12, 33);
 			saveDescription.MaxLength = 200;
 			saveDescription.Name = "saveDescription";
-			saveDescription.Size = new Size(360, 23);
+			saveDescription.Size = new Size(380, 23);
 			saveDescription.TabIndex = 1;
 			// 
 			// okButton
 			// 
 			okButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			okButton.Location = new Point(286, 111);
+			okButton.Location = new Point(306, 111);
 			okButton.Name = "okButton";
 			okButton.Size = new Size(86, 28);
 			okButton.TabIndex = 2;
@@ -76,20 +76,20 @@
 			// cancelButton
 			// 
 			cancelButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			cancelButton.Location = new Point(189, 111);
+			cancelButton.Location = new Point(209, 111);
 			cancelButton.Name = "cancelButton";
 			cancelButton.Size = new Size(86, 28);
 			cancelButton.TabIndex = 4;
 			cancelButton.Text = "&Cancel";
 			cancelButton.UseVisualStyleBackColor = true;
 			// 
-			// NewSaveForm
+			// SaveNameForm
 			// 
 			AcceptButton = okButton;
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			CancelButton = cancelButton;
-			ClientSize = new Size(384, 151);
+			ClientSize = new Size(404, 151);
 			Controls.Add(cancelButton);
 			Controls.Add(label2);
 			Controls.Add(okButton);
@@ -100,10 +100,9 @@
 			MaximizeBox = false;
 			MinimizeBox = false;
 			MinimumSize = new Size(190, 180);
-			Name = "NewSaveForm";
+			Name = "SaveNameForm";
 			ShowIcon = false;
 			SizeGripStyle = SizeGripStyle.Hide;
-			Text = "New Save";
 			KeyDown += NewSavepointForm_KeyDown;
 			ResumeLayout(false);
 			PerformLayout();

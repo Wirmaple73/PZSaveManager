@@ -32,9 +32,7 @@ namespace SavepointManager.Pages
 
 		public Button BackButton => backButton;
 
-		private Save? SelectedSave => saves.FirstOrDefault(s =>
-			s.Description == saveList.SelectedItems[0].Text && s.Date == DateTime.Parse(saveList.SelectedItems[0].SubItems[1].Text)
-		);
+		private Save? SelectedSave => saveList.SelectedIndices.Count > 0 ? saveList.SelectedItems[0].Tag as Save : null;
 
 		private string SaveInfo => $"Save date: {SelectedSave!.Date}\nDescription: {SelectedSave.Description}";
 
@@ -46,7 +44,7 @@ namespace SavepointManager.Pages
 
 		private void UpdateSaveList(bool refillList = true)
 		{
-			saves = SelectedWorld!.Saves;
+			saves = SelectedWorld!.Saves.ToList();
 			saves.Reverse();  // Reversed to sort saves by newest date
 
 			if (!refillList)
@@ -56,24 +54,32 @@ namespace SavepointManager.Pages
 			savePreview.Image = null;
 
 			foreach (var save in saves)
-				saveList.Items.Add(new ListViewItem(new[] { save.Description, save.Date.ToString() }));
+				saveList.Items.Add(new ListViewItem(new[] { save.Description, save.Date.ToString() }) { Tag = save });
 
 			if (saveList.Items.Count > 0)
 			{
 				saveList.Items[0].Selected = true;
 				saveLabel.Visible = saveLabelIcon.Visible = false;
+
+				SetSaveButtonsEnabled(true);
 			}
 			else
 			{
 				saveLabel.Visible = saveLabelIcon.Visible = true;
+				SetSaveButtonsEnabled(false);
 			}
 
 			saveList.Focus();
+
+			long totalBytes = saves.Sum(s => s.ArchivePath is not null ? new FileInfo(s.ArchivePath).Length : 0);
+			long freeBytes = new DriveInfo(Save.BackupPath).AvailableFreeSpace;
+
+			diskUsage.Text = (totalBytes < 1e+9 ? $"{totalBytes / 1e+6:f1} MB" : $"{totalBytes / 1e+9:f1} GB") + $" ({freeBytes / 1e+9:f1} GB free)";
 		}
 
 		private void saveList_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (saveList.SelectedIndices.Count == 0 || SelectedSave is null)
+			if (SelectedSave is null)
 			{
 				SetSaveButtonsEnabled(false);
 				savePreview.Image = null;
@@ -82,15 +88,23 @@ namespace SavepointManager.Pages
 
 			SetSaveButtonsEnabled(true);
 
-			savePreview.Image = SelectedSave.Thumb is not null && SelectedSave.Thumb.Length > 0 ?
-				Image.FromStream(SelectedSave.Thumb) : Resources.NoPreview;
+			try
+			{
+				savePreview.Image = SelectedSave.Thumb is not null && SelectedSave.Thumb.Length > 0 ?
+					Image.FromStream(SelectedSave.Thumb) : Resources.NoPreview;
+			}
+			catch (Exception ex)
+			{
+				savePreview.Image = Resources.NoPreview;
+				Logger.Log("Could not open save thumb", ex);
+			}
 		}
 
 		private void refreshListButton_Click(object sender, EventArgs e) => UpdateSaveList();
 
 		private void newSaveButton_Click(object sender, EventArgs e)
 		{
-			var newSaveForm = new NewSaveForm();
+			using var saveNameForm = new SaveNameForm() { Text = "New Save" };
 
 			if (Save.IsSaveInProgress)
 			{
@@ -98,13 +112,13 @@ namespace SavepointManager.Pages
 				return;
 			}
 
-			if (newSaveForm.ShowDialog() != DialogResult.OK)
+			if (saveNameForm.ShowDialog() != DialogResult.OK)
 				return;
 
-			string description = newSaveForm.SaveDescription is not null && newSaveForm.SaveDescription.Length > 0 ?
-				newSaveForm.SaveDescription : Save.ExternalSaveDescription;
+			string description = saveNameForm.SaveDescription is not null && saveNameForm.SaveDescription.Length > 0 ?
+				saveNameForm.SaveDescription : Save.ExternalSaveDescription;
 
-			var progressForm = new SavingProgressForm() { Save = new(SelectedWorld!, description) };
+			using var progressForm = new SavingProgressForm() { Save = new(SelectedWorld!, description) };
 
 			if (Save.IsSaveInProgress)
 			{
@@ -129,7 +143,7 @@ namespace SavepointManager.Pages
 		{
 			UpdateSaveList(false);
 
-			if (saveList.SelectedIndices.Count == 0 || SelectedWorld is null || SelectedSave is null)
+			if (SelectedWorld is null || SelectedSave is null)
 				return;
 
 			if (SelectedWorld.IsActive)
@@ -171,9 +185,31 @@ namespace SavepointManager.Pages
 			}
 		}
 
-		private void deleteSaveButton_Click(object sender, EventArgs e)
+		private async void renameSaveButton_Click(object sender, EventArgs e)
 		{
-			if (saveList.SelectedIndices.Count == 0 || SelectedSave is null)
+			if (SelectedSave is null)
+				return;
+
+			using var saveNameForm = new SaveNameForm() { Text = "Rename Save", SaveDescription = SelectedSave.Description };
+
+			if (saveNameForm.ShowDialog() == DialogResult.OK)
+			{
+				try
+				{
+					await SelectedSave.RenameAsync(saveNameForm.SaveDescription.Length > 0 ? saveNameForm.SaveDescription : Save.UnnamedSaveDescription);
+					UpdateSaveList();
+				}
+				catch (Exception ex)
+				{
+					Logger.Log("Could not rename the selected save", ex);
+					MessageBoxManager.ShowError($"The selected save could not be renamed.\nError message: {ex.Message}");
+				}
+			}
+		}
+
+		private async void deleteSaveButton_Click(object sender, EventArgs e)
+		{
+			if (SelectedSave is null)
 				return;
 
 			if (!MessageBoxManager.ShowConfirmation($"Are you sure you want to delete the following save?\nThis action cannot be undone!\n\n{SaveInfo}", "Save Deletion Confirmation"))
@@ -181,16 +217,17 @@ namespace SavepointManager.Pages
 
 			try
 			{
-				SelectedSave.Delete();
+				await SelectedSave.DeleteAsync();
 				UpdateSaveList();
 			}
-			catch
+			catch (Exception ex)
 			{
-				MessageBoxManager.ShowError("The specified save could not be deleted. It may still be deleted manually.");
+				Logger.Log("The selected save could not be deleted", ex);
+				MessageBoxManager.ShowError($"The selected save could not be deleted.\nError message: {ex.Message}");
 			}
 		}
 
-		private void SetSaveButtonsEnabled(bool value) => restoreSaveButton.Enabled = deleteSaveButton.Enabled = value;
+		private void SetSaveButtonsEnabled(bool value) => restoreSaveButton.Enabled = renameSaveButton.Enabled = deleteSaveButton.Enabled = value;
 
 		private static void ShowSaveInProgressError() => MessageBoxManager.ShowError("Another save process is already in progress. Please wait until it is completed.");
 	}

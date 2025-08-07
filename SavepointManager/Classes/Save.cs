@@ -26,11 +26,15 @@ namespace SavepointManager.Classes
 		public const string ManualSaveDescription = "Manual save";
 		public const string ExternalSaveDescription = "External save";
 		public const string AutosaveDescription = "Auto-save";
+		public const string UnnamedSaveDescription = "Unnamed save";
 
 		public static readonly string DefaultBackupPath = Path.Combine(World.BaseDirectory, "Backups");
 
 		public static string BackupPath => Settings.Default.SavePath.Length > 0 ? Settings.Default.SavePath : DefaultBackupPath;
 		public static int ProgressReportThreshold { get; } = 50;  // Report progress every 50 files
+
+		public static long AvailableSaveDiskSpace = new DriveInfo(BackupPath).AvailableFreeSpace;
+		public static long TotalSaveDiskSpace = new DirectoryInfo(BackupPath).GetFiles("*", SearchOption.AllDirectories)
 
 		public World AssociatedWorld { get; }
 		public string? ArchivePath { get; }
@@ -84,7 +88,7 @@ namespace SavepointManager.Classes
 					for (int i = 0; i < totalFiles; i++)
 					{
 						var ms = new MemoryStream();
-						
+
 						entryArray[i].WriteTo(ms);
 						ms.Position = 0;
 
@@ -155,6 +159,8 @@ namespace SavepointManager.Classes
 		{
 			lock (saveLock)
 			{
+				// TODO: Don't export if save directory is empty
+
 				if (IsSaveInProgress)
 					throw new InvalidOperationException("Another save is already in progress. Please wait until it is completed.");
 
@@ -185,7 +191,7 @@ namespace SavepointManager.Classes
 					using IWritableArchive archive = useCompression ? ZipArchive.Create() : TarArchive.Create();
 
 					var bag = new ConcurrentBag<(string EntryPath, MemoryStream Stream, DateTime EntryDate)>();
-					
+
 					UpdateArchiveStatus(ArchiveStatus.AddingFromDisk, "Adding files from disk...");
 					var thumb = GetSaveThumb();
 
@@ -292,7 +298,36 @@ namespace SavepointManager.Classes
 			}
 		}
 
-		public void Delete() => Directory.Delete(Directory.GetParent(ArchivePath!)!.FullName, true);
+		public async Task RenameAsync(string newDescription)
+		{
+			await Task.Run(() =>
+			{
+				string metadataPath = Path.Combine(Directory.GetParent(ArchivePath!)!.FullName, MetadataFileName);
+
+				if (File.Exists(metadataPath))
+				{
+					var doc = XElement.Load(metadataPath);
+
+					doc.SetElementValue(XmlElementName.Description, newDescription);
+					doc.Save(metadataPath);
+				}
+				else
+				{
+					// Save the metadata and thumb
+					var doc = new XDocument(
+						new XElement(XmlElementName.Metadata,
+							new XElement(XmlElementName.WorldName, AssociatedWorld.Name),
+							new XElement(XmlElementName.Description, newDescription),
+							new XElement(XmlElementName.Date, Date)
+						)
+					);
+
+					doc.Save(metadataPath);
+				}
+			});
+		}
+
+		public async Task DeleteAsync() => await Task.Run(() => Directory.Delete(Directory.GetParent(ArchivePath!)!.FullName, true));
 
 		private void UpdateArchiveStatus(ArchiveStatus status, string logMessage)
 		{

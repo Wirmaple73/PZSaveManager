@@ -35,7 +35,7 @@
 			optionsToolStripMenuItem = new ToolStripMenuItem();
 			configureSaveOptionsToolStripMenuItem = new ToolStripMenuItem();
 			helpToolStripMenuItem = new ToolStripMenuItem();
-			checkForupdatesToolStripMenuItem = new ToolStripMenuItem();
+			checkForUpdatesToolStripMenuItem = new ToolStripMenuItem();
 			aboutToolStripMenuItem = new ToolStripMenuItem();
 			pagePanel = new Panel();
 			menuStrip1.SuspendLayout();
@@ -82,16 +82,17 @@
 			// 
 			// helpToolStripMenuItem
 			// 
-			helpToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { checkForupdatesToolStripMenuItem, aboutToolStripMenuItem });
+			helpToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { checkForUpdatesToolStripMenuItem, aboutToolStripMenuItem });
 			helpToolStripMenuItem.Name = "helpToolStripMenuItem";
 			helpToolStripMenuItem.Size = new Size(44, 20);
 			helpToolStripMenuItem.Text = "&Help";
 			// 
-			// checkForupdatesToolStripMenuItem
+			// checkForUpdatesToolStripMenuItem
 			// 
-			checkForupdatesToolStripMenuItem.Name = "checkForupdatesToolStripMenuItem";
-			checkForupdatesToolStripMenuItem.Size = new Size(170, 22);
-			checkForupdatesToolStripMenuItem.Text = "Check for &updates";
+			checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
+			checkForUpdatesToolStripMenuItem.Size = new Size(170, 22);
+			checkForUpdatesToolStripMenuItem.Text = "Check for &updates";
+			checkForUpdatesToolStripMenuItem.Click += checkForUpdatesToolStripMenuItem_Click;
 			// 
 			// aboutToolStripMenuItem
 			// 
@@ -121,6 +122,7 @@
 			Name = "MainForm";
 			Text = "Project Zomboid Save Manager";
 			FormClosing += MainForm_FormClosing;
+			Shown += MainForm_Shown;
 			menuStrip1.ResumeLayout(false);
 			menuStrip1.PerformLayout();
 			ResumeLayout(false);
@@ -134,7 +136,7 @@
 		private ToolStripMenuItem optionsToolStripMenuItem;
 		private ToolStripMenuItem configureSaveOptionsToolStripMenuItem;
 		private ToolStripMenuItem helpToolStripMenuItem;
-		private ToolStripMenuItem checkForupdatesToolStripMenuItem;
+		private ToolStripMenuItem checkForUpdatesToolStripMenuItem;
 		private ToolStripMenuItem aboutToolStripMenuItem;
 		private Panel pagePanel;
 	}
