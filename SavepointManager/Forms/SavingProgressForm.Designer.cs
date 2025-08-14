@@ -121,6 +121,7 @@
 			MaximizeBox = false;
 			Name = "SavingProgressForm";
 			ShowIcon = false;
+			ShowInTaskbar = false;
 			Text = "Saving";
 			FormClosing += ArchiveProgressForm_FormClosing;
 			Shown += SavingProgressForm_Shown;

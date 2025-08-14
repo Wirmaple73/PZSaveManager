@@ -13,16 +13,19 @@ using System.Media;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using IOPath = System.IO.Path;
 
 namespace SavepointManager.Classes
 {
 	public class World
 	{
-		public static readonly string BaseDirectory = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Zomboid");
-		public static readonly string WorldDirectory = System.IO.Path.Combine(BaseDirectory, "Saves");
+		public static readonly string BaseDirectory = IOPath.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Zomboid");
+		public static readonly string WorldDirectory = IOPath.Combine(BaseDirectory, "Saves");
 
 		private const string LockedFileName = "players.db";
 		private const string BackupSuffix = "_old";
+
+		private static readonly string[] FilesToDelete = { "Save.tar", "Save.zip", "Metadata.xml", "Thumb.png" };
 
 		public const string ThumbName = "thumb.png";
 		public const int ThumbWidth = 256;
@@ -38,7 +41,7 @@ namespace SavepointManager.Classes
 		{
 			get
 			{
-				string lockedFilePath = System.IO.Path.Combine(Path, LockedFileName);
+				string lockedFilePath = IOPath.Combine(Path, LockedFileName);
 
 				if (!File.Exists(lockedFilePath))
 					return false;
@@ -61,64 +64,78 @@ namespace SavepointManager.Classes
 			}
 		}
 
-		public IEnumerable<Save> Saves
+		public World(string name, string path, string gamemode)
 		{
-			get
+			Name = name;
+			Path = path;
+			Gamemode = gamemode;
+			GamemodePath = IOPath.Combine(WorldDirectory, Gamemode);
+			BackupPath = IOPath.Combine(GamemodePath, Name + BackupSuffix);
+		}
+
+		public IEnumerable<Save> GetSaves()
+			=> GetAllSaves().Where(s => s.AssociatedWorld is not null && Name == s.AssociatedWorld.Name && Gamemode == s.AssociatedWorld.Gamemode);
+
+		private static IEnumerable<Save> GetOrphanedSaves() => GetAllSaves().Where(s => s.AssociatedWorld is null);
+
+		private static IEnumerable<Save> GetAllSaves()
+		{
+			// TODO: Make this parallel
+			if (!Directory.Exists(Save.BackupPath))
+				yield break;
+
+			foreach (string folderPath in Directory.EnumerateDirectories(Save.BackupPath))
 			{
-				if (!Directory.Exists(Save.BackupPath))
-					yield break;
+				string? archivePath = GetArchivePath();
 
-				foreach (string folderPath in Directory.GetDirectories(Save.BackupPath))
+				if (archivePath is null)
+					continue;
+
+				// Fetch the metadata
+				string metadataPath = IOPath.Combine(folderPath, Save.MetadataFileName);
+				string? worldName = null, worldGamemode = null, description = null;
+				DateTime? date = null;
+
+				if (File.Exists(metadataPath))
 				{
-					string? archivePath = GetArchivePath();
+					try
+					{
+						var xml = XElement.Load(metadataPath);
 
-					if (archivePath is null)
+						worldName	  = xml.Element(XmlElementName.WorldName)?.Value;
+						worldGamemode = xml.Element(XmlElementName.WorldGamemode)?.Value;
+						description	  = xml.Element(XmlElementName.Description)?.Value;
+
+						if (DateTime.TryParse(xml.Element(XmlElementName.Date)?.Value, out var parsedDate))
+							date = parsedDate;
+					}
+					catch (Exception ex)
+					{
+						// Not a big deal. The save is probably still fine.
+						Logger.Log($"Could not process the metadata at {metadataPath}", ex);
+					}
+				}
+
+				if (worldName is null || worldGamemode is null)
+				{
+					var worldData = Save.GetWorldDataFromArchive(archivePath);
+
+					if (worldData is null)
+					{
+						Logger.Log($"The save archive at {archivePath} appears to be corrupt. Skipping.", LogSeverity.Warning);
 						continue;
-
-					// Fetch the metadata
-					string metadataPath = System.IO.Path.Combine(folderPath, Save.MetadataFileName);
-
-					string? description = null;
-					DateTime? date = null;
-
-					if (File.Exists(metadataPath))
-					{
-						try
-						{
-							var xml = XElement.Load(metadataPath);
-							var worldNameElement = xml.Element(XmlElementName.WorldName);
-
-							if (worldNameElement is not null)
-							{
-								if (worldNameElement.Value != Name)
-									continue;
-							}
-							else
-							{
-								if (GetWorldNameFromArchive() != Name)
-									continue;
-							}
-
-							description = xml.Element(XmlElementName.Description)?.Value;
-
-							if (DateTime.TryParse(xml.Element(XmlElementName.Date)?.Value, out var parsedDate))
-								date = parsedDate;
-						}
-						catch
-						{
-							// Not a big deal. The save is probably still fine.
-						}
-					}
-					else
-					{
-						if (GetWorldNameFromArchive() != Name)
-							continue;
 					}
 
-					// Fetch the save preview
-					string thumbPath = System.IO.Path.Combine(folderPath, Save.ThumbFileName);
-					var thumb = new MemoryStream();
+					worldName = worldData.Value.Name;
+					worldGamemode = worldData.Value.Gamemode;
+				}
 
+				// Fetch the save preview
+				string thumbPath = IOPath.Combine(folderPath, Save.ThumbFileName);
+				var thumb = new MemoryStream();
+
+				try
+				{
 					if (File.Exists(thumbPath))
 					{
 						using var thumbFile = File.OpenRead(thumbPath);
@@ -127,53 +144,50 @@ namespace SavepointManager.Classes
 					else
 					{
 						using var archive = ArchiveFactory.Open(archivePath);
-						using var ts = archive.Entries.FirstOrDefault(e => e.Key == $"{Name}/{ThumbName}")?.OpenEntryStream();
+						using var ts = archive.Entries.FirstOrDefault(e => e.Key == $"{worldGamemode}/{worldName}/{ThumbName}")?.OpenEntryStream();
 						ts?.CopyTo(thumb);
 					}
+				}
+				catch (Exception ex)
+				{
+					Logger.Log($"Could not load the thumb for the world {worldName} ({worldGamemode})", ex);
+				}
 
-					thumb.Position = 0;
+				thumb.Position = 0;
+				date ??= File.GetLastWriteTime(archivePath);
 
-					// Strip extra date components like milliseconds, etc.
-					date ??= File.GetLastWriteTime(archivePath);
-					date = new DateTime(date.Value.Year, date.Value.Month, date.Value.Day, date.Value.Hour, date.Value.Minute, date.Value.Second);
+				yield return new(GetAssociatedWorld(), description ?? "No description", archivePath, date.Value, thumb);
 
-					yield return new(this, description ?? "No description", archivePath, date.Value, thumb);
+				string? GetArchivePath()
+				{
+					string zipPath = IOPath.Combine(folderPath, Save.ArchiveFileName + ".zip");
+					string tarPath = IOPath.Combine(folderPath, Save.ArchiveFileName + ".tar");
 
-					string? GetArchivePath()
-					{
-						string zipPath = System.IO.Path.Combine(folderPath, Save.ArchiveFileName + ".zip");
-						string tarPath = System.IO.Path.Combine(folderPath, Save.ArchiveFileName + ".tar");
+					if (File.Exists(zipPath) && ZipArchive.IsZipFile(zipPath))
+						return zipPath;
 
-						if (File.Exists(zipPath) && ZipArchive.IsZipFile(zipPath))
-							return zipPath;
+					if (File.Exists(tarPath) && TarArchive.IsTarFile(tarPath))
+						return tarPath;
 
-						if (File.Exists(tarPath) && TarArchive.IsTarFile(tarPath))
-							return tarPath;
+					return null;
+				}
 
+				World? GetAssociatedWorld()
+				{
+					if (string.IsNullOrWhiteSpace(worldName))
 						return null;
-					}
 
-					string? GetWorldNameFromArchive()
-					{
-						using var archive = ArchiveFactory.Open(archivePath);
-						string? firstEntryPath = archive.Entries.FirstOrDefault()?.Key;  // e.g. WorldName/map_sand.bin
+					// TODO: Use foreach if needed
+					var worlds = GetAllWorlds();
 
-						return firstEntryPath is not null && firstEntryPath.Contains('/') ? firstEntryPath.Split('/')[0] : null;
-					}
+					return !string.IsNullOrWhiteSpace(worldGamemode) ?
+						worlds.FirstOrDefault(w => w.Name == worldName && w.Gamemode == worldGamemode) :
+						worlds.FirstOrDefault(w => w.Name == worldName);
 				}
 			}
 		}
 
-		public World(string name, string path, string gamemode)
-		{
-			Name = name;
-			Path = path;
-			Gamemode = gamemode;
-			GamemodePath = System.IO.Path.Combine(WorldDirectory, Gamemode);
-			BackupPath = System.IO.Path.Combine(GamemodePath, Name + BackupSuffix);
-		}
-
-		public static IEnumerable<World> FetchAll()
+		public static IEnumerable<World> GetAllWorlds()
 		{
 			if (!Directory.Exists(BaseDirectory))
 				throw new DirectoryNotFoundException("Could not locate the save folder. Project Zomboid is likely not installed.");
@@ -189,12 +203,12 @@ namespace SavepointManager.Classes
 
 				foreach (var world in worldFolders)
 				{
-					string tarPath = System.IO.Path.Combine(world, $"{Save.ArchiveFileName}.tar");
-					string zipPath = System.IO.Path.Combine(world, $"{Save.ArchiveFileName}.zip");
+					string tarPath = IOPath.Combine(world, $"{Save.ArchiveFileName}.tar");
+					string zipPath = IOPath.Combine(world, $"{Save.ArchiveFileName}.zip");
 
 					// Filter out backups
 					if (!File.Exists(tarPath) && !File.Exists(zipPath))
-						yield return new(System.IO.Path.GetFileName(world), world, System.IO.Path.GetFileName(gamemodeFolder));
+						yield return new(IOPath.GetFileName(world), world, IOPath.GetFileName(gamemodeFolder));
 				}
 			}
 		}
@@ -203,7 +217,7 @@ namespace SavepointManager.Classes
 		{
 			Task.Run(async () =>
 			{
-				var activeWorld = FetchAll().FirstOrDefault(w => w.IsActive);
+				var activeWorld = GetAllWorlds().FirstOrDefault(w => w.IsActive);
 
 				if (activeWorld is null)
 				{
@@ -229,6 +243,109 @@ namespace SavepointManager.Classes
 					SoundPlayer.Shared.PlaySaveEffect(SoundEffect.SaveFailure);
 				}
 			}, token.Token);
+		}
+
+		public static void CreateMissingWorlds()
+		{
+            // Create non-existent worlds that have any saves associated with them
+			// TODO: Parallelize
+            foreach (Save save in GetOrphanedSaves())
+            {
+				if (string.IsNullOrWhiteSpace(save.ArchivePath))
+					continue;
+
+				string? parentDir = IOPath.GetDirectoryName(save.ArchivePath);
+
+				if (string.IsNullOrWhiteSpace(parentDir))
+					continue;
+
+				string metadataPath = IOPath.Combine(parentDir, Save.MetadataFileName);
+				string? worldName = null, worldGamemode = null;
+
+				if (File.Exists(metadataPath))
+				{
+					try
+					{
+						var xml = XElement.Load(metadataPath);
+
+						worldName = xml.Element(XmlElementName.WorldName)?.Value;
+						worldGamemode = xml.Element(XmlElementName.WorldGamemode)?.Value;
+					}
+					catch (Exception ex)
+					{
+						Logger.Log($"Could not read metadata at {metadataPath}", ex);
+					}
+				}
+
+				if (worldName is null || worldGamemode is null)
+				{
+					var worldData = Save.GetWorldDataFromArchive(save.ArchivePath);
+
+					if (worldData is null)
+					{
+						Logger.Log($"The archive at {save.ArchivePath} appears to be corrupt. Skipping.", LogSeverity.Warning);
+						continue;
+					}
+
+					worldName = worldData.Value.Name;
+					worldGamemode = worldData.Value.Gamemode;
+				}
+
+				try
+				{
+					Directory.CreateDirectory(IOPath.Combine(WorldDirectory, worldGamemode, worldName));
+					Logger.Log($"Created the world {worldName} ({worldGamemode}) for orphaned save at {parentDir}.", LogSeverity.Info);
+				}
+				catch (Exception ex)
+				{
+					Logger.Log($"Could not create the world {worldName} ({worldGamemode}) for orphaned save at {parentDir}", ex);
+				}
+			}
+        }
+
+		public void Delete()
+		{
+			// TODO: Parallelize
+			foreach (Save save in GetSaves())
+			{
+				if (string.IsNullOrWhiteSpace(save.ArchivePath))
+					continue;
+
+				string? parentFolderPath = IOPath.GetDirectoryName(save.ArchivePath);
+
+				if (string.IsNullOrWhiteSpace(parentFolderPath) || !Directory.Exists(parentFolderPath))
+					continue;
+
+				foreach (string filename in FilesToDelete)
+				{
+					string filePath = IOPath.Combine(parentFolderPath, filename);
+
+					if (File.Exists(filePath))
+					{
+						try
+						{
+							File.Delete(filePath);
+						}
+						catch (Exception ex)
+						{
+							Logger.Log($"Couldn't delete the file at {filePath}", ex);
+						}
+					}
+				}
+
+				try
+				{
+					Directory.Delete(parentFolderPath);
+				}
+				catch (Exception ex)
+				{
+					Logger.Log($"Couldn't delete the save directory at {parentFolderPath}", ex);
+				}
+			};
+
+			// Parallelize this if necessary
+			if (Directory.Exists(Path))
+				Directory.Delete(Path, true);
 		}
 	}
 }

@@ -10,6 +10,7 @@ namespace SavepointManager.Classes
 	{
 		public const string Metadata = "SaveMetadata";
 		public const string WorldName = "WorldName";
+		public const string WorldGamemode = "WorldGamemode";
 		public const string Description = "Description";
 		public const string Date = "Date";
 	}

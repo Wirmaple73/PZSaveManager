@@ -66,7 +66,9 @@ namespace SavepointManager.Forms
 
 		private void okButton_Click(object sender, EventArgs e)
 		{
-			if (enableAutosave.Checked && (!int.TryParse(autosaveInterval.Text, out int interval) || interval <= 0))
+			int interval = 0;
+
+			if (enableAutosave.Checked && (!int.TryParse(autosaveInterval.Text, out interval) || interval <= 0))
 			{
 				MessageBoxManager.ShowError("The auto-save interval must be greater than zero.");
 				return;
@@ -81,26 +83,29 @@ namespace SavepointManager.Forms
 
 			if (saveKey.IsErroneous || abortKey.IsErroneous)
 			{
+				// How does one end up here?
 				MessageBoxManager.ShowError("One of the selected hotkeys is invalid. Please select another one.");
 				return;
 			}
 
 			SaveHelper.UnbindAll();
 
-			if (!ValidateHotkey(saveKey.Key, "manual save") || !ValidateHotkey(abortKey.Key, "canceling saves"))
+			if (!ValidateHotkey(saveKey.Key, "manual save") || !ValidateHotkey(abortKey.Key, "cancelling saves"))
 				return;
 
 			if (saveKey.Key is not null && abortKey.Key is not null && saveKey.Key.Value == abortKey.Key.Value)
 			{
-				MessageBoxManager.ShowError("The 'manual save' and 'abort save' functions are binded to the same hotkey. Please make sure they are binded to different hotkeys.");
+				MessageBoxManager.ShowError("The 'manual save' and 'abort save' functions are binded to the same hotkey. Please ensure they are binded to different hotkeys.");
 				return;
 			}
 
 			// Check for insufficient disk space
 			double requiredDiskSpace = Save.DiskInfo.TotalOccupiedSaveSize + 64e+6;  // Provide 64 MB of headroom
+
+			var srcDrive = new DriveInfo(Settings.Default.SavePath);
 			var destDrive = new DriveInfo(backupPath.Text);
 
-			if (destDrive.AvailableFreeSpace < requiredDiskSpace)
+			if (srcDrive.Name != destDrive.Name && destDrive.AvailableFreeSpace < requiredDiskSpace)
 			{
 				MessageBoxManager.ShowError($"There is not enough disk space on the target drive ({destDrive.Name}). You need to choose a drive with at least {requiredDiskSpace / 1e+9:f1} GB of free space to relocate your saves.");
 				return;
@@ -143,10 +148,9 @@ namespace SavepointManager.Forms
 			Settings.Default.SaveHotkey = saveHotkeys.Text;
 			Settings.Default.AbortSaveHotkey = abortSaveHotkeys.Text;
 			Settings.Default.EnableAutosave = enableAutosave.Checked;
-			Settings.Default.AutosaveInterval = enableAutosave.Checked ? int.Parse(autosaveInterval.Text) : SaveHelper.DefaultAutosaveInterval;
+			Settings.Default.AutosaveInterval = enableAutosave.Checked ? interval : SaveHelper.DefaultAutosaveInterval;
 
 			Settings.Default.Save();
-			SaveBackupPathChanged?.Invoke(this, EventArgs.Empty);
 
 			this.DialogResult = DialogResult.OK;
 			this.Close();
@@ -170,12 +174,10 @@ namespace SavepointManager.Forms
 			useCompression.Checked = false;
 			useSaveSounds.Checked = true;
 			soundVolume.Value = 80;
-			saveHotkeys.Text = Keys.F5.ToString();
-			abortSaveHotkeys.Text = Keys.F6.ToString();
+			saveHotkeys.Text = Keys.F6.ToString();
+			abortSaveHotkeys.Text = Keys.F7.ToString();
 			enableAutosave.Checked = true;
 			autosaveInterval.Text = SaveHelper.DefaultAutosaveInterval.ToString();
 		}
-
-		public static event EventHandler<EventArgs>? SaveBackupPathChanged;
 	}
 }

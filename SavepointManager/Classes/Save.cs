@@ -27,7 +27,7 @@ namespace SavepointManager.Classes
 				=> new DirectoryInfo(BackupPath).EnumerateFiles("*", SearchOption.AllDirectories).Sum(file => file.Length);
 
 			public static long GetOccupiedSaveSize(World world)
-				=> world.Saves.Sum(s => s.ArchivePath is not null ? new FileInfo(s.ArchivePath).Length : 0);
+				=> world.GetSaves().Sum(s => s.ArchivePath is not null && File.Exists(s.ArchivePath) ? new FileInfo(s.ArchivePath).Length : 0);
 		}
 
 		public const string ArchiveFileName = "Save";
@@ -44,7 +44,7 @@ namespace SavepointManager.Classes
 		public static string BackupPath => Settings.Default.SavePath.Length > 0 ? Settings.Default.SavePath : DefaultBackupPath;
 		public static int ProgressReportThreshold { get; } = 50;  // Report progress every 50 files
 
-		public World AssociatedWorld { get; }
+		public World? AssociatedWorld { get; }
 		public string? ArchivePath { get; }
 		public string Description { get; }
 		public DateTime Date { get; }
@@ -55,7 +55,7 @@ namespace SavepointManager.Classes
 
 		private static readonly object saveLock = new();
 
-		public Save(World associatedWorld, string description, string? archivePath, DateTime date, MemoryStream thumb)
+		public Save(World? associatedWorld, string description, string? archivePath, DateTime date, MemoryStream thumb)
 		{
 			AssociatedWorld = associatedWorld;
 			Description = description;
@@ -70,6 +70,9 @@ namespace SavepointManager.Classes
 		{
 			await Task.Run(() =>
 			{
+				if (AssociatedWorld is null)
+					throw new NullReferenceException("Cannot restore an orphaned save.");
+
 				if (AssociatedWorld.IsActive)
 					throw new WorldActiveException("The current world must not be active before proceeding.");
 
@@ -100,7 +103,7 @@ namespace SavepointManager.Classes
 						entryArray[i].WriteTo(ms);
 						ms.Position = 0;
 
-						streams.Add((Path.Combine(AssociatedWorld.GamemodePath, entryArray[i].Key!), ms));
+						streams.Add((Path.Combine(World.WorldDirectory, entryArray[i].Key!), ms));
 
 						if (i % ProgressReportThreshold == 0)
 						{
@@ -169,6 +172,9 @@ namespace SavepointManager.Classes
 			{
 				// TODO: Don't export if save directory is empty
 
+				if (AssociatedWorld is null)
+					throw new NullReferenceException("Cannot export an orphaned save.");
+
 				if (IsSaveInProgress)
 					throw new InvalidOperationException("Another save is already in progress. Please wait until it is completed.");
 
@@ -214,7 +220,7 @@ namespace SavepointManager.Classes
 						ms.Position = 0;
 
 						string relativePath = Path.GetRelativePath(AssociatedWorld.Path, files[i]);  // e.g. "folder/file.dat"
-						string entryPath = Path.Combine(AssociatedWorld.Name, relativePath).Replace('\\', '/');  // e.g. WorldName/folder/file.dat
+						string entryPath = Path.Combine(AssociatedWorld.Gamemode, AssociatedWorld.Name, relativePath).Replace('\\', '/');  // e.g. Gamemode/WorldName/folder/file.dat
 
 						bag.Add((entryPath, ms, File.GetLastWriteTime(files[i])));
 						int processedFilesNew = Interlocked.Increment(ref processedFiles);
@@ -246,15 +252,8 @@ namespace SavepointManager.Classes
 					archive.SaveTo(outputArchivePath, new(useCompression ? CompressionType.Deflate : CompressionType.None));
 
 					// Save the metadata and thumb
-					var doc = new XDocument(
-						new XElement(XmlElementName.Metadata,
-							new XElement(XmlElementName.WorldName, AssociatedWorld.Name),
-							new XElement(XmlElementName.Description, Description),
-							new XElement(XmlElementName.Date, Date.ToString("G"))
-						)
-					);
+					CreateMetadata(AssociatedWorld.Name, AssociatedWorld.Gamemode, Description, Date).Save(outputXmlPath);
 
-					doc.Save(outputXmlPath);
 					thumb?.Save(outputThumbPath, System.Drawing.Imaging.ImageFormat.Png);
 					thumb?.Dispose();
 
@@ -308,9 +307,15 @@ namespace SavepointManager.Classes
 
 		public async Task RenameAsync(string newDescription)
 		{
+			if (AssociatedWorld is null)
+				throw new NullReferenceException("Cannot rename orphaned saves.");
+
+			if (ArchivePath is null)
+				throw new NullReferenceException(nameof(ArchivePath));
+
 			await Task.Run(() =>
 			{
-				string metadataPath = Path.Combine(Directory.GetParent(ArchivePath!)!.FullName, MetadataFileName);
+				string metadataPath = Path.Combine(Directory.GetParent(ArchivePath)!.FullName, MetadataFileName);
 
 				if (File.Exists(metadataPath))
 				{
@@ -321,18 +326,34 @@ namespace SavepointManager.Classes
 				}
 				else
 				{
-					// Save the metadata and thumb
-					var doc = new XDocument(
-						new XElement(XmlElementName.Metadata,
-							new XElement(XmlElementName.WorldName, AssociatedWorld.Name),
-							new XElement(XmlElementName.Description, newDescription),
-							new XElement(XmlElementName.Date, Date)
-						)
-					);
-
-					doc.Save(metadataPath);
+					CreateMetadata(AssociatedWorld.Name, AssociatedWorld.Gamemode, newDescription, Date).Save(metadataPath);
 				}
 			});
+		}
+
+		public static (string Gamemode, string Name)? GetWorldDataFromArchive(string archivePath)
+		{
+			if (!File.Exists(archivePath))
+				return null;
+
+			try
+			{
+				using var archive = ArchiveFactory.Open(archivePath);
+				string? firstEntryPath = archive.Entries.FirstOrDefault()?.Key;
+
+				if (string.IsNullOrWhiteSpace(firstEntryPath) || !firstEntryPath.Contains('/'))
+					return null;
+
+				// e.g. Gamemode/WorldName/map_sand.bin
+				var parts = firstEntryPath.Split('/');
+
+				return parts.Length >= 2 ? (parts[0], parts[1]) : null;
+			}
+			catch (Exception ex)
+			{
+				Logger.Log($"Could not retrieve the world name from the archive at {archivePath}", ex);
+				return null;
+			}
 		}
 
 		public async Task DeleteAsync() => await Task.Run(() => Directory.Delete(Directory.GetParent(ArchivePath!)!.FullName, true));
@@ -341,6 +362,18 @@ namespace SavepointManager.Classes
 		{
 			Logger.Log(logMessage, LogSeverity.Info);
 			ArchiveStatusChanged?.Invoke(this, new(status));
+		}
+
+		private static XDocument CreateMetadata(string worldName, string worldGamemode, string description, DateTime date)
+		{
+			return new XDocument(
+				new XElement(XmlElementName.Metadata,
+					new XElement(XmlElementName.WorldName, worldName),
+					new XElement(XmlElementName.WorldGamemode, worldGamemode),
+					new XElement(XmlElementName.Description, description),
+					new XElement(XmlElementName.Date, date.ToString())
+				)
+			);
 		}
 
 		public event EventHandler<ArchiveProgressEventArgs>? ArchiveProgressChanged;

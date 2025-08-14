@@ -11,9 +11,6 @@ namespace SavepointManager.Classes
 	{
 		public static bool Browse(string path)
 		{
-			if (!Directory.Exists(path))
-				return false;
-
 			try
 			{
 				Process.Start("explorer.exe", path);

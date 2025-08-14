@@ -10,8 +10,9 @@ namespace SavepointManager.Classes
 {
 	public static class Logger
 	{
+		public static string FilePath => Path.Combine(LogDirectory, $"PZSaveManager {DateTime.Now:yyyy-MM-dd}.log");
+
 		private static readonly string LogDirectory = Path.Combine(Environment.CurrentDirectory, "Logs");
-		private static string FilePath => Path.Combine(LogDirectory, $"PZSaveManager {DateTime.Now:yyyy-MM-dd}.log");
 
 		private static readonly StreamWriter? LogWriter = null;
 		private static readonly object LogLock = new();

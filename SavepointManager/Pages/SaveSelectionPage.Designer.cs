@@ -77,7 +77,7 @@
 			worldName.AutoEllipsis = true;
 			worldName.Location = new Point(54, 31);
 			worldName.Name = "worldName";
-			worldName.Size = new Size(372, 15);
+			worldName.Size = new Size(353, 15);
 			worldName.TabIndex = 16;
 			worldName.Text = "Fetching...";
 			// 
@@ -107,11 +107,12 @@
 			// 
 			saveLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 			saveLabel.AutoEllipsis = true;
-			saveLabel.Location = new Point(175, 493);
+			saveLabel.Location = new Point(175, 479);
 			saveLabel.Name = "saveLabel";
-			saveLabel.Size = new Size(543, 40);
+			saveLabel.Size = new Size(543, 54);
 			saveLabel.TabIndex = 22;
 			saveLabel.Text = "No saves have been created yet. If this is not the case and you have changed the save backup path recently, please make sure it is set correctly by navigating to Options > Configure save options.";
+			saveLabel.TextAlign = ContentAlignment.MiddleLeft;
 			saveLabel.Visible = false;
 			// 
 			// saveLabelIcon
@@ -140,7 +141,7 @@
 			label5.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			label5.AutoSize = true;
 			label5.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-			label5.Location = new Point(404, 31);
+			label5.Location = new Point(408, 31);
 			label5.Name = "label5";
 			label5.Size = new Size(97, 15);
 			label5.TabIndex = 25;
@@ -150,7 +151,7 @@
 			// 
 			diskUsage.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			diskUsage.AutoSize = true;
-			diskUsage.Location = new Point(499, 31);
+			diskUsage.Location = new Point(503, 31);
 			diskUsage.Name = "diskUsage";
 			diskUsage.Size = new Size(76, 15);
 			diskUsage.TabIndex = 26;
@@ -165,6 +166,7 @@
 			refreshSaveButton.Overflow = ToolStripItemOverflow.Never;
 			refreshSaveButton.Size = new Size(84, 22);
 			refreshSaveButton.Text = "Refresh list";
+			refreshSaveButton.ToolTipText = "Refreshes the save list.";
 			refreshSaveButton.Click += refreshListButton_Click;
 			// 
 			// toolStripSeparator1
@@ -181,7 +183,7 @@
 			newSaveButton.Overflow = ToolStripItemOverflow.Never;
 			newSaveButton.Size = new Size(60, 22);
 			newSaveButton.Text = "New...";
-			newSaveButton.ToolTipText = "Create a new save";
+			newSaveButton.ToolTipText = "Saves your current progress.";
 			newSaveButton.Click += newSaveButton_Click;
 			// 
 			// restoreSaveButton
@@ -192,7 +194,7 @@
 			restoreSaveButton.Overflow = ToolStripItemOverflow.Never;
 			restoreSaveButton.Size = new Size(75, 22);
 			restoreSaveButton.Text = "Restore...";
-			restoreSaveButton.ToolTipText = "Restore the selected save";
+			restoreSaveButton.ToolTipText = "Discards all current unsaved progress and rolls back your progress to the selected save.";
 			restoreSaveButton.Click += restoreSaveButton_Click;
 			// 
 			// renameSaveButton
@@ -203,7 +205,7 @@
 			renameSaveButton.Overflow = ToolStripItemOverflow.Never;
 			renameSaveButton.Size = new Size(79, 22);
 			renameSaveButton.Text = "Rename...";
-			renameSaveButton.ToolTipText = "Rename the selected save's description";
+			renameSaveButton.ToolTipText = "Renames the description of the selected save.";
 			renameSaveButton.Click += renameSaveButton_Click;
 			// 
 			// deleteSaveButton
@@ -214,13 +216,12 @@
 			deleteSaveButton.Overflow = ToolStripItemOverflow.Never;
 			deleteSaveButton.Size = new Size(69, 22);
 			deleteSaveButton.Text = "Delete...";
-			deleteSaveButton.ToolTipText = "Delete the selected save";
+			deleteSaveButton.ToolTipText = "Deletes the selected save.";
 			deleteSaveButton.Click += deleteSaveButton_Click;
 			// 
 			// toolStrip
 			// 
 			toolStrip.AllowMerge = false;
-			toolStrip.CanOverflow = false;
 			toolStrip.Items.AddRange(new ToolStripItem[] { refreshSaveButton, toolStripSeparator1, newSaveButton, restoreSaveButton, renameSaveButton, deleteSaveButton });
 			toolStrip.Location = new Point(0, 0);
 			toolStrip.Name = "toolStrip";
@@ -242,7 +243,6 @@
 			saveList.AllowColumnReorder = true;
 			saveList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 			saveList.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2 });
-			saveList.ContextMenuStrip = listContextMenu;
 			saveList.FullRowSelect = true;
 			saveList.Location = new Point(16, 56);
 			saveList.MultiSelect = false;
@@ -257,53 +257,64 @@
 			// 
 			listContextMenu.Items.AddRange(new ToolStripItem[] { refreshToolStripMenuItem, toolStripMenuItem1, newToolStripMenuItem, restoreToolStripMenuItem, renameToolStripMenuItem, deleteToolStripMenuItem });
 			listContextMenu.Name = "listContextMenu";
-			listContextMenu.Size = new Size(127, 120);
+			listContextMenu.Size = new Size(181, 142);
 			listContextMenu.Opening += listContextMenu_Opening;
 			// 
 			// refreshToolStripMenuItem
 			// 
 			refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-			refreshToolStripMenuItem.Size = new Size(126, 22);
-			refreshToolStripMenuItem.Text = "Refresh";
+			refreshToolStripMenuItem.ShortcutKeys = Keys.F5;
+			refreshToolStripMenuItem.Size = new Size(163, 22);
+			refreshToolStripMenuItem.Text = "&Refresh";
+			refreshToolStripMenuItem.ToolTipText = "Refreshes the save list.";
 			refreshToolStripMenuItem.Click += refreshListButton_Click;
 			// 
 			// toolStripMenuItem1
 			// 
 			toolStripMenuItem1.Name = "toolStripMenuItem1";
-			toolStripMenuItem1.Size = new Size(123, 6);
+			toolStripMenuItem1.Size = new Size(160, 6);
 			// 
 			// newToolStripMenuItem
 			// 
 			newToolStripMenuItem.Name = "newToolStripMenuItem";
-			newToolStripMenuItem.Size = new Size(126, 22);
-			newToolStripMenuItem.Text = "New...";
+			newToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.N;
+			newToolStripMenuItem.Size = new Size(163, 22);
+			newToolStripMenuItem.Text = "&New...";
+			newToolStripMenuItem.ToolTipText = "Saves your current progress.";
 			newToolStripMenuItem.Click += newSaveButton_Click;
 			// 
 			// restoreToolStripMenuItem
 			// 
 			restoreToolStripMenuItem.Name = "restoreToolStripMenuItem";
-			restoreToolStripMenuItem.Size = new Size(126, 22);
-			restoreToolStripMenuItem.Text = "Restore...";
+			restoreToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.R;
+			restoreToolStripMenuItem.Size = new Size(180, 22);
+			restoreToolStripMenuItem.Text = "Re&store...";
+			restoreToolStripMenuItem.ToolTipText = "Discards all current unsaved progress and rolls back your progress to the selected save.";
 			restoreToolStripMenuItem.Click += restoreSaveButton_Click;
 			// 
 			// renameToolStripMenuItem
 			// 
 			renameToolStripMenuItem.Name = "renameToolStripMenuItem";
-			renameToolStripMenuItem.Size = new Size(126, 22);
-			renameToolStripMenuItem.Text = "Rename...";
+			renameToolStripMenuItem.ShortcutKeys = Keys.F2;
+			renameToolStripMenuItem.Size = new Size(163, 22);
+			renameToolStripMenuItem.Text = "R&ename...";
+			renameToolStripMenuItem.ToolTipText = "Renames the description of the selected save.";
 			renameToolStripMenuItem.Click += renameSaveButton_Click;
 			// 
 			// deleteToolStripMenuItem
 			// 
 			deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-			deleteToolStripMenuItem.Size = new Size(126, 22);
-			deleteToolStripMenuItem.Text = "Delete...";
+			deleteToolStripMenuItem.ShortcutKeys = Keys.Delete;
+			deleteToolStripMenuItem.Size = new Size(163, 22);
+			deleteToolStripMenuItem.Text = "&Delete...";
+			deleteToolStripMenuItem.ToolTipText = "Deletes the selected save.";
 			deleteToolStripMenuItem.Click += deleteSaveButton_Click;
 			// 
 			// SaveSelectionPage
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
+			ContextMenuStrip = listContextMenu;
 			Controls.Add(toolStrip);
 			Controls.Add(diskUsage);
 			Controls.Add(label5);

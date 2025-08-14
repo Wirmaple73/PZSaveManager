@@ -13,104 +13,75 @@ using System.Windows.Forms;
 
 namespace SavepointManager.Forms
 {
-	public partial class WorldSelectionPage : UserControl
+	public partial class WorldSelectionPage : UserControl, IPage
 	{
-		private List<World> Worlds { get; set; } = new();
-
 		public World? SelectedWorld => worldList.SelectedIndices.Count > 0 ? worldList.SelectedItems[0].Tag as World : null;
 		public Button NextButton => nextButton;
 
 		public WorldSelectionPage()
 		{
 			InitializeComponent();
-			UpdateWorldList();
-
 			errorLabelIcon.Image = SystemIcons.Error.ToBitmap();
-
-			SaveOptionsForm.SaveBackupPathChanged += PageLoaded;
-			PageLoader.OnPageLoaded += PageLoaded;
 		}
 
-		private void PageLoaded(object? sender, EventArgs e) => UpdateWorldList();
+		public void PageLoaded() => UpdateUI();
 
-		private void UpdateWorldList()
+		public void UpdateUI()
 		{
+			// TODO: Sort the ListView
 			totalDiskUsage.Text = $"{Save.DiskInfo.TotalOccupiedSaveSize / 1e+9:f1} GB ({Save.DiskInfo.AvailableDiskSpace / 1e+9:f1} GB free on disk)";
+
+			World.CreateMissingWorlds();
+			IEnumerable<World> worlds;
 
 			try
 			{
-				Worlds = World.FetchAll().ToList();
+				worlds = World.GetAllWorlds();
 			}
 			catch (DirectoryNotFoundException ex)
 			{
+				Logger.Log("No worlds have been found", ex);
+
 				errorLabel.Text = $"{ex.Message}\nIf this is not the case, please run the game and create a world first.";
-				ClearWorldList();
 				return;
 			}
 
-			if (Worlds.Count == 0)
+			if (!worlds.Any())
 			{
+				Logger.Log("No worlds have been found.", LogSeverity.Info);
+
 				errorLabel.Text = "Project Zomboid is installed, but no world has been created yet.\nPlease run the game and create a world first.";
-				ClearWorldList();
 				return;
 			}
 
 			errorLabel.Text = "";
-			saveList_SelectedIndexChanged(this, EventArgs.Empty);
 
-			if (worldList.Items.Count == 0)
-			{
-				FillWorldList();
-				return;
-			}
+			worldList.BeginUpdate();
+			worldList.Items.Clear();
 
-			if (worldList.Items.Count == Worlds.Count && !DoesListNeedRefill())
-			{
-				for (int i = 0; i < worldList.Items.Count; i++)
-					worldList.Items[i].SubItems[2].Text = Worlds[i].IsActive ? "Yes" : "No";
-			}
-			else
-			{
-				ClearWorldList();
-				FillWorldList();
-			}
+			foreach (World world in worlds)
+				worldList.Items.Add(new ListViewItem(new[] { world.Name, world.Gamemode, world.IsActive ? "Yes" : "No" }) { Tag = world });
 
-			void ClearWorldList()
-			{
-				worldList.Items.Clear();
-				worldPreview.Image = null;
-			}
-
-			void FillWorldList()
-			{
-				foreach (var world in Worlds)
-					worldList.Items.Add(new ListViewItem(new[] { world.Name, world.Gamemode, world.IsActive ? "Yes" : "No" }) { Tag = world });
-
+			if (worldList.Items.Count > 0)
 				worldList.Items[0].Selected = true;
-			}
 
-			bool DoesListNeedRefill()
-			{
-				for (int i = 0; i < worldList.Items.Count; i++)
-				{
-					if (worldList.Items[i].SubItems[0].Text != Worlds[i].Name)
-						return true;
-				}
+			worldList.Focus();
+			worldList.EndUpdate();
 
-				return false;
-			}
+			saveList_SelectedIndexChanged(this, EventArgs.Empty);
 		}
 
 		private void saveList_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (worldList.SelectedIndices.Count == 0)
+			worldPreview.Image = Resources.NoPreview;
+
+			if (SelectedWorld is null)
 			{
-				nextButton.Enabled = false;
-				worldPreview.Image = null;
+				nextButton.Enabled = deleteWorldButton.Enabled = false;
 				return;
 			}
 
-			nextButton.Enabled = true;
+			nextButton.Enabled = deleteWorldButton.Enabled = true;
 
 			if (SelectedWorld is not null)
 			{
@@ -118,8 +89,6 @@ namespace SavepointManager.Forms
 
 				if (File.Exists(thumbPath))
 					worldPreview.ImageLocation = thumbPath;
-				else
-					worldPreview.Image = Resources.NoPreview;
 			}
 		}
 
@@ -127,7 +96,18 @@ namespace SavepointManager.Forms
 			=> errorLabel.Visible = errorLabelIcon.Visible = errorLabel.Text.Length > 0;
 
 		private void worldList_DoubleClick(object sender, EventArgs e) => nextButton.PerformClick();
+		private void refreshListButton_Click(object sender, EventArgs e) => UpdateUI();
 
-		private void refreshButton_Click(object sender, EventArgs e) => UpdateWorldList();
+		private void deleteWorldButton_Click(object sender, EventArgs e)
+		{
+			if (SelectedWorld is null || !MessageBoxManager.ShowConfirmation($"Are you sure you want to delete the world {SelectedWorld.Name} ({SelectedWorld.Gamemode}) and ALL OF ITS SAVES? This action cannot be undone!", "World Deletion Confirmation", isYesDefault: false))
+				return;
+
+			SelectedWorld.Delete();
+			UpdateUI();
+		}
+
+		private void listContextMenu_Opening(object sender, CancelEventArgs e)
+			=> deleteToolStripMenuItem.Enabled = SelectedWorld is not null;
 	}
 }

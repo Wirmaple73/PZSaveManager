@@ -86,6 +86,7 @@
 			MinimizeBox = false;
 			Name = "SaveRelocationProgressForm";
 			ShowIcon = false;
+			ShowInTaskbar = false;
 			SizeGripStyle = SizeGripStyle.Hide;
 			Text = "Moving Saves";
 			FormClosing += SaveRelocationProgressForm_FormClosing;

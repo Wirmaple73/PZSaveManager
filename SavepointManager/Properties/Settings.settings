@@ -9,7 +9,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="SaveHotkey" Type="System.String" Scope="User">
-      <Value Profile="(Default)">F5</Value>
+      <Value Profile="(Default)">F6</Value>
     </Setting>
     <Setting Name="EnableAutosave" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -18,7 +18,7 @@
       <Value Profile="(Default)">10</Value>
     </Setting>
     <Setting Name="AbortSaveHotkey" Type="System.String" Scope="User">
-      <Value Profile="(Default)">F6</Value>
+      <Value Profile="(Default)">F7</Value>
     </Setting>
     <Setting Name="UseSaveSounds" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>

@@ -40,7 +40,7 @@ namespace SavepointManager.Forms
 				saveSelectionPage.BackButton.Click += BackButton_Click;
 
 				this.AcceptButton = worldSelectionPage.NextButton;
-				PageLoader.Load(pagePanel, worldSelectionPage);
+				BackButton_Click(this, EventArgs.Empty);
 			}
 
 			void CheckForInsufficientDiskSpace()
@@ -56,13 +56,17 @@ namespace SavepointManager.Forms
 		private void BackButton_Click(object? sender, EventArgs e)
 		{
 			PageLoader.Load(pagePanel, worldSelectionPage);
+
 			this.CancelButton = saveSelectionPage.BackButton;
+			this.ContextMenuStrip = worldSelectionPage.ContextMenuStrip;
 		}
 
 		private void NextButton_Click(object? sender, EventArgs e)
 		{
+			saveSelectionPage.SelectedWorld = worldSelectionPage.SelectedWorld;
 			PageLoader.Load(pagePanel, saveSelectionPage);
-			saveSelectionPage.SelectedWorld = worldSelectionPage.SelectedWorld!;
+
+			this.ContextMenuStrip = saveSelectionPage.ContextMenuStrip;
 		}
 
 		private void configureSaveOptionsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -73,10 +77,24 @@ namespace SavepointManager.Forms
 			{
 				SaveHelper.UpdateHotkeys();
 				SaveHelper.UpdateAutosaveTimer();
+
+				saveSelectionPage.UpdateUI();
 			}
 		}
 
+		private void openLogFileToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (!FileExplorer.Browse(Logger.FilePath))
+				MessageBoxManager.ShowError($"The log file could not be opened. It may still be opened manually at {Logger.FilePath}.");
+		}
+
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e) => this.Close();
+
+		private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			using var form = new AboutForm();
+			form.ShowDialog();
+		}
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
@@ -112,7 +130,7 @@ namespace SavepointManager.Forms
 			catch (Exception ex)
 			{
 				Logger.Log("Could not check for updates", ex);
-				MessageBoxManager.ShowError("Could not check for updates. Please ensure you are connected to the internet properly and try again.");
+				MessageBoxManager.ShowError("Could not check for updates. Please ensure you are properly connected to the internet and try again.");
 				return;
 			}
 

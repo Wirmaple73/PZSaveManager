@@ -21,13 +21,7 @@ namespace SavepointManager.Forms
 
 		private DialogResult result = DialogResult.None;
 
-		private readonly TaskbarProgressReporter reporter;
-
-		public RestorationProgressForm()
-		{
-			InitializeComponent();
-			reporter = new(this.Handle);
-		}
+		public RestorationProgressForm() => InitializeComponent();
 
 		private async void RestorationProgressForm_Shown(object sender, EventArgs e)
 		{
@@ -78,7 +72,7 @@ namespace SavepointManager.Forms
 					status.Text = "Save restoration failed. Recovering your current unsaved progress...";
 					progressBar.Style = ProgressBarStyle.Marquee;
 
-					reporter.State = TaskbarProgressReporter.TaskbarStates.Indeterminate;
+					WindowHelper.TaskbarProgress.State = WindowHelper.TaskbarProgress.TaskbarState.Indeterminate;
 				});
 
 				try
@@ -114,7 +108,7 @@ namespace SavepointManager.Forms
 						progress.Text = "~";
 
 						progressBar.Style = ProgressBarStyle.Marquee;
-						reporter.State = TaskbarProgressReporter.TaskbarStates.Indeterminate;
+						WindowHelper.TaskbarProgress.State = WindowHelper.TaskbarProgress.TaskbarState.Indeterminate;
 					});
 
 					try
@@ -159,9 +153,7 @@ namespace SavepointManager.Forms
 
 			this.Invoke(() =>
 			{
-				reporter.State = TaskbarProgressReporter.TaskbarStates.Normal;
-
-				progressBar.Value = reporter.Progress = percentDone;
+				progressBar.Value = WindowHelper.TaskbarProgress.Progress = percentDone;
 				progress.Text = $"{e.FilesProcessed} out of {e.TotalFiles} files processed ({percentDone}% done)";
 			});
 		}
@@ -173,6 +165,7 @@ namespace SavepointManager.Forms
 				e.Cancel = true;
 
 			this.DialogResult = result;
+			WindowHelper.TaskbarProgress.FinishProgress();
 		}
 	}
 }

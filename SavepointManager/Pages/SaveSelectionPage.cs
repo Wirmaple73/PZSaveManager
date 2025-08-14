@@ -1,61 +1,51 @@
 ﻿using SavepointManager.Classes;
 using SavepointManager.Forms;
 using SavepointManager.Properties;
+using SharpCompress.Common;
+using System.Diagnostics;
 using System.Media;
 
 namespace SavepointManager.Pages
 {
-	public partial class SaveSelectionPage : UserControl
+	public partial class SaveSelectionPage : UserControl, IPage
 	{
-		private World? selectedWorld;
-		private List<Save> saves = new();
-
-		public World? SelectedWorld
-		{
-			get => selectedWorld;
-			set
-			{
-				selectedWorld = value;
-				SetSaveButtonsEnabled(false);
-
-				if (value is not null)
-				{
-					UpdateSaveList();
-					worldName.Text = value.Name;
-				}
-				else
-				{
-					saveList.Items.Clear();
-				}
-			}
-		}
-
+		public World? SelectedWorld { get; set; }
 		public Button BackButton => backButton;
 
-		private Save? SelectedSave => saveList.SelectedIndices.Count > 0 ? saveList.SelectedItems[0].Tag as Save : null;
+		private List<Save> saves = new();
 
+		private Save? SelectedSave => saveList.SelectedIndices.Count > 0 ? saveList.SelectedItems[0].Tag as Save : null;
 		private string SaveInfo => $"Save date: {SelectedSave!.Date}\nDescription: {SelectedSave.Description}";
 
 		public SaveSelectionPage()
 		{
 			InitializeComponent();
 			saveLabelIcon.Image = SystemIcons.Asterisk.ToBitmap();
-
-			SaveOptionsForm.SaveBackupPathChanged += (s, e) => UpdateSaveList();
 		}
 
-		private void UpdateSaveList()
+		public void PageLoaded()
 		{
-			// TODO: Suspend layout
+			worldName.Text = SelectedWorld?.Name ?? "Unknown world";
 
+			SetSaveButtonsEnabled(false);
+			UpdateUI();
+
+			if (this.ParentForm is not null)
+				this.ParentForm.ContextMenuStrip = listContextMenu;
+		}
+
+		public void UpdateUI()
+		{
 			if (SelectedWorld is null)
 				return;
 
-			saves = SelectedWorld.Saves.ToList();
+			saves = SelectedWorld.GetSaves().ToList();
 			saves.Reverse();  // Reversed to sort saves by newest date
 
+			savePreview.Image = Resources.NoPreview;
+
+			saveList.BeginUpdate();
 			saveList.Items.Clear();
-			savePreview.Image = null;
 
 			foreach (var save in saves)
 				saveList.Items.Add(new ListViewItem(new[] { save.Description, save.Date.ToString() }) { Tag = save });
@@ -74,6 +64,7 @@ namespace SavepointManager.Pages
 			}
 
 			saveList.Focus();
+			saveList.EndUpdate();
 
 			long totalBytes = Save.DiskInfo.GetOccupiedSaveSize(SelectedWorld);
 			diskUsage.Text = (totalBytes < 1e+9 ? $"{totalBytes / 1e+6:f1} MB" : $"{totalBytes / 1e+9:f1} GB") + $" ({Save.DiskInfo.AvailableDiskSpace / 1e+9:f1} GB free on disk)";
@@ -84,7 +75,7 @@ namespace SavepointManager.Pages
 			if (SelectedSave is null)
 			{
 				SetSaveButtonsEnabled(false);
-				savePreview.Image = null;
+				savePreview.Image = Resources.NoPreview;
 				return;
 			}
 
@@ -102,9 +93,9 @@ namespace SavepointManager.Pages
 			}
 		}
 
-		private void refreshListButton_Click(object sender, EventArgs e) => UpdateSaveList();
+		private void refreshListButton_Click(object? sender, EventArgs e) => UpdateUI();
 
-		private void newSaveButton_Click(object sender, EventArgs e)
+		private void newSaveButton_Click(object? sender, EventArgs e)
 		{
 			using var saveNameForm = new SaveNameForm() { Text = "New Save" };
 
@@ -131,7 +122,7 @@ namespace SavepointManager.Pages
 			if (progressForm.ShowDialog() == DialogResult.OK)
 			{
 				WindowHelper.FlashIfMinimized();
-				UpdateSaveList();
+				UpdateUI();
 			}
 			else
 			{
@@ -139,7 +130,7 @@ namespace SavepointManager.Pages
 			}
 		}
 
-		private void restoreSaveButton_Click(object sender, EventArgs e)
+		private void restoreSaveButton_Click(object? sender, EventArgs e)
 		{
 			// UpdateSaveList(false);
 
@@ -152,15 +143,16 @@ namespace SavepointManager.Pages
 				return;
 			}
 
-			if (!MessageBoxManager.ShowConfirmation($"Are you sure you want to restore the world {SelectedWorld.Name} back to the following save? All current unsaved progress will be lost!\n\n{SaveInfo}", "Save Restoration Confirmation"))
+			if (!MessageBoxManager.ShowConfirmation($"Are you sure you want to restore the world {SelectedWorld.Name} back to the following save? ALL CURRENT UNSAVED PROGRESS WILL BE LOST!\n\n{SaveInfo}", "Save Restoration Confirmation"))
 				return;
 
 			var progressForm = new RestorationProgressForm { SelectedSave = this.SelectedSave };
 
-			if (progressForm.ShowDialog() == DialogResult.OK)
-			{
-				WindowHelper.FlashIfMinimized();
+			var result = progressForm.ShowDialog();
+			WindowHelper.FlashIfMinimized();
 
+			if (result == DialogResult.OK)
+			{
 				string message = $"The world {SelectedWorld.Name} has been successfully restored to {SelectedSave.Date:G}.";
 
 				if (!progressForm.IsRedundantBackupDeleted!.Value)
@@ -187,7 +179,7 @@ namespace SavepointManager.Pages
 			}
 		}
 
-		private async void renameSaveButton_Click(object sender, EventArgs e)
+		private async void renameSaveButton_Click(object? sender, EventArgs e)
 		{
 			if (SelectedSave is null)
 				return;
@@ -199,7 +191,7 @@ namespace SavepointManager.Pages
 				try
 				{
 					await SelectedSave.RenameAsync(saveNameForm.SaveDescription.Length > 0 ? saveNameForm.SaveDescription : Save.UnnamedSaveDescription);
-					UpdateSaveList();
+					UpdateUI();
 				}
 				catch (Exception ex)
 				{
@@ -209,7 +201,7 @@ namespace SavepointManager.Pages
 			}
 		}
 
-		private async void deleteSaveButton_Click(object sender, EventArgs e)
+		private async void deleteSaveButton_Click(object? sender, EventArgs e)
 		{
 			if (SelectedSave is null)
 				return;
@@ -220,7 +212,7 @@ namespace SavepointManager.Pages
 			try
 			{
 				await SelectedSave.DeleteAsync();
-				UpdateSaveList();
+				UpdateUI();
 			}
 			catch (Exception ex)
 			{

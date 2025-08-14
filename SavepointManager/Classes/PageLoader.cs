@@ -1,23 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SavepointManager.Classes
+﻿namespace SavepointManager.Classes
 {
 	public static class PageLoader
 	{
-		public static event EventHandler<EventArgs>? OnPageLoaded;
+		public static UserControl? CurrentPage { get; set; } = null;
 
-		public static void Load(Control host, UserControl page)
+		public static void Load<T>(Control host, T page) where T : UserControl, IPage
 		{
 			page.Dock = DockStyle.Fill;
 
 			host.Controls.Clear();
 			host.Controls.Add(page);
 
-			OnPageLoaded?.Invoke(null, EventArgs.Empty);
+			CurrentPage = page;
+			page.PageLoaded();
 		}
 	}
 }

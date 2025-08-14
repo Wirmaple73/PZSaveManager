@@ -120,6 +120,7 @@
 			MinimizeBox = false;
 			Name = "RestorationProgressForm";
 			ShowIcon = false;
+			ShowInTaskbar = false;
 			Text = "Restoring";
 			FormClosing += RestorationProgressForm_FormClosing;
 			Shown += RestorationProgressForm_Shown;
