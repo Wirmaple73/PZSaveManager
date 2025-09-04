@@ -114,6 +114,50 @@ namespace SavepointManager.Classes
 			return processes.Length > 0 && processes[0].MainWindowHandle == GetForegroundWindow();
 		}
 
+		// Stolen from https://stackoverflow.com/a/15937460
+		public static void SetButtonEnabled(IntPtr windowHandle, StateWindowButton button, bool enabled) => EnableMenuItem(GetSystemMenu(windowHandle, false), (uint)button, (uint)(enabled ? 0 : 1));
+
+		public static void SetButtonDrawn(IntPtr windowHandle, DisplayWindowButton button, bool draw)
+		{
+			const int GWL_STYLE = -16, MF_BYCOMMAND = 0x00000000;
+
+			int style = GetWindowLong(windowHandle, GWL_STYLE);
+
+			if (draw)
+				style |= (int)button;
+			else
+				style &= ~(int)button;
+
+			_ = SetWindowLong(windowHandle, GWL_STYLE, style);
+
+			IntPtr hMenu = GetSystemMenu(windowHandle, false);
+
+			StateWindowButton stateButton = button switch
+			{
+				DisplayWindowButton.Maximize => StateWindowButton.Maximize,
+				DisplayWindowButton.Minimize => StateWindowButton.Minimize,
+				_ => throw new ArgumentOutOfRangeException(nameof(button))
+			};
+
+			if (draw)
+				GetSystemMenu(windowHandle, true);
+			else
+				RemoveMenu(hMenu, (uint)stateButton, MF_BYCOMMAND);
+		}
+
+		public enum StateWindowButton
+		{
+			Close = 0xF060,
+			Maximize = 0xF030,
+			Minimize = 0xF020
+		}
+
+		public enum DisplayWindowButton
+		{
+			Maximize = 0x10000,
+			Minimize = 0x20000
+		}
+
 		public static void FlashIfMinimized()
 		{
 			if (!IsInForeground())
@@ -151,6 +195,21 @@ namespace SavepointManager.Classes
 
 		private const uint FLASHW_ALL = 3;         // Flash both caption and taskbar button
 		private const uint FLASHW_TIMERNOFG = 12;  // Flash until window comes to foreground
+
+		[DllImport("user32.dll")]
+		private static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
+
+		[DllImport("user32.dll")]
+		private static extern bool RemoveMenu(IntPtr hMenu, uint uPosition, uint uFlags);
+
+		[DllImport("user32.dll")]
+		private static extern bool EnableMenuItem(IntPtr hMenu, uint itemId, uint uEnable);
+
+		[DllImport("user32.dll")]
+		private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+		[DllImport("user32.dll")]
+		private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 		#endregion
 	}
 }

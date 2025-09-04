@@ -371,7 +371,7 @@ namespace SavepointManager.Classes
 					new XElement(XmlElementName.WorldName, worldName),
 					new XElement(XmlElementName.WorldGamemode, worldGamemode),
 					new XElement(XmlElementName.Description, description),
-					new XElement(XmlElementName.Date, date.ToString())
+					new XElement(XmlElementName.Date, date.ToString("O"))
 				)
 			);
 		}

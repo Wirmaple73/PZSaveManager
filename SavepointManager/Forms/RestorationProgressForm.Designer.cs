@@ -107,7 +107,6 @@
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(424, 151);
-			ControlBox = false;
 			Controls.Add(progress);
 			Controls.Add(label4);
 			Controls.Add(label2);
@@ -117,7 +116,6 @@
 			Controls.Add(label1);
 			FormBorderStyle = FormBorderStyle.FixedDialog;
 			MaximizeBox = false;
-			MinimizeBox = false;
 			Name = "RestorationProgressForm";
 			ShowIcon = false;
 			ShowInTaskbar = false;

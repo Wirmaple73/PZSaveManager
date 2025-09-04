@@ -36,6 +36,7 @@ namespace SavepointManager.Forms
 
 		private async Task MoveSaves()
 		{
+			WindowHelper.SetButtonEnabled(this.Handle, WindowHelper.StateWindowButton.Close, false);
 			var dt = DateTime.Now;
 
 			await Task.Run(() =>

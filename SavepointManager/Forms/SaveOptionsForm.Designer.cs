@@ -75,7 +75,7 @@
 			groupBox1.Location = new Point(12, 309);
 			groupBox1.Name = "groupBox1";
 			groupBox1.Size = new Size(360, 100);
-			groupBox1.TabIndex = 0;
+			groupBox1.TabIndex = 2;
 			groupBox1.TabStop = false;
 			groupBox1.Text = "Hotkeys";
 			// 
@@ -105,7 +105,7 @@
 			label2.Location = new Point(14, 62);
 			label2.Name = "label2";
 			label2.Size = new Size(105, 15);
-			label2.TabIndex = 4;
+			label2.TabIndex = 2;
 			label2.Text = "Abort save hotkey:";
 			toolTip.SetToolTip(label2, resources.GetString("label2.ToolTip"));
 			// 
@@ -116,7 +116,7 @@
 			abortSaveHotkeys.Location = new Point(122, 59);
 			abortSaveHotkeys.Name = "abortSaveHotkeys";
 			abortSaveHotkeys.Size = new Size(105, 23);
-			abortSaveHotkeys.TabIndex = 5;
+			abortSaveHotkeys.TabIndex = 3;
 			toolTip.SetToolTip(abortSaveHotkeys, resources.GetString("abortSaveHotkeys.ToolTip"));
 			// 
 			// groupBox2
@@ -129,7 +129,7 @@
 			groupBox2.Location = new Point(12, 415);
 			groupBox2.Name = "groupBox2";
 			groupBox2.Size = new Size(360, 87);
-			groupBox2.TabIndex = 1;
+			groupBox2.TabIndex = 3;
 			groupBox2.TabStop = false;
 			groupBox2.Text = "Auto-save";
 			// 
@@ -179,7 +179,7 @@
 			okButton.Location = new Point(169, 521);
 			okButton.Name = "okButton";
 			okButton.Size = new Size(97, 28);
-			okButton.TabIndex = 6;
+			okButton.TabIndex = 5;
 			okButton.Text = "&OK";
 			okButton.UseVisualStyleBackColor = true;
 			okButton.Click += okButton_Click;
@@ -191,7 +191,7 @@
 			cancelButton.Location = new Point(276, 521);
 			cancelButton.Name = "cancelButton";
 			cancelButton.Size = new Size(97, 28);
-			cancelButton.TabIndex = 7;
+			cancelButton.TabIndex = 6;
 			cancelButton.Text = "&Cancel";
 			cancelButton.UseVisualStyleBackColor = true;
 			// 
@@ -216,7 +216,7 @@
 			useSaveSounds.Location = new Point(16, 26);
 			useSaveSounds.Name = "useSaveSounds";
 			useSaveSounds.Size = new Size(161, 19);
-			useSaveSounds.TabIndex = 7;
+			useSaveSounds.TabIndex = 0;
 			useSaveSounds.Text = "Enable save sound effects";
 			toolTip.SetToolTip(useSaveSounds, "Plays sound effects when saving a world succeeds, fails, or gets canceled. This setting only affects the manual & automatic save functions.");
 			useSaveSounds.UseVisualStyleBackColor = true;
@@ -233,7 +233,7 @@
 			groupBox3.Location = new Point(12, 12);
 			groupBox3.Name = "groupBox3";
 			groupBox3.Size = new Size(360, 155);
-			groupBox3.TabIndex = 8;
+			groupBox3.TabIndex = 0;
 			groupBox3.TabStop = false;
 			groupBox3.Text = "Save Options";
 			// 
@@ -242,7 +242,7 @@
 			saveRelocationLabel.Location = new Point(13, 75);
 			saveRelocationLabel.Name = "saveRelocationLabel";
 			saveRelocationLabel.Size = new Size(332, 33);
-			saveRelocationLabel.TabIndex = 6;
+			saveRelocationLabel.TabIndex = 3;
 			saveRelocationLabel.Text = "Note: If this is changed, all saves will be moved to the new path after you click 'OK'. This might take some time.";
 			// 
 			// useCompression
@@ -251,7 +251,7 @@
 			useCompression.Location = new Point(16, 121);
 			useCompression.Name = "useCompression";
 			useCompression.Size = new Size(131, 19);
-			useCompression.TabIndex = 3;
+			useCompression.TabIndex = 4;
 			useCompression.Text = "Compress save data";
 			compressToolTip.SetToolTip(useCompression, resources.GetString("useCompression.ToolTip"));
 			useCompression.UseVisualStyleBackColor = true;
@@ -296,7 +296,7 @@
 			resetButton.Location = new Point(11, 521);
 			resetButton.Name = "resetButton";
 			resetButton.Size = new Size(110, 28);
-			resetButton.TabIndex = 9;
+			resetButton.TabIndex = 4;
 			resetButton.Text = "&Reset all";
 			resetButton.UseVisualStyleBackColor = true;
 			resetButton.Click += resetButton_Click;
@@ -312,7 +312,7 @@
 			groupBox4.Location = new Point(12, 175);
 			groupBox4.Name = "groupBox4";
 			groupBox4.Size = new Size(360, 128);
-			groupBox4.TabIndex = 10;
+			groupBox4.TabIndex = 1;
 			groupBox4.TabStop = false;
 			groupBox4.Text = "Save Audio";
 			// 
@@ -322,7 +322,7 @@
 			previewButton.Location = new Point(262, 23);
 			previewButton.Name = "previewButton";
 			previewButton.Size = new Size(83, 25);
-			previewButton.TabIndex = 12;
+			previewButton.TabIndex = 4;
 			previewButton.Text = "Preview";
 			previewButton.UseVisualStyleBackColor = true;
 			previewButton.Click += previewButton_Click;
@@ -333,7 +333,7 @@
 			soundVolumeLabel.Location = new Point(321, 78);
 			soundVolumeLabel.Name = "soundVolumeLabel";
 			soundVolumeLabel.Size = new Size(38, 23);
-			soundVolumeLabel.TabIndex = 11;
+			soundVolumeLabel.TabIndex = 3;
 			soundVolumeLabel.Text = "100%";
 			soundVolumeLabel.TextAlign = ContentAlignment.MiddleCenter;
 			// 
@@ -344,11 +344,11 @@
 			soundVolume.Location = new Point(6, 80);
 			soundVolume.Maximum = 100;
 			soundVolume.Name = "soundVolume";
-			soundVolume.Size = new Size(318, 45);
+			soundVolume.Size = new Size(315, 45);
 			soundVolume.SmallChange = 10;
-			soundVolume.TabIndex = 10;
+			soundVolume.TabIndex = 2;
 			soundVolume.TickFrequency = 10;
-			soundVolume.Value = 5;
+			soundVolume.Value = 80;
 			soundVolume.ValueChanged += soundVolume_ValueChanged;
 			// 
 			// label6
@@ -357,7 +357,7 @@
 			label6.Location = new Point(12, 60);
 			label6.Name = "label6";
 			label6.Size = new Size(87, 15);
-			label6.TabIndex = 9;
+			label6.TabIndex = 1;
 			label6.Text = "Sound volume:";
 			// 
 			// SaveOptionsForm
@@ -375,7 +375,6 @@
 			Controls.Add(groupBox2);
 			Controls.Add(groupBox1);
 			FormBorderStyle = FormBorderStyle.FixedSingle;
-			Icon = (Icon)resources.GetObject("$this.Icon");
 			MaximizeBox = false;
 			MinimizeBox = false;
 			MinimumSize = new Size(270, 340);

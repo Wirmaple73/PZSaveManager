@@ -76,14 +76,12 @@
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(424, 101);
-			ControlBox = false;
 			Controls.Add(status);
 			Controls.Add(label3);
 			Controls.Add(progressBar);
 			Controls.Add(label1);
 			FormBorderStyle = FormBorderStyle.FixedDialog;
 			MaximizeBox = false;
-			MinimizeBox = false;
 			Name = "SaveRelocationProgressForm";
 			ShowIcon = false;
 			ShowInTaskbar = false;

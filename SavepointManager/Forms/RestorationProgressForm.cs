@@ -31,9 +31,10 @@ namespace SavepointManager.Forms
 
 		private async Task RestoreAsync()
 		{
-			if (SelectedSave is null)
+			if (SelectedSave is null || SelectedSave.AssociatedWorld is null)
 				throw new NullReferenceException("The selected save is null.");
 
+			WindowHelper.SetButtonEnabled(this.Handle, WindowHelper.StateWindowButton.Close, false);
 			this.Invoke(() => this.Text = $"Restoring {SelectedSave.AssociatedWorld.Name}");
 
 			try
@@ -52,7 +53,7 @@ namespace SavepointManager.Forms
 				}
 				catch (Exception exc)
 				{
-					throw new SaveBackupException("Could not rename the original world.", exc);
+					throw new SaveBackupException("Could not rename the original world", exc);
 				}
 
 				this.Invoke(() => progressBar.Style = ProgressBarStyle.Continuous);

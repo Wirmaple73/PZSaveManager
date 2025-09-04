@@ -37,6 +37,8 @@ namespace SavepointManager.Classes
 		public string GamemodePath { get; }
 		public string BackupPath { get; }
 
+		public DateTime LastPlayed => Directory.GetLastWriteTime(Path);
+
 		public bool IsActive
 		{
 			get
@@ -306,6 +308,7 @@ namespace SavepointManager.Classes
 		public void Delete()
 		{
 			// TODO: Parallelize
+			// Delete all saves
 			foreach (Save save in GetSaves())
 			{
 				if (string.IsNullOrWhiteSpace(save.ArchivePath))
@@ -343,7 +346,8 @@ namespace SavepointManager.Classes
 				}
 			};
 
-			// Parallelize this if necessary
+			// TODO: Parallelize
+			// Delete the world itself
 			if (Directory.Exists(Path))
 				Directory.Delete(Path, true);
 		}

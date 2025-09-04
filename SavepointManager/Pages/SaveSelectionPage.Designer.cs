@@ -107,11 +107,12 @@
 			// 
 			saveLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 			saveLabel.AutoEllipsis = true;
+			saveLabel.BackColor = Color.Transparent;
 			saveLabel.Location = new Point(175, 479);
 			saveLabel.Name = "saveLabel";
 			saveLabel.Size = new Size(543, 54);
 			saveLabel.TabIndex = 22;
-			saveLabel.Text = "No saves have been created yet. If this is not the case and you have changed the save backup path recently, please make sure it is set correctly by navigating to Options > Configure save options.";
+			saveLabel.Text = "No saves have been created yet. If this is not the case and you have changed the save backup path recently, please make sure it is set correctly by navigating to Options > Configure Save Options.";
 			saveLabel.TextAlign = ContentAlignment.MiddleLeft;
 			saveLabel.Visible = false;
 			// 
@@ -257,7 +258,7 @@
 			// 
 			listContextMenu.Items.AddRange(new ToolStripItem[] { refreshToolStripMenuItem, toolStripMenuItem1, newToolStripMenuItem, restoreToolStripMenuItem, renameToolStripMenuItem, deleteToolStripMenuItem });
 			listContextMenu.Name = "listContextMenu";
-			listContextMenu.Size = new Size(181, 142);
+			listContextMenu.Size = new Size(164, 120);
 			listContextMenu.Opening += listContextMenu_Opening;
 			// 
 			// refreshToolStripMenuItem
@@ -287,7 +288,7 @@
 			// 
 			restoreToolStripMenuItem.Name = "restoreToolStripMenuItem";
 			restoreToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.R;
-			restoreToolStripMenuItem.Size = new Size(180, 22);
+			restoreToolStripMenuItem.Size = new Size(163, 22);
 			restoreToolStripMenuItem.Text = "Re&store...";
 			restoreToolStripMenuItem.ToolTipText = "Discards all current unsaved progress and rolls back your progress to the selected save.";
 			restoreToolStripMenuItem.Click += restoreSaveButton_Click;

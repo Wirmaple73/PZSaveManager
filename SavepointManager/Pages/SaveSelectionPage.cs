@@ -2,6 +2,7 @@
 using SavepointManager.Forms;
 using SavepointManager.Properties;
 using SharpCompress.Common;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Media;
 
@@ -11,8 +12,6 @@ namespace SavepointManager.Pages
 	{
 		public World? SelectedWorld { get; set; }
 		public Button BackButton => backButton;
-
-		private List<Save> saves = new();
 
 		private Save? SelectedSave => saveList.SelectedIndices.Count > 0 ? saveList.SelectedItems[0].Tag as Save : null;
 		private string SaveInfo => $"Save date: {SelectedSave!.Date}\nDescription: {SelectedSave.Description}";
@@ -29,32 +28,26 @@ namespace SavepointManager.Pages
 
 			SetSaveButtonsEnabled(false);
 			UpdateUI();
-
-			if (this.ParentForm is not null)
-				this.ParentForm.ContextMenuStrip = listContextMenu;
 		}
 
 		public void UpdateUI()
 		{
+			var lastSelectedSave = SelectedSave;
+
+			saveList.Items.Clear();
+			savePreview.Image = Resources.NoPreview;
+
 			if (SelectedWorld is null)
 				return;
 
-			saves = SelectedWorld.GetSaves().ToList();
-			saves.Reverse();  // Reversed to sort saves by newest date
-
-			savePreview.Image = Resources.NoPreview;
-
-			saveList.BeginUpdate();
-			saveList.Items.Clear();
-
-			foreach (var save in saves)
+			foreach (Save save in SelectedWorld.GetSaves())
 				saveList.Items.Add(new ListViewItem(new[] { save.Description, save.Date.ToString() }) { Tag = save });
 
-			if (saveList.Items.Count > 0)
+            if (saveList.Items.Count > 0)
 			{
-				saveList.Items[0].Selected = true;
-				saveLabel.Visible = saveLabelIcon.Visible = false;
+				SelectLastSelectedSave();
 
+				saveLabel.Visible = saveLabelIcon.Visible = false;
 				SetSaveButtonsEnabled(true);
 			}
 			else
@@ -63,11 +56,26 @@ namespace SavepointManager.Pages
 				SetSaveButtonsEnabled(false);
 			}
 
-			saveList.Focus();
-			saveList.EndUpdate();
-
 			long totalBytes = Save.DiskInfo.GetOccupiedSaveSize(SelectedWorld);
 			diskUsage.Text = (totalBytes < 1e+9 ? $"{totalBytes / 1e+6:f1} MB" : $"{totalBytes / 1e+9:f1} GB") + $" ({Save.DiskInfo.AvailableDiskSpace / 1e+9:f1} GB free on disk)";
+		
+		
+			void SelectLastSelectedSave()
+			{
+				if (lastSelectedSave is null)
+					return;
+
+				for (int i = 0; i < saveList.Items.Count; i++)
+				{
+					if (saveList.Items[i].Tag is Save s && s.ArchivePath == lastSelectedSave.ArchivePath)
+					{
+						saveList.Items[i].Selected = true;
+						saveList.EnsureVisible(i);
+
+						break;
+					}
+				}
+			}
 		}
 
 		private void saveList_SelectedIndexChanged(object sender, EventArgs e)
@@ -132,9 +140,7 @@ namespace SavepointManager.Pages
 
 		private void restoreSaveButton_Click(object? sender, EventArgs e)
 		{
-			// UpdateSaveList(false);
-
-			if (SelectedWorld is null || SelectedSave is null)
+			if (SelectedWorld is null || SelectedSave is null || SelectedSave.AssociatedWorld is null)
 				return;
 
 			if (SelectedWorld.IsActive)
@@ -227,5 +233,11 @@ namespace SavepointManager.Pages
 
 		private void listContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
 			=> restoreToolStripMenuItem.Enabled = renameToolStripMenuItem.Enabled = deleteToolStripMenuItem.Enabled = SelectedSave is not null;
+
+		private void saveList_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+		{
+			if (e.Control && e.KeyCode == Keys.N)
+				e.IsInputKey = true;
+		}
 	}
 }

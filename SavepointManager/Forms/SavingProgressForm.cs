@@ -25,7 +25,15 @@ namespace SavepointManager.Forms
 
 		private async void SavingProgressForm_Shown(object sender, EventArgs e)
 		{
-			this.Text = $"Saving {Save!.AssociatedWorld.Name}";
+			if (Save is null || Save.AssociatedWorld is null)
+			{
+				result = DialogResult.Cancel;
+				this.Close();
+
+				return;
+			}
+
+			this.Text = $"Saving {Save.AssociatedWorld.Name}";
 
 			Save.ArchiveProgressChanged += Save_ArchiveProgressChanged;
 			Save.ArchiveStatusChanged += Save_ArchiveStatusChanged;

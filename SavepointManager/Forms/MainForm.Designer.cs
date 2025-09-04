@@ -28,7 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			menuStrip = new MenuStrip();
 			fileToolStripMenuItem = new ToolStripMenuItem();
 			openLogFileToolStripMenuItem = new ToolStripMenuItem();
@@ -36,10 +35,6 @@
 			exitToolStripMenuItem = new ToolStripMenuItem();
 			optionsToolStripMenuItem = new ToolStripMenuItem();
 			configureSaveOptionsToolStripMenuItem = new ToolStripMenuItem();
-			changethemeToolStripMenuItem = new ToolStripMenuItem();
-			defaultThemeToolStripMenuItem = new ToolStripMenuItem();
-			darkThemeToolStripMenuItem = new ToolStripMenuItem();
-			useSystemThemeToolStripMenuItem = new ToolStripMenuItem();
 			helpToolStripMenuItem = new ToolStripMenuItem();
 			checkForUpdatesToolStripMenuItem = new ToolStripMenuItem();
 			aboutToolStripMenuItem = new ToolStripMenuItem();
@@ -49,12 +44,13 @@
 			// 
 			// menuStrip
 			// 
-			menuStrip.BackColor = SystemColors.ControlLightLight;
+			menuStrip.AllowMerge = false;
+			menuStrip.BackColor = SystemColors.Menu;
 			menuStrip.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, optionsToolStripMenuItem, helpToolStripMenuItem });
 			menuStrip.Location = new Point(0, 0);
 			menuStrip.Name = "menuStrip";
-			menuStrip.Size = new Size(734, 24);
-			menuStrip.TabIndex = 1;
+			menuStrip.Size = new Size(784, 24);
+			menuStrip.TabIndex = 0;
 			menuStrip.Text = "menuStrip";
 			// 
 			// fileToolStripMenuItem
@@ -67,27 +63,27 @@
 			// openLogFileToolStripMenuItem
 			// 
 			openLogFileToolStripMenuItem.Name = "openLogFileToolStripMenuItem";
-			openLogFileToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.O;
-			openLogFileToolStripMenuItem.Size = new Size(185, 22);
-			openLogFileToolStripMenuItem.Text = "&Open log file";
+			openLogFileToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.L;
+			openLogFileToolStripMenuItem.Size = new Size(196, 22);
+			openLogFileToolStripMenuItem.Text = "&Open Log File...";
 			openLogFileToolStripMenuItem.Click += openLogFileToolStripMenuItem_Click;
 			// 
 			// toolStripMenuItem1
 			// 
 			toolStripMenuItem1.Name = "toolStripMenuItem1";
-			toolStripMenuItem1.Size = new Size(182, 6);
+			toolStripMenuItem1.Size = new Size(179, 6);
 			// 
 			// exitToolStripMenuItem
 			// 
 			exitToolStripMenuItem.Name = "exitToolStripMenuItem";
 			exitToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.F4;
-			exitToolStripMenuItem.Size = new Size(185, 22);
+			exitToolStripMenuItem.Size = new Size(182, 22);
 			exitToolStripMenuItem.Text = "&Exit";
 			exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
 			// 
 			// optionsToolStripMenuItem
 			// 
-			optionsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { configureSaveOptionsToolStripMenuItem, changethemeToolStripMenuItem });
+			optionsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { configureSaveOptionsToolStripMenuItem });
 			optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
 			optionsToolStripMenuItem.Size = new Size(61, 20);
 			optionsToolStripMenuItem.Text = "&Options";
@@ -95,38 +91,10 @@
 			// configureSaveOptionsToolStripMenuItem
 			// 
 			configureSaveOptionsToolStripMenuItem.Name = "configureSaveOptionsToolStripMenuItem";
-			configureSaveOptionsToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.S;
-			configureSaveOptionsToolStripMenuItem.Size = new Size(245, 22);
-			configureSaveOptionsToolStripMenuItem.Text = "&Configure save options...";
+			configureSaveOptionsToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.E;
+			configureSaveOptionsToolStripMenuItem.Size = new Size(248, 22);
+			configureSaveOptionsToolStripMenuItem.Text = "&Configure Save Options...";
 			configureSaveOptionsToolStripMenuItem.Click += configureSaveOptionsToolStripMenuItem_Click;
-			// 
-			// changethemeToolStripMenuItem
-			// 
-			changethemeToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { defaultThemeToolStripMenuItem, darkThemeToolStripMenuItem, useSystemThemeToolStripMenuItem });
-			changethemeToolStripMenuItem.Name = "changethemeToolStripMenuItem";
-			changethemeToolStripMenuItem.Size = new Size(245, 22);
-			changethemeToolStripMenuItem.Text = "C&hange theme...";
-			// 
-			// defaultThemeToolStripMenuItem
-			// 
-			defaultThemeToolStripMenuItem.CheckOnClick = true;
-			defaultThemeToolStripMenuItem.Name = "defaultThemeToolStripMenuItem";
-			defaultThemeToolStripMenuItem.Size = new Size(180, 22);
-			defaultThemeToolStripMenuItem.Text = "&Default theme";
-			// 
-			// darkThemeToolStripMenuItem
-			// 
-			darkThemeToolStripMenuItem.CheckOnClick = true;
-			darkThemeToolStripMenuItem.Name = "darkThemeToolStripMenuItem";
-			darkThemeToolStripMenuItem.Size = new Size(180, 22);
-			darkThemeToolStripMenuItem.Text = "D&ark theme";
-			// 
-			// useSystemThemeToolStripMenuItem
-			// 
-			useSystemThemeToolStripMenuItem.CheckOnClick = true;
-			useSystemThemeToolStripMenuItem.Name = "useSystemThemeToolStripMenuItem";
-			useSystemThemeToolStripMenuItem.Size = new Size(180, 22);
-			useSystemThemeToolStripMenuItem.Text = "&Use system theme";
 			// 
 			// helpToolStripMenuItem
 			// 
@@ -138,15 +106,15 @@
 			// checkForUpdatesToolStripMenuItem
 			// 
 			checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
-			checkForUpdatesToolStripMenuItem.Size = new Size(179, 22);
-			checkForUpdatesToolStripMenuItem.Text = "Check for &updates...";
+			checkForUpdatesToolStripMenuItem.Size = new Size(180, 22);
+			checkForUpdatesToolStripMenuItem.Text = "Check for &Updates...";
 			checkForUpdatesToolStripMenuItem.Click += checkForUpdatesToolStripMenuItem_Click;
 			// 
 			// aboutToolStripMenuItem
 			// 
 			aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-			aboutToolStripMenuItem.Size = new Size(179, 22);
-			aboutToolStripMenuItem.Text = "&About...";
+			aboutToolStripMenuItem.Size = new Size(180, 22);
+			aboutToolStripMenuItem.Text = "&About";
 			aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
 			// 
 			// pagePanel
@@ -154,17 +122,16 @@
 			pagePanel.Dock = DockStyle.Fill;
 			pagePanel.Location = new Point(0, 24);
 			pagePanel.Name = "pagePanel";
-			pagePanel.Size = new Size(734, 537);
-			pagePanel.TabIndex = 0;
+			pagePanel.Size = new Size(784, 537);
+			pagePanel.TabIndex = 1;
 			// 
 			// MainForm
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(734, 561);
+			ClientSize = new Size(784, 561);
 			Controls.Add(pagePanel);
 			Controls.Add(menuStrip);
-			Icon = (Icon)resources.GetObject("$this.Icon");
 			KeyPreview = true;
 			MainMenuStrip = menuStrip;
 			MinimumSize = new Size(540, 350);
@@ -188,10 +155,6 @@
 		private ToolStripMenuItem checkForUpdatesToolStripMenuItem;
 		private ToolStripMenuItem aboutToolStripMenuItem;
 		private Panel pagePanel;
-		private ToolStripMenuItem changethemeToolStripMenuItem;
-		private ToolStripMenuItem defaultThemeToolStripMenuItem;
-		private ToolStripMenuItem darkThemeToolStripMenuItem;
-		private ToolStripMenuItem useSystemThemeToolStripMenuItem;
 		private ToolStripMenuItem openLogFileToolStripMenuItem;
 		private ToolStripSeparator toolStripMenuItem1;
 	}

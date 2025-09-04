@@ -21,7 +21,7 @@ namespace SavepointManager.Forms
 		public WorldSelectionPage()
 		{
 			InitializeComponent();
-			errorLabelIcon.Image = SystemIcons.Error.ToBitmap();
+			errorLabelIcon.Image = SystemIcons.Asterisk.ToBitmap();
 		}
 
 		public void PageLoaded() => UpdateUI();
@@ -34,6 +34,9 @@ namespace SavepointManager.Forms
 			World.CreateMissingWorlds();
 			IEnumerable<World> worlds;
 
+			worldList.Items.Clear();
+			saveList_SelectedIndexChanged(this, EventArgs.Empty);
+
 			try
 			{
 				worlds = World.GetAllWorlds();
@@ -42,7 +45,7 @@ namespace SavepointManager.Forms
 			{
 				Logger.Log("No worlds have been found", ex);
 
-				errorLabel.Text = $"{ex.Message}\nIf this is not the case, please run the game and create a world first.";
+				errorLabel.Text = $"{ex.Message} If this is not the case, please run the game and create a world first.";
 				return;
 			}
 
@@ -50,17 +53,15 @@ namespace SavepointManager.Forms
 			{
 				Logger.Log("No worlds have been found.", LogSeverity.Info);
 
-				errorLabel.Text = "Project Zomboid is installed, but no world has been created yet.\nPlease run the game and create a world first.";
+				errorLabel.Text = "Project Zomboid is installed, but no world has been created yet. Please run the game and create a world first.";
 				return;
 			}
 
 			errorLabel.Text = "";
-
 			worldList.BeginUpdate();
-			worldList.Items.Clear();
 
 			foreach (World world in worlds)
-				worldList.Items.Add(new ListViewItem(new[] { world.Name, world.Gamemode, world.IsActive ? "Yes" : "No" }) { Tag = world });
+				worldList.Items.Add(new ListViewItem(new[] { world.Name, world.Gamemode, world.IsActive ? "Yes" : "No", world.LastPlayed.ToString() }) { Tag = world });
 
 			if (worldList.Items.Count > 0)
 				worldList.Items[0].Selected = true;
@@ -100,11 +101,13 @@ namespace SavepointManager.Forms
 
 		private void deleteWorldButton_Click(object sender, EventArgs e)
 		{
-			if (SelectedWorld is null || !MessageBoxManager.ShowConfirmation($"Are you sure you want to delete the world {SelectedWorld.Name} ({SelectedWorld.Gamemode}) and ALL OF ITS SAVES? This action cannot be undone!", "World Deletion Confirmation", isYesDefault: false))
+			if (SelectedWorld is null)
 				return;
 
-			SelectedWorld.Delete();
-			UpdateUI();
+			using var form = new WorldDeletionConfirmationForm() { Subject = SelectedWorld };
+
+			if (form.ShowDialog() == DialogResult.OK)
+				UpdateUI();
 		}
 
 		private void listContextMenu_Opening(object sender, CancelEventArgs e)

@@ -28,6 +28,7 @@
     <None Remove="Resources\Audio\Spam\Spam4.wav" />
     <None Remove="Resources\Audio\Spam\Spam5.wav" />
     <None Remove="Resources\Audio\Spam\Spam6.wav" />
+    <None Remove="Resources\Images\NoPreview.jpg" />
     <None Remove="Resources\NoPreview.png" />
   </ItemGroup>
 
@@ -48,7 +49,11 @@
     <EmbeddedResource Include="Resources\Audio\Spam\Spam4.wav" />
     <EmbeddedResource Include="Resources\Audio\Spam\Spam5.wav" />
     <EmbeddedResource Include="Resources\Audio\Spam\Spam6.wav" />
-    <EmbeddedResource Include="Resources\Images\NoPreview.png" />
+    <EmbeddedResource Include="Resources\Images\NoPreview.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
   <ItemGroup>
