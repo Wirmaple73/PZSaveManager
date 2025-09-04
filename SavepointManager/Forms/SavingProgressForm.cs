@@ -105,7 +105,7 @@ namespace SavepointManager.Forms
 				tokenSource.Cancel();
 
 			this.DialogResult = result;
-			WindowHelper.TaskbarProgress.FinishProgress();
+			WindowHelper.TaskbarProgress.Finish();
 		}
 	}
 }

@@ -11,23 +11,57 @@ namespace SavepointManager.Classes
 {
 	public static class WindowHelper
 	{
-		// Snatched from https://stackoverflow.com/a/24187171/18954775
+		public static bool IsInForeground()
+			=> Process.GetCurrentProcess().MainWindowHandle == NativeMethods.GetForegroundWindow();
+
+		public static bool IsInForeground(string processName)
+		{
+			var processes = Process.GetProcessesByName(processName);
+			return processes.Length > 0 && processes[0].MainWindowHandle == NativeMethods.GetForegroundWindow();
+		}
+
+		public static void FlashIfMinimized()
+		{
+			if (!IsInForeground())
+			{
+				SystemSounds.Beep.Play();
+				NativeMethods.FlashWindow(Process.GetCurrentProcess().MainWindowHandle);
+			}
+		}
+
+		public static class Buttons
+		{
+			public static void SetEnabled(IntPtr windowHandle, WindowButton button, bool enabled) =>
+				NativeMethods.EnableMenuItem(NativeMethods.GetSystemMenu(windowHandle, false), (uint)button, enabled ? 0u : 1u);
+
+			public static void DisableCloseButton(IntPtr windowHandle) => SetEnabled(windowHandle, WindowButton.Close, false);
+
+			public enum WindowButton
+			{
+				Close = 0xF060,
+				Maximize = 0xF030,
+				Minimize = 0xF020
+			}
+		}
+
 		public static class TaskbarProgress
 		{
 			private static readonly ITaskbarList3 Taskbar = (ITaskbarList3)new TaskbarInstance();
-			private static readonly bool IsUserInTheStoneAge = Environment.OSVersion.Version < new Version(6, 1);
 
 			private static int progress = 0;
 			private static TaskbarState state = TaskbarState.Normal;
+
+			static TaskbarProgress()
+			{
+				if (Environment.OSVersion.Version < new Version(6, 1))
+					throw new PlatformNotSupportedException("Taskbar progress is not supported on operating systems older than Windows 7.");
+			}
 
 			public static TaskbarState State
 			{
 				get => state;
 				set
 				{
-					if (IsUserInTheStoneAge)
-						return;
-
 					state = value;
 					Taskbar.SetProgressState(Process.GetCurrentProcess().MainWindowHandle, value);
 				}
@@ -38,21 +72,19 @@ namespace SavepointManager.Classes
 				get => progress;
 				set
 				{
-					if (IsUserInTheStoneAge)
-						return;
+					if (value < 0 || value > 100)
+						throw new ArgumentOutOfRangeException(nameof(Progress));
 
-					if (progress < 0 || progress > 100)
-						throw new ArgumentOutOfRangeException(nameof(Progress), "Progress must be between 0 and 100, inclusive.");
+					progress = value;
 
 					if (State != TaskbarState.Normal)
 						State = TaskbarState.Normal;
 
-					progress = value;
 					Taskbar.SetProgressValue(Process.GetCurrentProcess().MainWindowHandle, (ulong)value, 100);
 				}
 			}
 
-			public static void FinishProgress()
+			public static void Finish()
 			{
 				Progress = 0;
 				State = TaskbarState.NoProgress;
@@ -67,149 +99,25 @@ namespace SavepointManager.Classes
 				Paused = 0x8
 			}
 
-			#region P/Invoke boilerplate
-			[ComImport()]
-			[Guid("ea1afb91-9e28-4b86-90e9-9e9f8a5eefaf")]
-			[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+			#region COM interop
+			[ComImport, Guid("ea1afb91-9e28-4b86-90e9-9e9f8a5eefaf"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 			private interface ITaskbarList3
 			{
-				// ITaskbarList
-				[PreserveSig]
 				void HrInit();
-				[PreserveSig]
 				void AddTab(IntPtr hwnd);
-				[PreserveSig]
 				void DeleteTab(IntPtr hwnd);
-				[PreserveSig]
 				void ActivateTab(IntPtr hwnd);
-				[PreserveSig]
 				void SetActiveAlt(IntPtr hwnd);
 
-				// ITaskbarList2
-				[PreserveSig]
 				void MarkFullscreenWindow(IntPtr hwnd, [MarshalAs(UnmanagedType.Bool)] bool fFullscreen);
 
-				// ITaskbarList3
-				[PreserveSig]
-				void SetProgressValue(IntPtr hwnd, UInt64 ullCompleted, UInt64 ullTotal);
-				[PreserveSig]
+				void SetProgressValue(IntPtr hwnd, ulong ullCompleted, ulong ullTotal);
 				void SetProgressState(IntPtr hwnd, TaskbarState state);
 			}
 
-			[ComImport()]
-			[Guid("56fdf344-fd6d-11d0-958a-006097c9a090")]
-			[ClassInterface(ClassInterfaceType.None)]
-			private class TaskbarInstance
-			{
-			}
+			[ComImport, Guid("56fdf344-fd6d-11d0-958a-006097c9a090"), ClassInterface(ClassInterfaceType.None)]
+			private class TaskbarInstance { }
 			#endregion
 		}
-
-		public static bool IsInForeground()
-			=> Process.GetCurrentProcess().MainWindowHandle == GetForegroundWindow();
-
-		public static bool IsInForeground(string processName)
-		{
-			var processes = Process.GetProcessesByName(processName);
-			return processes.Length > 0 && processes[0].MainWindowHandle == GetForegroundWindow();
-		}
-
-		// Stolen from https://stackoverflow.com/a/15937460
-		public static void SetButtonEnabled(IntPtr windowHandle, StateWindowButton button, bool enabled) => EnableMenuItem(GetSystemMenu(windowHandle, false), (uint)button, (uint)(enabled ? 0 : 1));
-
-		public static void SetButtonDrawn(IntPtr windowHandle, DisplayWindowButton button, bool draw)
-		{
-			const int GWL_STYLE = -16, MF_BYCOMMAND = 0x00000000;
-
-			int style = GetWindowLong(windowHandle, GWL_STYLE);
-
-			if (draw)
-				style |= (int)button;
-			else
-				style &= ~(int)button;
-
-			_ = SetWindowLong(windowHandle, GWL_STYLE, style);
-
-			IntPtr hMenu = GetSystemMenu(windowHandle, false);
-
-			StateWindowButton stateButton = button switch
-			{
-				DisplayWindowButton.Maximize => StateWindowButton.Maximize,
-				DisplayWindowButton.Minimize => StateWindowButton.Minimize,
-				_ => throw new ArgumentOutOfRangeException(nameof(button))
-			};
-
-			if (draw)
-				GetSystemMenu(windowHandle, true);
-			else
-				RemoveMenu(hMenu, (uint)stateButton, MF_BYCOMMAND);
-		}
-
-		public enum StateWindowButton
-		{
-			Close = 0xF060,
-			Maximize = 0xF030,
-			Minimize = 0xF020
-		}
-
-		public enum DisplayWindowButton
-		{
-			Maximize = 0x10000,
-			Minimize = 0x20000
-		}
-
-		public static void FlashIfMinimized()
-		{
-			if (!IsInForeground())
-			{
-				SystemSounds.Beep.Play();
-				FlashWindowEx(ref FlashInfo);
-			}
-		}
-
-		#region More P/Invoke boilerplate
-		private static FLASHWINFO FlashInfo = new()
-		{
-			cbSize = Convert.ToUInt32(Marshal.SizeOf(typeof(FLASHWINFO))),
-			hwnd = Process.GetCurrentProcess().MainWindowHandle,
-			dwFlags = FLASHW_ALL | FLASHW_TIMERNOFG,
-			uCount = uint.MaxValue,
-			dwTimeout = 0
-		};
-
-		[StructLayout(LayoutKind.Sequential)]
-		private struct FLASHWINFO
-		{
-			public uint cbSize;
-			public IntPtr hwnd;
-			public uint dwFlags;
-			public uint uCount;
-			public uint dwTimeout;
-		}
-
-		[DllImport("user32.dll")]
-		private static extern bool FlashWindowEx(ref FLASHWINFO pwfi);
-
-		[DllImport("user32.dll")]
-		private static extern IntPtr GetForegroundWindow();
-
-		private const uint FLASHW_ALL = 3;         // Flash both caption and taskbar button
-		private const uint FLASHW_TIMERNOFG = 12;  // Flash until window comes to foreground
-
-		[DllImport("user32.dll")]
-		private static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
-
-		[DllImport("user32.dll")]
-		private static extern bool RemoveMenu(IntPtr hMenu, uint uPosition, uint uFlags);
-
-		[DllImport("user32.dll")]
-		private static extern bool EnableMenuItem(IntPtr hMenu, uint itemId, uint uEnable);
-
-		[DllImport("user32.dll")]
-		private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
-
-		[DllImport("user32.dll")]
-		private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
-		#endregion
 	}
 }

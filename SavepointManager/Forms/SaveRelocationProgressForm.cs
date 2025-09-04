@@ -36,7 +36,7 @@ namespace SavepointManager.Forms
 
 		private async Task MoveSaves()
 		{
-			WindowHelper.SetButtonEnabled(this.Handle, WindowHelper.StateWindowButton.Close, false);
+			WindowHelper.Buttons.DisableCloseButton(this.Handle);
 			var dt = DateTime.Now;
 
 			await Task.Run(() =>
@@ -95,7 +95,7 @@ namespace SavepointManager.Forms
 			if (result == DialogResult.None)
 				e.Cancel = true;
 
-			WindowHelper.TaskbarProgress.FinishProgress();
+			WindowHelper.TaskbarProgress.Finish();
 		}
 	}
 }

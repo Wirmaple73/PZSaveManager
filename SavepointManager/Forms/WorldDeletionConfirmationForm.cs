@@ -35,16 +35,12 @@ namespace SavepointManager.Forms
 			warningImage.Image = SystemIcons.Warning.ToBitmap();
 		}
 
-		private void WorldDeletionConfirmationForm_Shown(object sender, EventArgs e)
-		{
-			WindowHelper.SetButtonDrawn(this.Handle, WindowHelper.DisplayWindowButton.Maximize, false);
-			SystemSounds.Beep.Play();
-		}
+		private void WorldDeletionConfirmationForm_Shown(object sender, EventArgs e) => SystemSounds.Beep.Play();
 
 		private async void removeButton_Click(object sender, EventArgs e)
 		{
 			cancelButton.Enabled = removeButton.Enabled = confirmationTextBox.Enabled = false;
-			WindowHelper.SetButtonEnabled(this.Handle, WindowHelper.StateWindowButton.Close, false);
+			WindowHelper.Buttons.DisableCloseButton(this.Handle);
 
 			isDeletionInProgress = true;
 			statusLabel.Visible = actualStatusLabel.Visible = progressLabel.Visible = progressBar.Visible = true;

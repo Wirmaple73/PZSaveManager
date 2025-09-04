@@ -34,7 +34,7 @@ namespace SavepointManager.Forms
 			if (SelectedSave is null || SelectedSave.AssociatedWorld is null)
 				throw new NullReferenceException("The selected save is null.");
 
-			WindowHelper.SetButtonEnabled(this.Handle, WindowHelper.StateWindowButton.Close, false);
+			WindowHelper.Buttons.DisableCloseButton(this.Handle);
 			this.Invoke(() => this.Text = $"Restoring {SelectedSave.AssociatedWorld.Name}");
 
 			try
@@ -166,7 +166,7 @@ namespace SavepointManager.Forms
 				e.Cancel = true;
 
 			this.DialogResult = result;
-			WindowHelper.TaskbarProgress.FinishProgress();
+			WindowHelper.TaskbarProgress.Finish();
 		}
 	}
 }
