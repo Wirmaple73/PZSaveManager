@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			menuStrip = new MenuStrip();
 			fileToolStripMenuItem = new ToolStripMenuItem();
 			openLogFileToolStripMenuItem = new ToolStripMenuItem();
@@ -71,13 +72,13 @@
 			// toolStripMenuItem1
 			// 
 			toolStripMenuItem1.Name = "toolStripMenuItem1";
-			toolStripMenuItem1.Size = new Size(179, 6);
+			toolStripMenuItem1.Size = new Size(193, 6);
 			// 
 			// exitToolStripMenuItem
 			// 
 			exitToolStripMenuItem.Name = "exitToolStripMenuItem";
 			exitToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.F4;
-			exitToolStripMenuItem.Size = new Size(182, 22);
+			exitToolStripMenuItem.Size = new Size(196, 22);
 			exitToolStripMenuItem.Text = "&Exit";
 			exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
 			// 
@@ -129,14 +130,17 @@
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
+			BackColor = SystemColors.Window;
 			ClientSize = new Size(784, 561);
 			Controls.Add(pagePanel);
 			Controls.Add(menuStrip);
+			Icon = (Icon)resources.GetObject("$this.Icon");
 			KeyPreview = true;
 			MainMenuStrip = menuStrip;
 			MinimumSize = new Size(540, 350);
 			Name = "MainForm";
 			Text = "Project Zomboid Save Manager";
+			Icon = Properties.Resources.Icon;
 			FormClosing += MainForm_FormClosing;
 			Shown += MainForm_Shown;
 			menuStrip.ResumeLayout(false);

@@ -1,17 +1,10 @@
 ﻿using SharpCompress.Archives;
 using SharpCompress.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SavepointManager.Properties;
 using SharpCompress.Archives.Zip;
 using System.Xml.Linq;
 using SavepointManager.Classes.Exceptions;
 using SharpCompress.Archives.Tar;
-using SharpCompress.Readers;
-using System.Diagnostics;
 using System.Collections.Concurrent;
 using System.Buffers;
 
@@ -71,7 +64,7 @@ namespace SavepointManager.Classes
 			await Task.Run(() =>
 			{
 				if (AssociatedWorld is null)
-					throw new NullReferenceException("Cannot restore an orphaned save.");
+					throw new InvalidOperationException($"{nameof(AssociatedWorld)} is null.");
 
 				if (AssociatedWorld.IsActive)
 					throw new WorldActiveException("The current world must not be active before proceeding.");
@@ -170,13 +163,14 @@ namespace SavepointManager.Classes
 		{
 			lock (saveLock)
 			{
-				// TODO: Don't export if save directory is empty
-
 				if (AssociatedWorld is null)
-					throw new NullReferenceException("Cannot export an orphaned save.");
+					throw new InvalidOperationException($"{nameof(AssociatedWorld)} is null.");
 
 				if (IsSaveInProgress)
 					throw new InvalidOperationException("Another save is already in progress. Please wait until it is completed.");
+
+				if (!Directory.EnumerateFiles(AssociatedWorld.Path, "*", SearchOption.TopDirectoryOnly).Any())
+					throw new NotSupportedException("Cannot export an empty world.");
 
 				SetSaveState(true, true);
 			}
@@ -308,10 +302,10 @@ namespace SavepointManager.Classes
 		public async Task RenameAsync(string newDescription)
 		{
 			if (AssociatedWorld is null)
-				throw new NullReferenceException("Cannot rename orphaned saves.");
+				throw new InvalidOperationException($"{nameof(AssociatedWorld)} is null.");
 
 			if (ArchivePath is null)
-				throw new NullReferenceException(nameof(ArchivePath));
+				throw new InvalidOperationException($"{nameof(ArchivePath)} is null.");
 
 			await Task.Run(() =>
 			{
@@ -367,7 +361,7 @@ namespace SavepointManager.Classes
 		private static XDocument CreateMetadata(string worldName, string worldGamemode, string description, DateTime date)
 		{
 			return new XDocument(
-				new XElement(XmlElementName.Metadata,
+				new XElement(XmlElementName.SaveMetadata,
 					new XElement(XmlElementName.WorldName, worldName),
 					new XElement(XmlElementName.WorldGamemode, worldGamemode),
 					new XElement(XmlElementName.Description, description),

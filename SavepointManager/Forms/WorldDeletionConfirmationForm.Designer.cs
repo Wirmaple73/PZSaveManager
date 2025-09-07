@@ -33,12 +33,9 @@
 			label1 = new Label();
 			confirmationTextBox = new TextBox();
 			panel1 = new Panel();
-			progressLabel = new Label();
-			actualStatusLabel = new Label();
-			statusLabel = new Label();
 			progressBar = new ProgressBar();
+			deleteButton = new Button();
 			cancelButton = new Button();
-			removeButton = new Button();
 			panel2 = new Panel();
 			((System.ComponentModel.ISupportInitialize)warningImage).BeginInit();
 			panel1.SuspendLayout();
@@ -68,16 +65,16 @@
 			// 
 			label1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
 			label1.AutoSize = true;
-			label1.Location = new Point(9, 77);
+			label1.Location = new Point(9, 71);
 			label1.Name = "label1";
 			label1.Size = new Size(478, 15);
 			label1.TabIndex = 1;
-			label1.Text = "&To proceed with removal, please type \"delete\" in the box below. This may take some time.";
+			label1.Text = "&To proceed with deletion, please type \"delete\" in the box below. This may take some time.";
 			// 
 			// confirmationTextBox
 			// 
 			confirmationTextBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-			confirmationTextBox.Location = new Point(12, 100);
+			confirmationTextBox.Location = new Point(12, 94);
 			confirmationTextBox.Name = "confirmationTextBox";
 			confirmationTextBox.Size = new Size(500, 23);
 			confirmationTextBox.TabIndex = 2;
@@ -86,81 +83,49 @@
 			// panel1
 			// 
 			panel1.BackColor = SystemColors.Control;
-			panel1.Controls.Add(progressLabel);
-			panel1.Controls.Add(actualStatusLabel);
-			panel1.Controls.Add(statusLabel);
 			panel1.Controls.Add(progressBar);
+			panel1.Controls.Add(deleteButton);
 			panel1.Controls.Add(cancelButton);
-			panel1.Controls.Add(removeButton);
 			panel1.Dock = DockStyle.Bottom;
-			panel1.Location = new Point(0, 136);
+			panel1.Location = new Point(0, 127);
 			panel1.Name = "panel1";
-			panel1.Size = new Size(524, 65);
-			panel1.TabIndex = 8;
-			// 
-			// progressLabel
-			// 
-			progressLabel.AutoSize = true;
-			progressLabel.Location = new Point(276, 32);
-			progressLabel.Name = "progressLabel";
-			progressLabel.Size = new Size(35, 15);
-			progressLabel.TabIndex = 13;
-			progressLabel.Text = "100%";
-			progressLabel.Visible = false;
-			// 
-			// actualStatusLabel
-			// 
-			actualStatusLabel.AutoSize = true;
-			actualStatusLabel.Location = new Point(50, 6);
-			actualStatusLabel.Name = "actualStatusLabel";
-			actualStatusLabel.Size = new Size(57, 15);
-			actualStatusLabel.TabIndex = 11;
-			actualStatusLabel.Text = "Starting...";
-			actualStatusLabel.Visible = false;
-			// 
-			// statusLabel
-			// 
-			statusLabel.AutoSize = true;
-			statusLabel.Location = new Point(11, 6);
-			statusLabel.Name = "statusLabel";
-			statusLabel.Size = new Size(42, 15);
-			statusLabel.TabIndex = 10;
-			statusLabel.Text = "Status:";
-			statusLabel.Visible = false;
+			panel1.Size = new Size(524, 54);
+			panel1.TabIndex = 3;
 			// 
 			// progressBar
 			// 
 			progressBar.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-			progressBar.Location = new Point(12, 26);
+			progressBar.Location = new Point(12, 15);
+			progressBar.MarqueeAnimationSpeed = 10;
 			progressBar.Name = "progressBar";
-			progressBar.Size = new Size(260, 26);
-			progressBar.Style = ProgressBarStyle.Continuous;
-			progressBar.TabIndex = 12;
+			progressBar.Size = new Size(308, 26);
+			progressBar.Style = ProgressBarStyle.Marquee;
+			progressBar.TabIndex = 0;
 			progressBar.Visible = false;
+			// 
+			// deleteButton
+			// 
+			deleteButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+			deleteButton.Enabled = false;
+			deleteButton.FlatStyle = FlatStyle.System;
+			deleteButton.Location = new Point(334, 14);
+			deleteButton.Name = "deleteButton";
+			deleteButton.Size = new Size(86, 28);
+			deleteButton.TabIndex = 1;
+			deleteButton.Text = "&Delete";
+			deleteButton.UseVisualStyleBackColor = true;
+			deleteButton.Click += deleteButton_Click;
 			// 
 			// cancelButton
 			// 
 			cancelButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 			cancelButton.FlatStyle = FlatStyle.System;
-			cancelButton.Location = new Point(334, 25);
+			cancelButton.Location = new Point(426, 14);
 			cancelButton.Name = "cancelButton";
 			cancelButton.Size = new Size(86, 28);
-			cancelButton.TabIndex = 8;
+			cancelButton.TabIndex = 2;
 			cancelButton.Text = "&Cancel";
 			cancelButton.UseVisualStyleBackColor = true;
-			// 
-			// removeButton
-			// 
-			removeButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			removeButton.Enabled = false;
-			removeButton.FlatStyle = FlatStyle.System;
-			removeButton.Location = new Point(426, 25);
-			removeButton.Name = "removeButton";
-			removeButton.Size = new Size(86, 28);
-			removeButton.TabIndex = 9;
-			removeButton.Text = "&Remove";
-			removeButton.UseVisualStyleBackColor = true;
-			removeButton.Click += removeButton_Click;
 			// 
 			// panel2
 			// 
@@ -169,17 +134,17 @@
 			panel2.Controls.Add(deletionMessage);
 			panel2.Location = new Point(50, 12);
 			panel2.Name = "panel2";
-			panel2.Size = new Size(470, 60);
-			panel2.TabIndex = 9;
+			panel2.Size = new Size(470, 56);
+			panel2.TabIndex = 0;
 			// 
 			// WorldDeletionConfirmationForm
 			// 
-			AcceptButton = removeButton;
+			AcceptButton = deleteButton;
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			BackColor = SystemColors.Window;
 			CancelButton = cancelButton;
-			ClientSize = new Size(524, 201);
+			ClientSize = new Size(524, 181);
 			Controls.Add(panel2);
 			Controls.Add(panel1);
 			Controls.Add(confirmationTextBox);
@@ -195,7 +160,6 @@
 			Shown += WorldDeletionConfirmationForm_Shown;
 			((System.ComponentModel.ISupportInitialize)warningImage).EndInit();
 			panel1.ResumeLayout(false);
-			panel1.PerformLayout();
 			panel2.ResumeLayout(false);
 			panel2.PerformLayout();
 			ResumeLayout(false);
@@ -209,12 +173,9 @@
 		private Label label1;
 		private TextBox confirmationTextBox;
 		private Panel panel1;
-		private Label actualStatusLabel;
-		private Label statusLabel;
 		private ProgressBar progressBar;
+		private Button deleteButton;
 		private Button cancelButton;
-		private Button removeButton;
 		private Panel panel2;
-		private Label progressLabel;
 	}
 }

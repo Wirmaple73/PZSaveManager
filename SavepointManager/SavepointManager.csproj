@@ -6,13 +6,13 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
-    <ApplicationIcon>Icon.ico</ApplicationIcon>
     <Title>Project Zomboid Save Manager</Title>
     <Product>Project Zomboid Save Manager</Product>
     <Company>Wirmaple73</Company>
     <AssemblyVersion>1.0</AssemblyVersion>
     <FileVersion>1.0</FileVersion>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
+    <ApplicationIcon>Resources\Images\Icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,12 +28,9 @@
     <None Remove="Resources\Audio\Spam\Spam4.wav" />
     <None Remove="Resources\Audio\Spam\Spam5.wav" />
     <None Remove="Resources\Audio\Spam\Spam6.wav" />
+    <None Remove="Resources\Images\Icon.ico" />
     <None Remove="Resources\Images\NoPreview.jpg" />
     <None Remove="Resources\NoPreview.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Icon.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -49,6 +46,7 @@
     <EmbeddedResource Include="Resources\Audio\Spam\Spam4.wav" />
     <EmbeddedResource Include="Resources\Audio\Spam\Spam5.wav" />
     <EmbeddedResource Include="Resources\Audio\Spam\Spam6.wav" />
+    <EmbeddedResource Include="Resources\Images\Icon.ico" />
     <EmbeddedResource Include="Resources\Images\NoPreview.jpg" />
   </ItemGroup>
 

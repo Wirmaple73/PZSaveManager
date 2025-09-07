@@ -1,18 +1,7 @@
-﻿using SavepointManager.Forms;
-using SavepointManager.Properties;
+﻿using System.Xml.Linq;
 using SharpCompress.Archives;
 using SharpCompress.Archives.Tar;
 using SharpCompress.Archives.Zip;
-using SharpCompress.Common;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Media;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using IOPath = System.IO.Path;
 
 namespace SavepointManager.Classes
@@ -37,7 +26,7 @@ namespace SavepointManager.Classes
 		public string GamemodePath { get; }
 		public string BackupPath { get; }
 
-		public DateTime LastPlayed => Directory.GetLastWriteTime(Path);
+		public DateTime LastActive => Directory.GetLastWriteTime(Path);
 
 		public bool IsActive
 		{
@@ -82,9 +71,10 @@ namespace SavepointManager.Classes
 
 		private static IEnumerable<Save> GetAllSaves()
 		{
-			// TODO: Make this parallel
 			if (!Directory.Exists(Save.BackupPath))
 				yield break;
+
+			IEnumerable<World>? allWorlds = null;
 
 			foreach (string folderPath in Directory.EnumerateDirectories(Save.BackupPath))
 			{
@@ -104,9 +94,9 @@ namespace SavepointManager.Classes
 					{
 						var xml = XElement.Load(metadataPath);
 
-						worldName	  = xml.Element(XmlElementName.WorldName)?.Value;
+						worldName = xml.Element(XmlElementName.WorldName)?.Value;
 						worldGamemode = xml.Element(XmlElementName.WorldGamemode)?.Value;
-						description	  = xml.Element(XmlElementName.Description)?.Value;
+						description = xml.Element(XmlElementName.Description)?.Value;
 
 						if (DateTime.TryParse(xml.Element(XmlElementName.Date)?.Value, out var parsedDate))
 							date = parsedDate;
@@ -179,12 +169,11 @@ namespace SavepointManager.Classes
 					if (string.IsNullOrWhiteSpace(worldName))
 						return null;
 
-					// TODO: Use foreach if needed
-					var worlds = GetAllWorlds();
+					allWorlds ??= GetAllWorlds();
 
 					return !string.IsNullOrWhiteSpace(worldGamemode) ?
-						worlds.FirstOrDefault(w => w.Name == worldName && w.Gamemode == worldGamemode) :
-						worlds.FirstOrDefault(w => w.Name == worldName);
+						allWorlds.FirstOrDefault(w => w.Name == worldName && w.Gamemode == worldGamemode) :
+						allWorlds.FirstOrDefault(w => w.Name == worldName);
 				}
 			}
 		}
@@ -249,10 +238,9 @@ namespace SavepointManager.Classes
 
 		public static void CreateMissingWorlds()
 		{
-            // Create non-existent worlds that have any saves associated with them
-			// TODO: Parallelize
-            foreach (Save save in GetOrphanedSaves())
-            {
+			// Create non-existent worlds that have any saves associated with them
+			foreach (Save save in GetOrphanedSaves())
+			{
 				if (string.IsNullOrWhiteSpace(save.ArchivePath))
 					continue;
 
@@ -303,53 +291,54 @@ namespace SavepointManager.Classes
 					Logger.Log($"Could not create the world {worldName} ({worldGamemode}) for orphaned save at {parentDir}", ex);
 				}
 			}
-        }
+		}
 
-		public void Delete()
+		public async Task DeleteAsync()
 		{
-			// TODO: Parallelize
-			// Delete all saves
-			foreach (Save save in GetSaves())
+			await Task.Run(() =>
 			{
-				if (string.IsNullOrWhiteSpace(save.ArchivePath))
-					continue;
-
-				string? parentFolderPath = IOPath.GetDirectoryName(save.ArchivePath);
-
-				if (string.IsNullOrWhiteSpace(parentFolderPath) || !Directory.Exists(parentFolderPath))
-					continue;
-
-				foreach (string filename in FilesToDelete)
+				// Delete all saves
+				Parallel.ForEach(GetSaves(), save =>
 				{
-					string filePath = IOPath.Combine(parentFolderPath, filename);
+					if (string.IsNullOrWhiteSpace(save.ArchivePath))
+						return;  // continue
 
-					if (File.Exists(filePath))
+					string? parentFolderPath = IOPath.GetDirectoryName(save.ArchivePath);
+
+					if (string.IsNullOrWhiteSpace(parentFolderPath) || !Directory.Exists(parentFolderPath))
+						return;
+
+					foreach (string filename in FilesToDelete)
 					{
-						try
+						string filePath = IOPath.Combine(parentFolderPath, filename);
+
+						if (File.Exists(filePath))
 						{
-							File.Delete(filePath);
-						}
-						catch (Exception ex)
-						{
-							Logger.Log($"Couldn't delete the file at {filePath}", ex);
+							try
+							{
+								File.Delete(filePath);
+							}
+							catch (Exception ex)
+							{
+								Logger.Log($"Couldn't delete the file at {filePath}", ex);
+							}
 						}
 					}
-				}
 
-				try
-				{
-					Directory.Delete(parentFolderPath);
-				}
-				catch (Exception ex)
-				{
-					Logger.Log($"Couldn't delete the save directory at {parentFolderPath}", ex);
-				}
-			};
+					try
+					{
+						Directory.Delete(parentFolderPath);
+					}
+					catch (Exception ex)
+					{
+						Logger.Log($"Couldn't delete the save directory at {parentFolderPath}", ex);
+					}
+				});
 
-			// TODO: Parallelize
-			// Delete the world itself
-			if (Directory.Exists(Path))
-				Directory.Delete(Path, true);
+				// Too lazy to parallelize. Who wants to delete an entire world anyway?
+				if (Directory.Exists(Path))
+					Directory.Delete(Path, true);
+			});
 		}
 	}
 }

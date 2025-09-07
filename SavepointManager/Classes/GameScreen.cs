@@ -1,11 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
-
-namespace SavepointManager.Classes
+﻿namespace SavepointManager.Classes
 {
 	public static class GameScreen
 	{

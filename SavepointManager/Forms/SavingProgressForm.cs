@@ -1,14 +1,4 @@
 ﻿using SavepointManager.Classes;
-using SharpCompress.Common;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using SavepointManager.Properties;
 
 namespace SavepointManager.Forms
@@ -81,7 +71,12 @@ namespace SavepointManager.Forms
 				};
 
 				if (e.Status == ArchiveStatus.Exporting)
+				{
+					WindowHelper.Buttons.DisableCloseButton(this.Handle);
+					this.cancelButton.Enabled = false;
+
 					progress.Text = "~";
+				}
 
 				if (progressBar.Style == ProgressBarStyle.Marquee)
 					WindowHelper.TaskbarProgress.State = WindowHelper.TaskbarProgress.TaskbarState.Indeterminate;

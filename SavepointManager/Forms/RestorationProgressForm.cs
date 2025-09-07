@@ -1,14 +1,5 @@
 ﻿using SavepointManager.Classes;
 using SavepointManager.Classes.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace SavepointManager.Forms
 {
@@ -32,7 +23,7 @@ namespace SavepointManager.Forms
 		private async Task RestoreAsync()
 		{
 			if (SelectedSave is null || SelectedSave.AssociatedWorld is null)
-				throw new NullReferenceException("The selected save is null.");
+				throw new InvalidOperationException($"{nameof(SelectedSave)} or the world associated with it is null.");
 
 			WindowHelper.Buttons.DisableCloseButton(this.Handle);
 			this.Invoke(() => this.Text = $"Restoring {SelectedSave.AssociatedWorld.Name}");

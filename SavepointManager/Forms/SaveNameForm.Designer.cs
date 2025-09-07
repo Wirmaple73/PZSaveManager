@@ -42,7 +42,7 @@
 			label1.Name = "label1";
 			label1.Size = new Size(96, 15);
 			label1.TabIndex = 0;
-			label1.Text = "Save description:";
+			label1.Text = "&Save description:";
 			// 
 			// saveDescription
 			// 
@@ -57,10 +57,10 @@
 			// 
 			okButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 			okButton.FlatStyle = FlatStyle.System;
-			okButton.Location = new Point(306, 111);
+			okButton.Location = new Point(214, 111);
 			okButton.Name = "okButton";
 			okButton.Size = new Size(86, 28);
-			okButton.TabIndex = 2;
+			okButton.TabIndex = 3;
 			okButton.Text = "&OK";
 			okButton.UseVisualStyleBackColor = true;
 			okButton.Click += okButton_Click;
@@ -71,14 +71,14 @@
 			label2.Location = new Point(9, 69);
 			label2.Name = "label2";
 			label2.Size = new Size(233, 15);
-			label2.TabIndex = 3;
+			label2.TabIndex = 2;
 			label2.Text = "Example: \"Before testing my new shotgun\"";
 			// 
 			// cancelButton
 			// 
 			cancelButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 			cancelButton.FlatStyle = FlatStyle.System;
-			cancelButton.Location = new Point(209, 111);
+			cancelButton.Location = new Point(306, 111);
 			cancelButton.Name = "cancelButton";
 			cancelButton.Size = new Size(86, 28);
 			cancelButton.TabIndex = 4;
@@ -90,6 +90,7 @@
 			AcceptButton = okButton;
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
+			BackColor = SystemColors.Window;
 			CancelButton = cancelButton;
 			ClientSize = new Size(404, 151);
 			Controls.Add(cancelButton);

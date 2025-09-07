@@ -1,14 +1,5 @@
 ﻿using SavepointManager.Classes;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Media;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace SavepointManager.Forms
 {
@@ -25,7 +16,7 @@ namespace SavepointManager.Forms
 				subject = value;
 
 				if (value is not null)
-					deletionMessage.Text = $"Warning: You are about to PERMANENTLY delete the world {value.Name} ({value.Gamemode}), including all of its saves ({value.GetSaves().Count()} in total). This action cannot be undone.";
+					deletionMessage.Text = $"Warning: You are about to PERMANENTLY delete the world {value.Name} ({value.Gamemode}), including all of its saves ({value.GetSaves().Count()} in total). This action cannot be undone!";
 			}
 		}
 
@@ -37,24 +28,25 @@ namespace SavepointManager.Forms
 
 		private void WorldDeletionConfirmationForm_Shown(object sender, EventArgs e) => SystemSounds.Beep.Play();
 
-		private async void removeButton_Click(object sender, EventArgs e)
+		private async void deleteButton_Click(object sender, EventArgs e)
 		{
-			cancelButton.Enabled = removeButton.Enabled = confirmationTextBox.Enabled = false;
+			if (Subject is null)
+				throw new InvalidOperationException($"{nameof(Subject)} is null.");
+
+			deleteButton.Enabled = cancelButton.Enabled = confirmationTextBox.Enabled = false;
 			WindowHelper.Buttons.DisableCloseButton(this.Handle);
 
 			isDeletionInProgress = true;
-			statusLabel.Visible = actualStatusLabel.Visible = progressLabel.Visible = progressBar.Visible = true;
+			progressBar.Visible = true;
 
-			// TODO: Parallelize and report progress
-			//Subject?.Delete();
-			await Task.Delay(10000);
+			await Subject.DeleteAsync();
 
 			isDeletionInProgress = false;
 			this.DialogResult = DialogResult.OK;
 		}
 
 		private void confirmationBox_TextChanged(object sender, EventArgs e)
-			=> removeButton.Enabled = confirmationTextBox.Text.Trim().Equals("delete", StringComparison.OrdinalIgnoreCase);
+			=> deleteButton.Enabled = confirmationTextBox.Text.Trim().Equals("delete", StringComparison.OrdinalIgnoreCase);
 
 		private void WorldDeletionConfirmationForm_FormClosing(object sender, FormClosingEventArgs e)
 		{

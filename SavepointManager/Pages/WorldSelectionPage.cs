@@ -1,15 +1,6 @@
 ﻿using SavepointManager.Classes;
 using SavepointManager.Properties;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace SavepointManager.Forms
 {
@@ -61,7 +52,7 @@ namespace SavepointManager.Forms
 			worldList.BeginUpdate();
 
 			foreach (World world in worlds)
-				worldList.Items.Add(new ListViewItem(new[] { world.Name, world.Gamemode, world.IsActive ? "Yes" : "No", world.LastPlayed.ToString() }) { Tag = world });
+				worldList.Items.Add(new ListViewItem(new[] { world.Name, world.Gamemode, world.IsActive ? "Yes" : "No", world.LastActive.ToString() }) { Tag = world });
 
 			if (worldList.Items.Count > 0)
 				worldList.Items[0].Selected = true;

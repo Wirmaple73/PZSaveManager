@@ -1,15 +1,6 @@
-﻿using NHotkey;
+﻿using System.Diagnostics;
 using SavepointManager.Classes;
 using SavepointManager.Properties;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace SavepointManager.Forms
 {
@@ -100,9 +91,10 @@ namespace SavepointManager.Forms
 			}
 
 			// Check for insufficient disk space
-			double requiredDiskSpace = Save.DiskInfo.TotalOccupiedSaveSize + 64e+6;  // Provide 64 MB of headroom
+			const double Headroom = 64e+6;
+			double requiredDiskSpace = Save.DiskInfo.TotalOccupiedSaveSize + Headroom;
 
-			var srcDrive = new DriveInfo(Settings.Default.SavePath);
+			var srcDrive = new DriveInfo(Save.BackupPath);
 			var destDrive = new DriveInfo(backupPath.Text);
 
 			if (srcDrive.Name != destDrive.Name && destDrive.AvailableFreeSpace < requiredDiskSpace)
@@ -119,18 +111,18 @@ namespace SavepointManager.Forms
 				}
 				catch (Exception ex)
 				{
-					Logger.Log($"Could not create the save backup directory at {Save.BackupPath}", ex);
+					Logger.Log($"Could not create the save backup directory at {backupPath.Text}", ex);
 					MessageBoxManager.ShowError("The selected save backup path could not be created automatically. Please select another path.");
 
 					return;
 				}
 			}
 
-			if (backupPath.Text != Settings.Default.SavePath && Directory.Exists(Settings.Default.SavePath))  // If the user has changed the backup path
+			if (backupPath.Text != Save.BackupPath && Directory.Exists(Save.BackupPath))  // If the user has changed the backup path
 			{
 				using var form = new SaveRelocationProgressForm()
 				{
-					OldPath = Settings.Default.SavePath,
+					OldPath = Save.BackupPath,
 					NewPath = backupPath.Text
 				};
 
@@ -138,7 +130,7 @@ namespace SavepointManager.Forms
 				WindowHelper.FlashIfMinimized();
 
 				if (result != DialogResult.OK && MessageBoxManager.ShowConfirmation($"Some backup folders could not be moved to the new backup path automatically. These folders have to be moved manually in order to be recognized by the program later. Would you like to browse and move the folders yourself now?\n\nError message: {form.ErrorMessage}", "Backup Path Error", MessageBoxIcon.Error, true))
-					FileExplorer.Browse(Settings.Default.SavePath);
+					FileExplorer.Browse(Save.BackupPath);
 			}
 
 			Settings.Default.SavePath = backupPath.Text;
@@ -171,12 +163,12 @@ namespace SavepointManager.Forms
 		private void resetButton_Click(object sender, EventArgs e)
 		{
 			backupPath.Text = Save.DefaultBackupPath;
-			useCompression.Checked = false;
+			useCompression.Checked = true;
 			useSaveSounds.Checked = true;
 			soundVolume.Value = 80;
 			saveHotkeys.Text = Keys.F6.ToString();
 			abortSaveHotkeys.Text = Keys.F7.ToString();
-			enableAutosave.Checked = true;
+			enableAutosave.Checked = false;
 			autosaveInterval.Text = SaveHelper.DefaultAutosaveInterval.ToString();
 		}
 	}

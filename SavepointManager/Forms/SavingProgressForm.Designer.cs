@@ -62,7 +62,7 @@
 			label3.Location = new Point(8, 70);
 			label3.Name = "label3";
 			label3.Size = new Size(42, 15);
-			label3.TabIndex = 3;
+			label3.TabIndex = 2;
 			label3.Text = "Status:";
 			// 
 			// cancelButton
@@ -72,7 +72,7 @@
 			cancelButton.Location = new Point(326, 111);
 			cancelButton.Name = "cancelButton";
 			cancelButton.Size = new Size(86, 28);
-			cancelButton.TabIndex = 4;
+			cancelButton.TabIndex = 6;
 			cancelButton.Text = "Cancel";
 			cancelButton.UseVisualStyleBackColor = true;
 			// 
@@ -82,7 +82,7 @@
 			status.Location = new Point(60, 70);
 			status.Name = "status";
 			status.Size = new Size(121, 15);
-			status.TabIndex = 6;
+			status.TabIndex = 3;
 			status.Text = "Beginning to export...";
 			// 
 			// progress
@@ -91,7 +91,7 @@
 			progress.Location = new Point(60, 89);
 			progress.Name = "progress";
 			progress.Size = new Size(76, 15);
-			progress.TabIndex = 8;
+			progress.TabIndex = 5;
 			progress.Text = "Calculating...";
 			// 
 			// label4
@@ -100,13 +100,14 @@
 			label4.Location = new Point(8, 89);
 			label4.Name = "label4";
 			label4.Size = new Size(55, 15);
-			label4.TabIndex = 7;
+			label4.TabIndex = 4;
 			label4.Text = "Progress:";
 			// 
 			// SavingProgressForm
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
+			BackColor = SystemColors.Window;
 			CancelButton = cancelButton;
 			ClientSize = new Size(424, 151);
 			Controls.Add(progress);

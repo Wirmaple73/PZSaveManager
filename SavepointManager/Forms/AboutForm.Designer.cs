@@ -29,12 +29,12 @@
 		private void InitializeComponent()
 		{
 			label1 = new Label();
-			pictureBox1 = new PictureBox();
+			appIcon = new PictureBox();
 			versionLabel = new Label();
 			okButton = new Button();
 			githubLink = new LinkLabel();
 			label2 = new Label();
-			((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+			((System.ComponentModel.ISupportInitialize)appIcon).BeginInit();
 			SuspendLayout();
 			// 
 			// label1
@@ -46,23 +46,23 @@
 			label1.TabIndex = 0;
 			label1.Text = "Project Zomboid Save Manager";
 			// 
-			// pictureBox1
+			// appIcon
 			// 
-			pictureBox1.Location = new Point(10, 12);
-			pictureBox1.Name = "pictureBox1";
-			pictureBox1.Size = new Size(80, 80);
-			pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-			pictureBox1.TabIndex = 1;
-			pictureBox1.TabStop = false;
+			appIcon.Location = new Point(10, 12);
+			appIcon.Name = "appIcon";
+			appIcon.Size = new Size(80, 80);
+			appIcon.SizeMode = PictureBoxSizeMode.Zoom;
+			appIcon.TabIndex = 1;
+			appIcon.TabStop = false;
 			// 
 			// versionLabel
 			// 
 			versionLabel.AutoSize = true;
 			versionLabel.Location = new Point(98, 31);
 			versionLabel.Name = "versionLabel";
-			versionLabel.Size = new Size(78, 15);
-			versionLabel.TabIndex = 2;
-			versionLabel.Text = "Version ..........";
+			versionLabel.Size = new Size(103, 15);
+			versionLabel.TabIndex = 1;
+			versionLabel.Text = "Fetching version...";
 			// 
 			// okButton
 			// 
@@ -71,7 +71,7 @@
 			okButton.Location = new Point(295, 131);
 			okButton.Name = "okButton";
 			okButton.Size = new Size(97, 28);
-			okButton.TabIndex = 7;
+			okButton.TabIndex = 4;
 			okButton.Text = "&OK";
 			okButton.UseVisualStyleBackColor = true;
 			// 
@@ -81,7 +81,7 @@
 			githubLink.Location = new Point(98, 77);
 			githubLink.Name = "githubLink";
 			githubLink.Size = new Size(267, 15);
-			githubLink.TabIndex = 8;
+			githubLink.TabIndex = 3;
 			githubLink.TabStop = true;
 			githubLink.Text = "https://github.com/Wirmaple73/PZSaveManager";
 			githubLink.LinkClicked += githubLink_LinkClicked;
@@ -92,7 +92,7 @@
 			label2.Location = new Point(98, 59);
 			label2.Name = "label2";
 			label2.Size = new Size(130, 15);
-			label2.TabIndex = 9;
+			label2.TabIndex = 2;
 			label2.Text = "Created by Wirmaple73";
 			// 
 			// AboutForm
@@ -100,13 +100,14 @@
 			AcceptButton = okButton;
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
+			BackColor = SystemColors.Window;
 			CancelButton = okButton;
 			ClientSize = new Size(404, 171);
 			Controls.Add(label2);
 			Controls.Add(githubLink);
 			Controls.Add(okButton);
 			Controls.Add(versionLabel);
-			Controls.Add(pictureBox1);
+			Controls.Add(appIcon);
 			Controls.Add(label1);
 			FormBorderStyle = FormBorderStyle.FixedDialog;
 			MaximizeBox = false;
@@ -114,7 +115,7 @@
 			Name = "AboutForm";
 			Text = "About";
 			Load += AboutForm_Load;
-			((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+			((System.ComponentModel.ISupportInitialize)appIcon).EndInit();
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -122,7 +123,7 @@
 		#endregion
 
 		private Label label1;
-		private PictureBox pictureBox1;
+		private PictureBox appIcon;
 		private Label versionLabel;
 		private Button okButton;
 		private LinkLabel githubLink;

@@ -1,10 +1,6 @@
 ﻿using SavepointManager.Classes;
 using SavepointManager.Forms;
 using SavepointManager.Properties;
-using SharpCompress.Common;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Media;
 
 namespace SavepointManager.Pages
 {
@@ -43,7 +39,7 @@ namespace SavepointManager.Pages
 			foreach (Save save in SelectedWorld.GetSaves())
 				saveList.Items.Add(new ListViewItem(new[] { save.Description, save.Date.ToString() }) { Tag = save });
 
-            if (saveList.Items.Count > 0)
+			if (saveList.Items.Count > 0)
 			{
 				SelectLastSelectedSave();
 
@@ -58,8 +54,8 @@ namespace SavepointManager.Pages
 
 			long totalBytes = Save.DiskInfo.GetOccupiedSaveSize(SelectedWorld);
 			diskUsage.Text = (totalBytes < 1e+9 ? $"{totalBytes / 1e+6:f1} MB" : $"{totalBytes / 1e+9:f1} GB") + $" ({Save.DiskInfo.AvailableDiskSpace / 1e+9:f1} GB free on disk)";
-		
-		
+
+
 			void SelectLastSelectedSave()
 			{
 				if (lastSelectedSave is null)

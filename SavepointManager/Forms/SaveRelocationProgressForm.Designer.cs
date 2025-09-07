@@ -40,7 +40,7 @@
 			status.Location = new Point(47, 70);
 			status.Name = "status";
 			status.Size = new Size(174, 15);
-			status.TabIndex = 13;
+			status.TabIndex = 3;
 			status.Text = "Moving saves to the new path...";
 			// 
 			// label3
@@ -49,7 +49,7 @@
 			label3.Location = new Point(8, 70);
 			label3.Name = "label3";
 			label3.Size = new Size(42, 15);
-			label3.TabIndex = 10;
+			label3.TabIndex = 2;
 			label3.Text = "Status:";
 			// 
 			// progressBar
@@ -60,7 +60,7 @@
 			progressBar.Name = "progressBar";
 			progressBar.Size = new Size(400, 23);
 			progressBar.Style = ProgressBarStyle.Continuous;
-			progressBar.TabIndex = 8;
+			progressBar.TabIndex = 1;
 			// 
 			// label1
 			// 
@@ -68,13 +68,14 @@
 			label1.Location = new Point(10, 9);
 			label1.Name = "label1";
 			label1.Size = new Size(74, 15);
-			label1.TabIndex = 7;
+			label1.TabIndex = 0;
 			label1.Text = "Please wait...";
 			// 
 			// SaveRelocationProgressForm
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
+			BackColor = SystemColors.Window;
 			ClientSize = new Size(424, 101);
 			Controls.Add(status);
 			Controls.Add(label3);

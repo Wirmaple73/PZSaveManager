@@ -43,7 +43,7 @@
 			status.Location = new Point(60, 70);
 			status.Name = "status";
 			status.Size = new Size(211, 15);
-			status.TabIndex = 13;
+			status.TabIndex = 3;
 			status.Text = "Backing up current unsaved progress...";
 			// 
 			// label3
@@ -52,7 +52,7 @@
 			label3.Location = new Point(8, 70);
 			label3.Name = "label3";
 			label3.Size = new Size(42, 15);
-			label3.TabIndex = 10;
+			label3.TabIndex = 2;
 			label3.Text = "Status:";
 			// 
 			// progressBar
@@ -63,7 +63,7 @@
 			progressBar.Name = "progressBar";
 			progressBar.Size = new Size(400, 23);
 			progressBar.Style = ProgressBarStyle.Marquee;
-			progressBar.TabIndex = 8;
+			progressBar.TabIndex = 1;
 			// 
 			// label1
 			// 
@@ -71,7 +71,7 @@
 			label1.Location = new Point(10, 9);
 			label1.Name = "label1";
 			label1.Size = new Size(74, 15);
-			label1.TabIndex = 7;
+			label1.TabIndex = 0;
 			label1.Text = "Please wait...";
 			// 
 			// label2
@@ -81,7 +81,7 @@
 			label2.Location = new Point(8, 125);
 			label2.Name = "label2";
 			label2.Size = new Size(368, 15);
-			label2.TabIndex = 14;
+			label2.TabIndex = 6;
 			label2.Text = "Please do not open the world in-game until this process is complete.";
 			// 
 			// progress
@@ -90,7 +90,7 @@
 			progress.Location = new Point(60, 89);
 			progress.Name = "progress";
 			progress.Size = new Size(76, 15);
-			progress.TabIndex = 18;
+			progress.TabIndex = 5;
 			progress.Text = "Calculating...";
 			// 
 			// label4
@@ -99,13 +99,14 @@
 			label4.Location = new Point(8, 89);
 			label4.Name = "label4";
 			label4.Size = new Size(55, 15);
-			label4.TabIndex = 17;
+			label4.TabIndex = 4;
 			label4.Text = "Progress:";
 			// 
 			// RestorationProgressForm
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
+			BackColor = SystemColors.Window;
 			ClientSize = new Size(424, 151);
 			Controls.Add(progress);
 			Controls.Add(label4);

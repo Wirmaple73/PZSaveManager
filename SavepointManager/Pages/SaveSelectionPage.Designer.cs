@@ -69,7 +69,7 @@
 			label2.Location = new Point(13, 31);
 			label2.Name = "label2";
 			label2.Size = new Size(44, 15);
-			label2.TabIndex = 15;
+			label2.TabIndex = 1;
 			label2.Text = "World:";
 			// 
 			// worldName
@@ -78,7 +78,7 @@
 			worldName.Location = new Point(54, 31);
 			worldName.Name = "worldName";
 			worldName.Size = new Size(353, 15);
-			worldName.TabIndex = 16;
+			worldName.TabIndex = 2;
 			worldName.Text = "Fetching...";
 			// 
 			// backButton
@@ -89,7 +89,7 @@
 			backButton.Location = new Point(15, 493);
 			backButton.Name = "backButton";
 			backButton.Size = new Size(112, 28);
-			backButton.TabIndex = 18;
+			backButton.TabIndex = 7;
 			backButton.Text = "&Back";
 			// 
 			// savePreview
@@ -111,7 +111,7 @@
 			saveLabel.Location = new Point(175, 479);
 			saveLabel.Name = "saveLabel";
 			saveLabel.Size = new Size(543, 54);
-			saveLabel.TabIndex = 22;
+			saveLabel.TabIndex = 8;
 			saveLabel.Text = "No saves have been created yet. If this is not the case and you have changed the save backup path recently, please make sure it is set correctly by navigating to Options > Configure Save Options.";
 			saveLabel.TextAlign = ContentAlignment.MiddleLeft;
 			saveLabel.Visible = false;
@@ -133,7 +133,7 @@
 			label4.Location = new Point(518, 261);
 			label4.Name = "label4";
 			label4.Size = new Size(200, 15);
-			label4.TabIndex = 24;
+			label4.TabIndex = 6;
 			label4.Text = "Preview may not be fully accurate.";
 			label4.TextAlign = ContentAlignment.MiddleCenter;
 			// 
@@ -145,7 +145,7 @@
 			label5.Location = new Point(408, 31);
 			label5.Name = "label5";
 			label5.Size = new Size(97, 15);
-			label5.TabIndex = 25;
+			label5.TabIndex = 3;
 			label5.Text = "Save disk usage:";
 			// 
 			// diskUsage
@@ -155,7 +155,7 @@
 			diskUsage.Location = new Point(503, 31);
 			diskUsage.Name = "diskUsage";
 			diskUsage.Size = new Size(76, 15);
-			diskUsage.TabIndex = 26;
+			diskUsage.TabIndex = 4;
 			diskUsage.Text = "Calculating...";
 			diskUsage.TextAlign = ContentAlignment.MiddleLeft;
 			// 
@@ -223,11 +223,14 @@
 			// toolStrip
 			// 
 			toolStrip.AllowMerge = false;
+			toolStrip.BackColor = SystemColors.Window;
+			toolStrip.GripStyle = ToolStripGripStyle.Hidden;
 			toolStrip.Items.AddRange(new ToolStripItem[] { refreshSaveButton, toolStripSeparator1, newSaveButton, restoreSaveButton, renameSaveButton, deleteSaveButton });
 			toolStrip.Location = new Point(0, 0);
 			toolStrip.Name = "toolStrip";
+			toolStrip.Padding = new Padding(13, 0, 1, 0);
 			toolStrip.Size = new Size(734, 25);
-			toolStrip.TabIndex = 27;
+			toolStrip.TabIndex = 0;
 			// 
 			// columnHeader1
 			// 
@@ -244,12 +247,13 @@
 			saveList.AllowColumnReorder = true;
 			saveList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 			saveList.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2 });
+			saveList.ContextMenuStrip = listContextMenu;
 			saveList.FullRowSelect = true;
 			saveList.Location = new Point(16, 56);
 			saveList.MultiSelect = false;
 			saveList.Name = "saveList";
 			saveList.Size = new Size(485, 420);
-			saveList.TabIndex = 12;
+			saveList.TabIndex = 5;
 			saveList.UseCompatibleStateImageBehavior = false;
 			saveList.View = View.Details;
 			saveList.SelectedIndexChanged += saveList_SelectedIndexChanged;
@@ -315,7 +319,7 @@
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ContextMenuStrip = listContextMenu;
+			BackColor = SystemColors.Window;
 			Controls.Add(toolStrip);
 			Controls.Add(diskUsage);
 			Controls.Add(label5);

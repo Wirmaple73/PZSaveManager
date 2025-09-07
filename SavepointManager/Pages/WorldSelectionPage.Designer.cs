@@ -39,6 +39,10 @@
 			columnHeader2 = new ColumnHeader();
 			columnHeader3 = new ColumnHeader();
 			columnHeader4 = new ColumnHeader();
+			listContextMenu = new ContextMenuStrip(components);
+			refreshToolStripMenuItem = new ToolStripMenuItem();
+			toolStripMenuItem1 = new ToolStripSeparator();
+			deleteToolStripMenuItem = new ToolStripMenuItem();
 			errorLabel = new Label();
 			errorLabelIcon = new PictureBox();
 			totalDiskUsage = new Label();
@@ -47,14 +51,10 @@
 			refreshWorldButton = new ToolStripButton();
 			toolStripSeparator1 = new ToolStripSeparator();
 			deleteWorldButton = new ToolStripButton();
-			listContextMenu = new ContextMenuStrip(components);
-			refreshToolStripMenuItem = new ToolStripMenuItem();
-			toolStripMenuItem1 = new ToolStripSeparator();
-			deleteToolStripMenuItem = new ToolStripMenuItem();
 			((System.ComponentModel.ISupportInitialize)worldPreview).BeginInit();
+			listContextMenu.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)errorLabelIcon).BeginInit();
 			toolStrip.SuspendLayout();
-			listContextMenu.SuspendLayout();
 			SuspendLayout();
 			// 
 			// nextButton
@@ -102,6 +102,7 @@
 			// 
 			worldList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 			worldList.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2, columnHeader3, columnHeader4 });
+			worldList.ContextMenuStrip = listContextMenu;
 			worldList.FullRowSelect = true;
 			worldList.Location = new Point(16, 56);
 			worldList.MultiSelect = false;
@@ -129,8 +130,38 @@
 			// 
 			// columnHeader4
 			// 
-			columnHeader4.Text = "Last played";
+			columnHeader4.Text = "Last active";
 			columnHeader4.Width = 145;
+			// 
+			// listContextMenu
+			// 
+			listContextMenu.Items.AddRange(new ToolStripItem[] { refreshToolStripMenuItem, toolStripMenuItem1, deleteToolStripMenuItem });
+			listContextMenu.Name = "listContextMenu";
+			listContextMenu.Size = new Size(141, 54);
+			listContextMenu.Opening += listContextMenu_Opening;
+			// 
+			// refreshToolStripMenuItem
+			// 
+			refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
+			refreshToolStripMenuItem.ShortcutKeys = Keys.F5;
+			refreshToolStripMenuItem.Size = new Size(140, 22);
+			refreshToolStripMenuItem.Text = "&Refresh";
+			refreshToolStripMenuItem.ToolTipText = "Refreshes the world list.";
+			refreshToolStripMenuItem.Click += refreshListButton_Click;
+			// 
+			// toolStripMenuItem1
+			// 
+			toolStripMenuItem1.Name = "toolStripMenuItem1";
+			toolStripMenuItem1.Size = new Size(137, 6);
+			// 
+			// deleteToolStripMenuItem
+			// 
+			deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+			deleteToolStripMenuItem.ShortcutKeys = Keys.Delete;
+			deleteToolStripMenuItem.Size = new Size(140, 22);
+			deleteToolStripMenuItem.Text = "&Delete...";
+			deleteToolStripMenuItem.ToolTipText = "Deletes the selected world and all of its saves.";
+			deleteToolStripMenuItem.Click += deleteWorldButton_Click;
 			// 
 			// errorLabel
 			// 
@@ -180,10 +211,13 @@
 			// toolStrip
 			// 
 			toolStrip.AllowMerge = false;
+			toolStrip.BackColor = SystemColors.Window;
 			toolStrip.CanOverflow = false;
+			toolStrip.GripStyle = ToolStripGripStyle.Hidden;
 			toolStrip.Items.AddRange(new ToolStripItem[] { refreshWorldButton, toolStripSeparator1, deleteWorldButton });
 			toolStrip.Location = new Point(0, 0);
 			toolStrip.Name = "toolStrip";
+			toolStrip.Padding = new Padding(13, 0, 1, 0);
 			toolStrip.Size = new Size(784, 25);
 			toolStrip.TabIndex = 0;
 			// 
@@ -215,41 +249,11 @@
 			deleteWorldButton.ToolTipText = "Deletes the selected world and all of its saves.";
 			deleteWorldButton.Click += deleteWorldButton_Click;
 			// 
-			// listContextMenu
-			// 
-			listContextMenu.Items.AddRange(new ToolStripItem[] { refreshToolStripMenuItem, toolStripMenuItem1, deleteToolStripMenuItem });
-			listContextMenu.Name = "listContextMenu";
-			listContextMenu.Size = new Size(141, 54);
-			listContextMenu.Opening += listContextMenu_Opening;
-			// 
-			// refreshToolStripMenuItem
-			// 
-			refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-			refreshToolStripMenuItem.ShortcutKeys = Keys.F5;
-			refreshToolStripMenuItem.Size = new Size(140, 22);
-			refreshToolStripMenuItem.Text = "&Refresh";
-			refreshToolStripMenuItem.ToolTipText = "Refreshes the world list.";
-			refreshToolStripMenuItem.Click += refreshListButton_Click;
-			// 
-			// toolStripMenuItem1
-			// 
-			toolStripMenuItem1.Name = "toolStripMenuItem1";
-			toolStripMenuItem1.Size = new Size(137, 6);
-			// 
-			// deleteToolStripMenuItem
-			// 
-			deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-			deleteToolStripMenuItem.ShortcutKeys = Keys.Delete;
-			deleteToolStripMenuItem.Size = new Size(140, 22);
-			deleteToolStripMenuItem.Text = "&Delete...";
-			deleteToolStripMenuItem.ToolTipText = "Deletes the selected world and all of its saves.";
-			deleteToolStripMenuItem.Click += deleteWorldButton_Click;
-			// 
 			// WorldSelectionPage
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ContextMenuStrip = listContextMenu;
+			BackColor = SystemColors.Window;
 			Controls.Add(toolStrip);
 			Controls.Add(totalDiskUsage);
 			Controls.Add(label5);
@@ -263,10 +267,10 @@
 			Name = "WorldSelectionPage";
 			Size = new Size(784, 537);
 			((System.ComponentModel.ISupportInitialize)worldPreview).EndInit();
+			listContextMenu.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)errorLabelIcon).EndInit();
 			toolStrip.ResumeLayout(false);
 			toolStrip.PerformLayout();
-			listContextMenu.ResumeLayout(false);
 			ResumeLayout(false);
 			PerformLayout();
 		}
