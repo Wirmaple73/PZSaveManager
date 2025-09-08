@@ -33,8 +33,8 @@
 			label3 = new Label();
 			cancelButton = new Button();
 			status = new Label();
-			progress = new Label();
-			label4 = new Label();
+			actualProgress = new Label();
+			progressLabel = new Label();
 			SuspendLayout();
 			// 
 			// label1
@@ -85,23 +85,23 @@
 			status.TabIndex = 3;
 			status.Text = "Beginning to export...";
 			// 
-			// progress
+			// actualProgress
 			// 
-			progress.AutoSize = true;
-			progress.Location = new Point(60, 89);
-			progress.Name = "progress";
-			progress.Size = new Size(76, 15);
-			progress.TabIndex = 5;
-			progress.Text = "Calculating...";
+			actualProgress.AutoSize = true;
+			actualProgress.Location = new Point(60, 89);
+			actualProgress.Name = "actualProgress";
+			actualProgress.Size = new Size(76, 15);
+			actualProgress.TabIndex = 5;
+			actualProgress.Text = "Calculating...";
 			// 
-			// label4
+			// progressLabel
 			// 
-			label4.AutoSize = true;
-			label4.Location = new Point(8, 89);
-			label4.Name = "label4";
-			label4.Size = new Size(55, 15);
-			label4.TabIndex = 4;
-			label4.Text = "Progress:";
+			progressLabel.AutoSize = true;
+			progressLabel.Location = new Point(8, 89);
+			progressLabel.Name = "progressLabel";
+			progressLabel.Size = new Size(55, 15);
+			progressLabel.TabIndex = 4;
+			progressLabel.Text = "Progress:";
 			// 
 			// SavingProgressForm
 			// 
@@ -110,8 +110,8 @@
 			BackColor = SystemColors.Window;
 			CancelButton = cancelButton;
 			ClientSize = new Size(424, 151);
-			Controls.Add(progress);
-			Controls.Add(label4);
+			Controls.Add(actualProgress);
+			Controls.Add(progressLabel);
 			Controls.Add(status);
 			Controls.Add(cancelButton);
 			Controls.Add(label3);
@@ -137,7 +137,7 @@
 		private Label label3;
 		private Button cancelButton;
 		private Label status;
-		private Label progress;
-		private Label label4;
+		private Label actualProgress;
+		private Label progressLabel;
 	}
 }

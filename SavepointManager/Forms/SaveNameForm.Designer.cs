@@ -48,7 +48,6 @@
 			// 
 			saveDescription.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			saveDescription.Location = new Point(12, 33);
-			saveDescription.MaxLength = 200;
 			saveDescription.Name = "saveDescription";
 			saveDescription.Size = new Size(380, 23);
 			saveDescription.TabIndex = 1;

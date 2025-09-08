@@ -31,10 +31,14 @@
 			components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SaveOptionsForm));
 			groupBox1 = new GroupBox();
-			saveHotkeys = new ComboBox();
+			warningIcon = new PictureBox();
+			label7 = new Label();
+			clearAbortSaveHotkeyButton = new Button();
+			clearSaveHotkeyButton = new Button();
+			abortSaveHotkey = new TextBox();
+			saveHotkey = new TextBox();
 			label1 = new Label();
 			label2 = new Label();
-			abortSaveHotkeys = new ComboBox();
 			groupBox2 = new GroupBox();
 			label4 = new Label();
 			autosaveInterval = new TextBox();
@@ -59,10 +63,8 @@
 			resetButton = new Button();
 			cancelButton = new Button();
 			okButton = new Button();
-			progressBar = new ProgressBar();
-			deleteButton = new Button();
-			button1 = new Button();
 			groupBox1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)warningIcon).BeginInit();
 			groupBox2.SuspendLayout();
 			groupBox3.SuspendLayout();
 			groupBox4.SuspendLayout();
@@ -73,26 +75,81 @@
 			// groupBox1
 			// 
 			groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			groupBox1.Controls.Add(saveHotkeys);
+			groupBox1.Controls.Add(warningIcon);
+			groupBox1.Controls.Add(label7);
+			groupBox1.Controls.Add(clearAbortSaveHotkeyButton);
+			groupBox1.Controls.Add(clearSaveHotkeyButton);
+			groupBox1.Controls.Add(abortSaveHotkey);
+			groupBox1.Controls.Add(saveHotkey);
 			groupBox1.Controls.Add(label1);
 			groupBox1.Controls.Add(label2);
-			groupBox1.Controls.Add(abortSaveHotkeys);
 			groupBox1.Location = new Point(12, 298);
 			groupBox1.Name = "groupBox1";
-			groupBox1.Size = new Size(361, 88);
+			groupBox1.Size = new Size(360, 120);
 			groupBox1.TabIndex = 2;
 			groupBox1.TabStop = false;
 			groupBox1.Text = "Hotkeys";
 			// 
-			// saveHotkeys
+			// warningIcon
 			// 
-			saveHotkeys.DropDownStyle = ComboBoxStyle.DropDownList;
-			saveHotkeys.FormattingEnabled = true;
-			saveHotkeys.Location = new Point(122, 21);
-			saveHotkeys.Name = "saveHotkeys";
-			saveHotkeys.Size = new Size(105, 23);
-			saveHotkeys.TabIndex = 1;
-			toolTip.SetToolTip(saveHotkeys, "Used to select the key that triggers a manual save on the active world when pressed.\r\nIf this feature is not desired, please select \"None\".");
+			warningIcon.Location = new Point(14, 85);
+			warningIcon.Name = "warningIcon";
+			warningIcon.Size = new Size(24, 24);
+			warningIcon.SizeMode = PictureBoxSizeMode.Zoom;
+			warningIcon.TabIndex = 8;
+			warningIcon.TabStop = false;
+			toolTip.SetToolTip(warningIcon, resources.GetString("warningIcon.ToolTip"));
+			// 
+			// label7
+			// 
+			label7.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+			label7.Location = new Point(41, 85);
+			label7.Name = "label7";
+			label7.Size = new Size(80, 24);
+			label7.TabIndex = 6;
+			label7.Text = "Warning";
+			label7.TextAlign = ContentAlignment.MiddleLeft;
+			toolTip.SetToolTip(label7, resources.GetString("label7.ToolTip"));
+			// 
+			// clearAbortSaveHotkeyButton
+			// 
+			clearAbortSaveHotkeyButton.FlatStyle = FlatStyle.System;
+			clearAbortSaveHotkeyButton.Location = new Point(289, 52);
+			clearAbortSaveHotkeyButton.Name = "clearAbortSaveHotkeyButton";
+			clearAbortSaveHotkeyButton.Size = new Size(56, 25);
+			clearAbortSaveHotkeyButton.TabIndex = 5;
+			clearAbortSaveHotkeyButton.Text = "Clear";
+			clearAbortSaveHotkeyButton.UseVisualStyleBackColor = true;
+			clearAbortSaveHotkeyButton.Click += clearAbortSaveHotkeyButton_Click;
+			// 
+			// clearSaveHotkeyButton
+			// 
+			clearSaveHotkeyButton.FlatStyle = FlatStyle.System;
+			clearSaveHotkeyButton.Location = new Point(289, 20);
+			clearSaveHotkeyButton.Name = "clearSaveHotkeyButton";
+			clearSaveHotkeyButton.Size = new Size(56, 25);
+			clearSaveHotkeyButton.TabIndex = 2;
+			clearSaveHotkeyButton.Text = "Clear";
+			clearSaveHotkeyButton.UseVisualStyleBackColor = true;
+			clearSaveHotkeyButton.Click += clearSaveHotkeyButton_Click;
+			// 
+			// abortSaveHotkey
+			// 
+			abortSaveHotkey.Location = new Point(122, 53);
+			abortSaveHotkey.Name = "abortSaveHotkey";
+			abortSaveHotkey.ReadOnly = true;
+			abortSaveHotkey.Size = new Size(154, 23);
+			abortSaveHotkey.TabIndex = 4;
+			abortSaveHotkey.KeyDown += saveHotkey_KeyDown;
+			// 
+			// saveHotkey
+			// 
+			saveHotkey.Location = new Point(122, 21);
+			saveHotkey.Name = "saveHotkey";
+			saveHotkey.ReadOnly = true;
+			saveHotkey.Size = new Size(154, 23);
+			saveHotkey.TabIndex = 1;
+			saveHotkey.KeyDown += saveHotkey_KeyDown;
 			// 
 			// label1
 			// 
@@ -107,22 +164,12 @@
 			// label2
 			// 
 			label2.AutoSize = true;
-			label2.Location = new Point(14, 56);
+			label2.Location = new Point(13, 56);
 			label2.Name = "label2";
 			label2.Size = new Size(105, 15);
-			label2.TabIndex = 2;
+			label2.TabIndex = 3;
 			label2.Text = "&Abort save hotkey:";
 			toolTip.SetToolTip(label2, resources.GetString("label2.ToolTip"));
-			// 
-			// abortSaveHotkeys
-			// 
-			abortSaveHotkeys.DropDownStyle = ComboBoxStyle.DropDownList;
-			abortSaveHotkeys.FormattingEnabled = true;
-			abortSaveHotkeys.Location = new Point(122, 53);
-			abortSaveHotkeys.Name = "abortSaveHotkeys";
-			abortSaveHotkeys.Size = new Size(105, 23);
-			abortSaveHotkeys.TabIndex = 3;
-			toolTip.SetToolTip(abortSaveHotkeys, resources.GetString("abortSaveHotkeys.ToolTip"));
 			// 
 			// groupBox2
 			// 
@@ -131,9 +178,9 @@
 			groupBox2.Controls.Add(autosaveInterval);
 			groupBox2.Controls.Add(label3);
 			groupBox2.Controls.Add(enableAutosave);
-			groupBox2.Location = new Point(12, 392);
+			groupBox2.Location = new Point(12, 424);
 			groupBox2.Name = "groupBox2";
-			groupBox2.Size = new Size(361, 84);
+			groupBox2.Size = new Size(360, 84);
 			groupBox2.TabIndex = 3;
 			groupBox2.TabStop = false;
 			groupBox2.Text = "Auto-save";
@@ -179,7 +226,7 @@
 			// 
 			// toolTip
 			// 
-			toolTip.AutoPopDelay = 8000;
+			toolTip.AutoPopDelay = 12000;
 			toolTip.InitialDelay = 500;
 			toolTip.ReshowDelay = 100;
 			// 
@@ -281,7 +328,7 @@
 			groupBox4.Controls.Add(useSaveSounds);
 			groupBox4.Location = new Point(12, 164);
 			groupBox4.Name = "groupBox4";
-			groupBox4.Size = new Size(361, 128);
+			groupBox4.Size = new Size(360, 128);
 			groupBox4.TabIndex = 1;
 			groupBox4.TabStop = false;
 			groupBox4.Text = "Save Audio";
@@ -300,12 +347,12 @@
 			// soundVolumeLabel
 			// 
 			soundVolumeLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			soundVolumeLabel.Location = new Point(322, 78);
+			soundVolumeLabel.Location = new Point(309, 80);
 			soundVolumeLabel.Name = "soundVolumeLabel";
-			soundVolumeLabel.Size = new Size(37, 23);
+			soundVolumeLabel.Size = new Size(36, 23);
 			soundVolumeLabel.TabIndex = 3;
 			soundVolumeLabel.Text = "80%";
-			soundVolumeLabel.TextAlign = ContentAlignment.MiddleCenter;
+			soundVolumeLabel.TextAlign = ContentAlignment.MiddleRight;
 			// 
 			// soundVolume
 			// 
@@ -314,7 +361,7 @@
 			soundVolume.Location = new Point(6, 80);
 			soundVolume.Maximum = 100;
 			soundVolume.Name = "soundVolume";
-			soundVolume.Size = new Size(316, 45);
+			soundVolume.Size = new Size(300, 45);
 			soundVolume.SmallChange = 10;
 			soundVolume.TabIndex = 2;
 			soundVolume.TickFrequency = 10;
@@ -336,11 +383,8 @@
 			panel1.Controls.Add(resetButton);
 			panel1.Controls.Add(cancelButton);
 			panel1.Controls.Add(okButton);
-			panel1.Controls.Add(progressBar);
-			panel1.Controls.Add(deleteButton);
-			panel1.Controls.Add(button1);
 			panel1.Dock = DockStyle.Bottom;
-			panel1.Location = new Point(0, 492);
+			panel1.Location = new Point(0, 527);
 			panel1.Name = "panel1";
 			panel1.Size = new Size(384, 54);
 			panel1.TabIndex = 4;
@@ -380,40 +424,6 @@
 			okButton.UseVisualStyleBackColor = true;
 			okButton.Click += okButton_Click;
 			// 
-			// progressBar
-			// 
-			progressBar.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-			progressBar.Location = new Point(12, -27);
-			progressBar.MarqueeAnimationSpeed = 10;
-			progressBar.Name = "progressBar";
-			progressBar.Size = new Size(492, 26);
-			progressBar.Style = ProgressBarStyle.Marquee;
-			progressBar.TabIndex = 0;
-			progressBar.Visible = false;
-			// 
-			// deleteButton
-			// 
-			deleteButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			deleteButton.Enabled = false;
-			deleteButton.FlatStyle = FlatStyle.System;
-			deleteButton.Location = new Point(518, -28);
-			deleteButton.Name = "deleteButton";
-			deleteButton.Size = new Size(86, 28);
-			deleteButton.TabIndex = 8;
-			deleteButton.Text = "&Delete";
-			deleteButton.UseVisualStyleBackColor = true;
-			// 
-			// button1
-			// 
-			button1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			button1.FlatStyle = FlatStyle.System;
-			button1.Location = new Point(610, -28);
-			button1.Name = "button1";
-			button1.Size = new Size(86, 28);
-			button1.TabIndex = 9;
-			button1.Text = "&Cancel";
-			button1.UseVisualStyleBackColor = true;
-			// 
 			// SaveOptionsForm
 			// 
 			AcceptButton = okButton;
@@ -421,7 +431,7 @@
 			AutoScaleMode = AutoScaleMode.Font;
 			BackColor = SystemColors.Window;
 			CancelButton = cancelButton;
-			ClientSize = new Size(384, 546);
+			ClientSize = new Size(384, 581);
 			Controls.Add(panel1);
 			Controls.Add(groupBox4);
 			Controls.Add(groupBox3);
@@ -434,8 +444,10 @@
 			MinimumSize = new Size(270, 340);
 			Name = "SaveOptionsForm";
 			Text = "Save Options";
+			Shown += SaveOptionsForm_Shown;
 			groupBox1.ResumeLayout(false);
 			groupBox1.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)warningIcon).EndInit();
 			groupBox2.ResumeLayout(false);
 			groupBox2.PerformLayout();
 			groupBox3.ResumeLayout(false);
@@ -451,13 +463,11 @@
 
 		private GroupBox groupBox1;
 		private Label label1;
-		private ComboBox saveHotkeys;
 		private GroupBox groupBox2;
 		private CheckBox enableAutosave;
 		private Label label3;
 		private TextBox autosaveInterval;
 		private Label label4;
-		private ComboBox abortSaveHotkeys;
 		private Label label2;
 		private ToolTip toolTip;
 		private GroupBox groupBox3;
@@ -478,8 +488,11 @@
 		private Button resetButton;
 		private Button cancelButton;
 		private Button okButton;
-		private ProgressBar progressBar;
-		private Button deleteButton;
-		private Button button1;
+		private TextBox saveHotkey;
+		private TextBox abortSaveHotkey;
+		private Button clearAbortSaveHotkeyButton;
+		private Button clearSaveHotkeyButton;
+		private PictureBox warningIcon;
+		private Label label7;
 	}
 }

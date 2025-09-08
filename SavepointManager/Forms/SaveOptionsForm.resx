@@ -120,14 +120,18 @@
   <metadata name="toolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>149, 17</value>
   </metadata>
+  <data name="warningIcon.ToolTip" xml:space="preserve">
+    <value>The selected hotkeys are exclusive to this application and will not work in other programs. For example, Ctrl+S will save your progress in-game, but it won’t save documents in Notepad anymore.
+This limitation only applies when this application is running.</value>
+  </data>
+  <data name="label7.ToolTip" xml:space="preserve">
+    <value>The selected hotkeys are exclusive to this application and will not work in other programs. For example, Ctrl+S will save your progress in-game, but it won’t save documents in Notepad anymore.
+This limitation only applies when this application is running.</value>
+  </data>
   <data name="label2.ToolTip" xml:space="preserve">
     <value>Used to select the key that aborts an ongoing manual/automatic save. This might prove useful in situations in which, saving can temporarily disrupt gameplay.
 If this feature is not desired, please select "None".
 </value>
-  </data>
-  <data name="abortSaveHotkeys.ToolTip" xml:space="preserve">
-    <value>Used to select the key that aborts an ongoing manual/automatic save. This might prove useful in situations in which, saving can temporarily disrupt gameplay.
-If this feature is not desired, please select "None".</value>
   </data>
   <metadata name="compressToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>

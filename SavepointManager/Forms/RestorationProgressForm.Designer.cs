@@ -33,14 +33,14 @@
 			progressBar = new ProgressBar();
 			label1 = new Label();
 			label2 = new Label();
-			progress = new Label();
-			label4 = new Label();
+			actualProgress = new Label();
+			progressLabel = new Label();
 			SuspendLayout();
 			// 
 			// status
 			// 
 			status.AutoSize = true;
-			status.Location = new Point(60, 70);
+			status.Location = new Point(61, 70);
 			status.Name = "status";
 			status.Size = new Size(211, 15);
 			status.TabIndex = 3;
@@ -49,7 +49,7 @@
 			// label3
 			// 
 			label3.AutoSize = true;
-			label3.Location = new Point(8, 70);
+			label3.Location = new Point(9, 70);
 			label3.Name = "label3";
 			label3.Size = new Size(42, 15);
 			label3.TabIndex = 2;
@@ -68,7 +68,7 @@
 			// label1
 			// 
 			label1.AutoSize = true;
-			label1.Location = new Point(10, 9);
+			label1.Location = new Point(9, 9);
 			label1.Name = "label1";
 			label1.Size = new Size(74, 15);
 			label1.TabIndex = 0;
@@ -78,29 +78,31 @@
 			// 
 			label2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
 			label2.AutoSize = true;
-			label2.Location = new Point(8, 125);
+			label2.Location = new Point(9, 125);
 			label2.Name = "label2";
 			label2.Size = new Size(368, 15);
 			label2.TabIndex = 6;
 			label2.Text = "Please do not open the world in-game until this process is complete.";
 			// 
-			// progress
+			// actualProgress
 			// 
-			progress.AutoSize = true;
-			progress.Location = new Point(60, 89);
-			progress.Name = "progress";
-			progress.Size = new Size(76, 15);
-			progress.TabIndex = 5;
-			progress.Text = "Calculating...";
+			actualProgress.AutoSize = true;
+			actualProgress.Location = new Point(61, 89);
+			actualProgress.Name = "actualProgress";
+			actualProgress.Size = new Size(76, 15);
+			actualProgress.TabIndex = 5;
+			actualProgress.Text = "Calculating...";
+			actualProgress.Visible = false;
 			// 
-			// label4
+			// progressLabel
 			// 
-			label4.AutoSize = true;
-			label4.Location = new Point(8, 89);
-			label4.Name = "label4";
-			label4.Size = new Size(55, 15);
-			label4.TabIndex = 4;
-			label4.Text = "Progress:";
+			progressLabel.AutoSize = true;
+			progressLabel.Location = new Point(9, 89);
+			progressLabel.Name = "progressLabel";
+			progressLabel.Size = new Size(55, 15);
+			progressLabel.TabIndex = 4;
+			progressLabel.Text = "Progress:";
+			progressLabel.Visible = false;
 			// 
 			// RestorationProgressForm
 			// 
@@ -108,8 +110,8 @@
 			AutoScaleMode = AutoScaleMode.Font;
 			BackColor = SystemColors.Window;
 			ClientSize = new Size(424, 151);
-			Controls.Add(progress);
-			Controls.Add(label4);
+			Controls.Add(actualProgress);
+			Controls.Add(progressLabel);
 			Controls.Add(label2);
 			Controls.Add(status);
 			Controls.Add(label3);
@@ -134,7 +136,7 @@
 		private ProgressBar progressBar;
 		private Label label1;
 		private Label label2;
-		private Label progress;
-		private Label label4;
+		private Label actualProgress;
+		private Label progressLabel;
 	}
 }

@@ -75,7 +75,7 @@ namespace SavepointManager.Forms
 					WindowHelper.Buttons.DisableCloseButton(this.Handle);
 					this.cancelButton.Enabled = false;
 
-					progress.Text = "~";
+					progressLabel.Visible = actualProgress.Visible = false;
 				}
 
 				if (progressBar.Style == ProgressBarStyle.Marquee)
@@ -90,7 +90,7 @@ namespace SavepointManager.Forms
 				int percentDone = (int)((float)e.FilesProcessed / e.TotalFiles * 100);
 
 				progressBar.Value = WindowHelper.TaskbarProgress.Progress = percentDone;
-				progress.Text = $"{e.FilesProcessed} out of {e.TotalFiles} files added ({percentDone}% done)";
+				actualProgress.Text = $"{e.FilesProcessed} out of {e.TotalFiles} files added ({percentDone}% done)";
 			});
 		}
 

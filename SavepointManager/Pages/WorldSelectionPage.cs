@@ -19,7 +19,6 @@ namespace SavepointManager.Forms
 
 		public void UpdateUI()
 		{
-			// TODO: Sort the ListView
 			totalDiskUsage.Text = $"{Save.DiskInfo.TotalOccupiedSaveSize / 1e+9:f1} GB ({Save.DiskInfo.AvailableDiskSpace / 1e+9:f1} GB free on disk)";
 
 			World.CreateMissingWorlds();

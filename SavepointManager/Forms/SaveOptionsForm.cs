@@ -6,18 +6,10 @@ namespace SavepointManager.Forms
 {
 	public partial class SaveOptionsForm : Form
 	{
-		public SaveOptionsForm()
+		public SaveOptionsForm() => InitializeComponent();
+
+		private void SaveOptionsForm_Shown(object sender, EventArgs e)
 		{
-			InitializeComponent();
-
-			var keys = Enum.GetNames(typeof(Keys));
-
-			for (int i = 0; i < keys.Length; i++)
-			{
-				saveHotkeys.Items.Add(keys[i]);
-				abortSaveHotkeys.Items.Add(keys[i]);
-			}
-
 			if (Directory.Exists(Save.BackupPath))
 				folderBrowser.InitialDirectory = Save.BackupPath;
 
@@ -26,11 +18,12 @@ namespace SavepointManager.Forms
 			useSaveSounds.Checked = Settings.Default.UseSaveSounds;
 			soundVolume.Enabled = previewButton.Enabled = useSaveSounds.Checked;
 			soundVolume.Value = Settings.Default.SoundVolume;
-			saveHotkeys.Text = Settings.Default.SaveHotkey;
-			abortSaveHotkeys.Text = Settings.Default.AbortSaveHotkey;
+			saveHotkey.Text = Settings.Default.SaveHotkey;
+			abortSaveHotkey.Text = Settings.Default.AbortSaveHotkey;
 			autosaveInterval.Text = Settings.Default.AutosaveInterval.ToString();
 			enableAutosave.Checked = autosaveInterval.Enabled = Settings.Default.EnableAutosave;
 
+			warningIcon.Image = SystemIcons.Warning.ToBitmap();
 			soundVolume_ValueChanged(this, EventArgs.Empty);
 		}
 
@@ -69,8 +62,8 @@ namespace SavepointManager.Forms
 				return;
 
 			// Validate hotkeys
-			var saveKey = SaveHelper.GetKeyByString(saveHotkeys.Text);
-			var abortKey = SaveHelper.GetKeyByString(abortSaveHotkeys.Text);
+			var saveKey = SaveHelper.GetKeyByString(saveHotkey.Text);
+			var abortKey = SaveHelper.GetKeyByString(abortSaveHotkey.Text);
 
 			if (saveKey.IsErroneous || abortKey.IsErroneous)
 			{
@@ -91,7 +84,7 @@ namespace SavepointManager.Forms
 			}
 
 			// Check for insufficient disk space
-			const double Headroom = 64e+6;
+			const double Headroom = 64e+6;  // 64 MB
 			double requiredDiskSpace = Save.DiskInfo.TotalOccupiedSaveSize + Headroom;
 
 			var srcDrive = new DriveInfo(Save.BackupPath);
@@ -137,8 +130,8 @@ namespace SavepointManager.Forms
 			Settings.Default.UseCompression = useCompression.Checked;
 			Settings.Default.UseSaveSounds = useSaveSounds.Checked;
 			Settings.Default.SoundVolume = soundVolume.Value;
-			Settings.Default.SaveHotkey = saveHotkeys.Text;
-			Settings.Default.AbortSaveHotkey = abortSaveHotkeys.Text;
+			Settings.Default.SaveHotkey = saveHotkey.Text;
+			Settings.Default.AbortSaveHotkey = abortSaveHotkey.Text;
 			Settings.Default.EnableAutosave = enableAutosave.Checked;
 			Settings.Default.AutosaveInterval = enableAutosave.Checked ? interval : SaveHelper.DefaultAutosaveInterval;
 
@@ -166,10 +159,19 @@ namespace SavepointManager.Forms
 			useCompression.Checked = true;
 			useSaveSounds.Checked = true;
 			soundVolume.Value = 80;
-			saveHotkeys.Text = Keys.F6.ToString();
-			abortSaveHotkeys.Text = Keys.F7.ToString();
+			saveHotkey.Text = Keys.F6.ToString();
+			abortSaveHotkey.Text = Keys.F7.ToString();
 			enableAutosave.Checked = false;
 			autosaveInterval.Text = SaveHelper.DefaultAutosaveInterval.ToString();
 		}
+
+		private void saveHotkey_KeyDown(object sender, KeyEventArgs e)
+		{
+			((TextBox)sender).Text = e.KeyData.ToString();
+			e.SuppressKeyPress = true;
+		}
+
+		private void clearSaveHotkeyButton_Click(object sender, EventArgs e) => saveHotkey.Text = Keys.None.ToString();
+		private void clearAbortSaveHotkeyButton_Click(object sender, EventArgs e) => abortSaveHotkey.Text = Keys.None.ToString();
 	}
 }

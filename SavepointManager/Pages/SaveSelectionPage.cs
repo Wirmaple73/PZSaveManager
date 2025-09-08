@@ -42,9 +42,7 @@ namespace SavepointManager.Pages
 			if (saveList.Items.Count > 0)
 			{
 				SelectLastSelectedSave();
-
 				saveLabel.Visible = saveLabelIcon.Visible = false;
-				SetSaveButtonsEnabled(true);
 			}
 			else
 			{
@@ -76,9 +74,10 @@ namespace SavepointManager.Pages
 
 		private void saveList_SelectedIndexChanged(object sender, EventArgs e)
 		{
+			SetSaveButtonsEnabled(false);
+
 			if (SelectedSave is null)
 			{
-				SetSaveButtonsEnabled(false);
 				savePreview.Image = Resources.NoPreview;
 				return;
 			}

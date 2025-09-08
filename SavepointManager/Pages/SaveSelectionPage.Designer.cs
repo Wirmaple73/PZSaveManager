@@ -29,7 +29,6 @@
 		private void InitializeComponent()
 		{
 			components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SaveSelectionPage));
 			label2 = new Label();
 			worldName = new Label();
 			backButton = new Button();
@@ -161,11 +160,12 @@
 			// 
 			// refreshSaveButton
 			// 
-			refreshSaveButton.Image = (Image)resources.GetObject("refreshSaveButton.Image");
+			refreshSaveButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+			refreshSaveButton.Image = Properties.Resources.RefreshList;
 			refreshSaveButton.ImageTransparentColor = Color.Magenta;
 			refreshSaveButton.Name = "refreshSaveButton";
 			refreshSaveButton.Overflow = ToolStripItemOverflow.Never;
-			refreshSaveButton.Size = new Size(84, 22);
+			refreshSaveButton.Size = new Size(23, 22);
 			refreshSaveButton.Text = "Refresh list";
 			refreshSaveButton.ToolTipText = "Refreshes the save list.";
 			refreshSaveButton.Click += refreshListButton_Click;
@@ -178,44 +178,51 @@
 			// 
 			// newSaveButton
 			// 
-			newSaveButton.Image = (Image)resources.GetObject("newSaveButton.Image");
+			newSaveButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+			newSaveButton.Image = Properties.Resources.New;
 			newSaveButton.ImageTransparentColor = Color.Magenta;
 			newSaveButton.Name = "newSaveButton";
 			newSaveButton.Overflow = ToolStripItemOverflow.Never;
-			newSaveButton.Size = new Size(60, 22);
+			newSaveButton.Size = new Size(23, 22);
 			newSaveButton.Text = "New...";
 			newSaveButton.ToolTipText = "Saves your current progress.";
 			newSaveButton.Click += newSaveButton_Click;
 			// 
 			// restoreSaveButton
 			// 
-			restoreSaveButton.Image = (Image)resources.GetObject("restoreSaveButton.Image");
+			restoreSaveButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+			restoreSaveButton.Enabled = false;
+			restoreSaveButton.Image = Properties.Resources.Restore;
 			restoreSaveButton.ImageTransparentColor = Color.Magenta;
 			restoreSaveButton.Name = "restoreSaveButton";
 			restoreSaveButton.Overflow = ToolStripItemOverflow.Never;
-			restoreSaveButton.Size = new Size(75, 22);
+			restoreSaveButton.Size = new Size(23, 22);
 			restoreSaveButton.Text = "Restore...";
 			restoreSaveButton.ToolTipText = "Discards all current unsaved progress and rolls back your progress to the selected save.";
 			restoreSaveButton.Click += restoreSaveButton_Click;
 			// 
 			// renameSaveButton
 			// 
-			renameSaveButton.Image = (Image)resources.GetObject("renameSaveButton.Image");
+			renameSaveButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+			renameSaveButton.Enabled = false;
+			renameSaveButton.Image = Properties.Resources.Rename;
 			renameSaveButton.ImageTransparentColor = Color.Magenta;
 			renameSaveButton.Name = "renameSaveButton";
 			renameSaveButton.Overflow = ToolStripItemOverflow.Never;
-			renameSaveButton.Size = new Size(79, 22);
+			renameSaveButton.Size = new Size(23, 22);
 			renameSaveButton.Text = "Rename...";
 			renameSaveButton.ToolTipText = "Renames the description of the selected save.";
 			renameSaveButton.Click += renameSaveButton_Click;
 			// 
 			// deleteSaveButton
 			// 
-			deleteSaveButton.Image = (Image)resources.GetObject("deleteSaveButton.Image");
+			deleteSaveButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+			deleteSaveButton.Enabled = false;
+			deleteSaveButton.Image = Properties.Resources.Delete;
 			deleteSaveButton.ImageTransparentColor = Color.Magenta;
 			deleteSaveButton.Name = "deleteSaveButton";
 			deleteSaveButton.Overflow = ToolStripItemOverflow.Never;
-			deleteSaveButton.Size = new Size(69, 22);
+			deleteSaveButton.Size = new Size(23, 22);
 			deleteSaveButton.Text = "Delete...";
 			deleteSaveButton.ToolTipText = "Deletes the selected save.";
 			deleteSaveButton.Click += deleteSaveButton_Click;

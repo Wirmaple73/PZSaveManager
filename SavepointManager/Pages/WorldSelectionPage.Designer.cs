@@ -29,7 +29,6 @@
 		private void InitializeComponent()
 		{
 			components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WorldSelectionPage));
 			nextButton = new Button();
 			worldPreview = new PictureBox();
 			label2 = new Label();
@@ -137,14 +136,14 @@
 			// 
 			listContextMenu.Items.AddRange(new ToolStripItem[] { refreshToolStripMenuItem, toolStripMenuItem1, deleteToolStripMenuItem });
 			listContextMenu.Name = "listContextMenu";
-			listContextMenu.Size = new Size(141, 54);
+			listContextMenu.Size = new Size(181, 76);
 			listContextMenu.Opening += listContextMenu_Opening;
 			// 
 			// refreshToolStripMenuItem
 			// 
 			refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
 			refreshToolStripMenuItem.ShortcutKeys = Keys.F5;
-			refreshToolStripMenuItem.Size = new Size(140, 22);
+			refreshToolStripMenuItem.Size = new Size(180, 22);
 			refreshToolStripMenuItem.Text = "&Refresh";
 			refreshToolStripMenuItem.ToolTipText = "Refreshes the world list.";
 			refreshToolStripMenuItem.Click += refreshListButton_Click;
@@ -152,13 +151,13 @@
 			// toolStripMenuItem1
 			// 
 			toolStripMenuItem1.Name = "toolStripMenuItem1";
-			toolStripMenuItem1.Size = new Size(137, 6);
+			toolStripMenuItem1.Size = new Size(177, 6);
 			// 
 			// deleteToolStripMenuItem
 			// 
 			deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
 			deleteToolStripMenuItem.ShortcutKeys = Keys.Delete;
-			deleteToolStripMenuItem.Size = new Size(140, 22);
+			deleteToolStripMenuItem.Size = new Size(180, 22);
 			deleteToolStripMenuItem.Text = "&Delete...";
 			deleteToolStripMenuItem.ToolTipText = "Deletes the selected world and all of its saves.";
 			deleteToolStripMenuItem.Click += deleteWorldButton_Click;
@@ -223,11 +222,12 @@
 			// 
 			// refreshWorldButton
 			// 
-			refreshWorldButton.Image = (Image)resources.GetObject("refreshWorldButton.Image");
+			refreshWorldButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+			refreshWorldButton.Image = Properties.Resources.RefreshList;
 			refreshWorldButton.ImageTransparentColor = Color.Magenta;
 			refreshWorldButton.Name = "refreshWorldButton";
 			refreshWorldButton.Overflow = ToolStripItemOverflow.Never;
-			refreshWorldButton.Size = new Size(84, 22);
+			refreshWorldButton.Size = new Size(23, 22);
 			refreshWorldButton.Text = "Refresh list";
 			refreshWorldButton.ToolTipText = "Refreshes the world list.";
 			refreshWorldButton.Click += refreshListButton_Click;
@@ -240,11 +240,12 @@
 			// 
 			// deleteWorldButton
 			// 
-			deleteWorldButton.Image = (Image)resources.GetObject("deleteWorldButton.Image");
+			deleteWorldButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+			deleteWorldButton.Image = Properties.Resources.Delete;
 			deleteWorldButton.ImageTransparentColor = Color.Magenta;
 			deleteWorldButton.Name = "deleteWorldButton";
 			deleteWorldButton.Overflow = ToolStripItemOverflow.Never;
-			deleteWorldButton.Size = new Size(69, 22);
+			deleteWorldButton.Size = new Size(23, 22);
 			deleteWorldButton.Text = "Delete...";
 			deleteWorldButton.ToolTipText = "Deletes the selected world and all of its saves.";
 			deleteWorldButton.Click += deleteWorldButton_Click;

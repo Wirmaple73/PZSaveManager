@@ -58,8 +58,23 @@ namespace SavepointManager.Properties {
                 this["SaveHotkey"] = value;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
+
+		[global::System.Configuration.UserScopedSettingAttribute()]
+		[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("F7")]
+		public string AbortSaveHotkey
+		{
+			get
+			{
+				return ((string)(this["AbortSaveHotkey"]));
+			}
+			set
+			{
+				this["AbortSaveHotkey"] = value;
+			}
+		}
+
+		[global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool EnableAutosave {
@@ -80,18 +95,6 @@ namespace SavepointManager.Properties {
             }
             set {
                 this["AutosaveInterval"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("F7")]
-        public string AbortSaveHotkey {
-            get {
-                return ((string)(this["AbortSaveHotkey"]));
-            }
-            set {
-                this["AbortSaveHotkey"] = value;
             }
         }
         

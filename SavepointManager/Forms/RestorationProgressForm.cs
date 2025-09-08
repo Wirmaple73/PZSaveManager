@@ -25,8 +25,8 @@ namespace SavepointManager.Forms
 			if (SelectedSave is null || SelectedSave.AssociatedWorld is null)
 				throw new InvalidOperationException($"{nameof(SelectedSave)} or the world associated with it is null.");
 
-			WindowHelper.Buttons.DisableCloseButton(this.Handle);
 			this.Invoke(() => this.Text = $"Restoring {SelectedSave.AssociatedWorld.Name}");
+			WindowHelper.Buttons.DisableCloseButton(this.Handle);
 
 			try
 			{
@@ -47,7 +47,11 @@ namespace SavepointManager.Forms
 					throw new SaveBackupException("Could not rename the original world", exc);
 				}
 
-				this.Invoke(() => progressBar.Style = ProgressBarStyle.Continuous);
+				this.Invoke(() =>
+				{
+					progressBar.Style = ProgressBarStyle.Continuous;
+					progressLabel.Visible = actualProgress.Visible = true;
+				});
 
 				SelectedSave.ArchiveProgressChanged += SelectedSave_ArchiveProgressChanged;
 				SelectedSave.ArchiveStatusChanged += SelectedSave_ArchiveStatusChanged;
@@ -97,7 +101,7 @@ namespace SavepointManager.Forms
 					this.Invoke(() =>
 					{
 						status.Text = "Deleting temporary world backup...";
-						progress.Text = "~";
+						progressLabel.Visible = actualProgress.Visible = false;
 
 						progressBar.Style = ProgressBarStyle.Marquee;
 						WindowHelper.TaskbarProgress.State = WindowHelper.TaskbarProgress.TaskbarState.Indeterminate;
@@ -146,7 +150,7 @@ namespace SavepointManager.Forms
 			this.Invoke(() =>
 			{
 				progressBar.Value = WindowHelper.TaskbarProgress.Progress = percentDone;
-				progress.Text = $"{e.FilesProcessed} out of {e.TotalFiles} files processed ({percentDone}% done)";
+				actualProgress.Text = $"{e.FilesProcessed} out of {e.TotalFiles} files processed ({percentDone}% done)";
 			});
 		}
 

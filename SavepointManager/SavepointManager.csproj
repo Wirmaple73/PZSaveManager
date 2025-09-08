@@ -28,8 +28,13 @@
     <None Remove="Resources\Audio\Spam\Spam4.wav" />
     <None Remove="Resources\Audio\Spam\Spam5.wav" />
     <None Remove="Resources\Audio\Spam\Spam6.wav" />
+    <None Remove="Resources\Images\Delete.png" />
     <None Remove="Resources\Images\Icon.ico" />
+    <None Remove="Resources\Images\New.png" />
     <None Remove="Resources\Images\NoPreview.jpg" />
+    <None Remove="Resources\Images\RefreshList.png" />
+    <None Remove="Resources\Images\Rename.png" />
+    <None Remove="Resources\Images\Restore.png" />
     <None Remove="Resources\NoPreview.png" />
   </ItemGroup>
 
@@ -46,8 +51,13 @@
     <EmbeddedResource Include="Resources\Audio\Spam\Spam4.wav" />
     <EmbeddedResource Include="Resources\Audio\Spam\Spam5.wav" />
     <EmbeddedResource Include="Resources\Audio\Spam\Spam6.wav" />
+    <EmbeddedResource Include="Resources\Images\Delete.png" />
     <EmbeddedResource Include="Resources\Images\Icon.ico" />
+    <EmbeddedResource Include="Resources\Images\New.png" />
     <EmbeddedResource Include="Resources\Images\NoPreview.jpg" />
+    <EmbeddedResource Include="Resources\Images\RefreshList.png" />
+    <EmbeddedResource Include="Resources\Images\Rename.png" />
+    <EmbeddedResource Include="Resources\Images\Restore.png" />
   </ItemGroup>
 
   <ItemGroup>
