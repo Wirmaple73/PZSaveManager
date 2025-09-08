@@ -1,0 +1,101 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Title>Project Zomboid Save Manager</Title>
+    <Product>Project Zomboid Save Manager</Product>
+    <Company>Wirmaple73</Company>
+    <AssemblyVersion>1.0</AssemblyVersion>
+    <FileVersion>1.0</FileVersion>
+    <PlatformTarget>x64</PlatformTarget>
+    <ApplicationIcon>Resources\Images\Icon.ico</ApplicationIcon>
+    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\Audio\AlreadySaving.wav" />
+    <None Remove="Resources\Audio\SaveCanceled.wav" />
+    <None Remove="Resources\Audio\SaveComplete.wav" />
+    <None Remove="Resources\Audio\SaveFailure.wav" />
+    <None Remove="Resources\Audio\SaveNotCanceled.wav" />
+    <None Remove="Resources\Audio\Saving.wav" />
+    <None Remove="Resources\Audio\Spam\Spam1.wav" />
+    <None Remove="Resources\Audio\Spam\Spam2.wav" />
+    <None Remove="Resources\Audio\Spam\Spam3.wav" />
+    <None Remove="Resources\Audio\Spam\Spam4.wav" />
+    <None Remove="Resources\Audio\Spam\Spam5.wav" />
+    <None Remove="Resources\Audio\Spam\Spam6.wav" />
+    <None Remove="Resources\Images\Delete.png" />
+    <None Remove="Resources\Images\Icon.ico" />
+    <None Remove="Resources\Images\New.png" />
+    <None Remove="Resources\Images\NoPreview.jpg" />
+    <None Remove="Resources\Images\RefreshList.png" />
+    <None Remove="Resources\Images\Rename.png" />
+    <None Remove="Resources\Images\Restore.png" />
+    <None Remove="Resources\NoPreview.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Audio\AlreadySaving.wav" />
+    <EmbeddedResource Include="Resources\Audio\SaveCanceled.wav" />
+    <EmbeddedResource Include="Resources\Audio\SaveComplete.wav" />
+    <EmbeddedResource Include="Resources\Audio\SaveFailure.wav" />
+    <EmbeddedResource Include="Resources\Audio\SaveNotCanceled.wav" />
+    <EmbeddedResource Include="Resources\Audio\Saving.wav" />
+    <EmbeddedResource Include="Resources\Audio\Spam\Spam1.wav" />
+    <EmbeddedResource Include="Resources\Audio\Spam\Spam2.wav" />
+    <EmbeddedResource Include="Resources\Audio\Spam\Spam3.wav" />
+    <EmbeddedResource Include="Resources\Audio\Spam\Spam4.wav" />
+    <EmbeddedResource Include="Resources\Audio\Spam\Spam5.wav" />
+    <EmbeddedResource Include="Resources\Audio\Spam\Spam6.wav" />
+    <EmbeddedResource Include="Resources\Images\Delete.png" />
+    <EmbeddedResource Include="Resources\Images\Icon.ico" />
+    <EmbeddedResource Include="Resources\Images\New.png" />
+    <EmbeddedResource Include="Resources\Images\NoPreview.jpg" />
+    <EmbeddedResource Include="Resources\Images\RefreshList.png" />
+    <EmbeddedResource Include="Resources\Images\Rename.png" />
+    <EmbeddedResource Include="Resources\Images\Restore.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NAudio" Version="2.2.1" />
+    <PackageReference Include="NHotkey.WindowsForms" Version="3.0.0" />
+    <PackageReference Include="SharpCompress" Version="0.40.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+</Project>
