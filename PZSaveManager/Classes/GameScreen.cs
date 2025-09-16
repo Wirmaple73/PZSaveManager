@@ -14,9 +14,7 @@
 			var bmp = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
 
 			using (var g = Graphics.FromImage(bmp))
-			{
 				g.CopyFromScreen(0, 0, 0, 0, bmp.Size);
-			}
 
 			return bmp;
 		}

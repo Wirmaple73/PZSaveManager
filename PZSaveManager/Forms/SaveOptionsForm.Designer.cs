@@ -351,7 +351,7 @@
 			soundVolumeLabel.Name = "soundVolumeLabel";
 			soundVolumeLabel.Size = new Size(36, 23);
 			soundVolumeLabel.TabIndex = 3;
-			soundVolumeLabel.Text = "80%";
+			soundVolumeLabel.Text = "50%";
 			soundVolumeLabel.TextAlign = ContentAlignment.MiddleRight;
 			// 
 			// soundVolume
@@ -437,12 +437,12 @@
 			Controls.Add(groupBox3);
 			Controls.Add(groupBox2);
 			Controls.Add(groupBox1);
-			FormBorderStyle = FormBorderStyle.FixedSingle;
-			Icon = Properties.Resources.Icon;
+			FormBorderStyle = FormBorderStyle.FixedDialog;
 			MaximizeBox = false;
 			MinimizeBox = false;
 			MinimumSize = new Size(270, 340);
 			Name = "SaveOptionsForm";
+			ShowIcon = false;
 			Text = "Save Options";
 			Shown += SaveOptionsForm_Shown;
 			groupBox1.ResumeLayout(false);

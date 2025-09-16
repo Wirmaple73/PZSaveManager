@@ -16,6 +16,8 @@ namespace PZSaveManager.Pages
 		{
 			InitializeComponent();
 			saveLabelIcon.Image = SystemIcons.Asterisk.ToBitmap();
+
+			Save.SaveExported += (s, e) => this.Invoke(() => UpdateUI());
 		}
 
 		public void PageLoaded()
@@ -24,6 +26,8 @@ namespace PZSaveManager.Pages
 
 			SetSaveButtonsEnabled(false);
 			UpdateUI();
+
+			saveList.Focus();
 		}
 
 		public void UpdateUI()
@@ -36,7 +40,7 @@ namespace PZSaveManager.Pages
 			if (SelectedWorld is null)
 				return;
 
-			foreach (Save save in SelectedWorld.GetSaves())
+			foreach (Save save in SelectedWorld.GetSaves().Reverse())  // Reverse to sort by date (descending)
 				saveList.Items.Add(new ListViewItem(new[] { save.Description, save.Date.ToString() }) { Tag = save });
 
 			if (saveList.Items.Count > 0)
@@ -72,6 +76,18 @@ namespace PZSaveManager.Pages
 			}
 		}
 
+		//public void GlobalKeyDown(Keys keys)
+		//{
+		//	EventHandler? handler = keys switch
+		//	{
+		//		Keys.F5 => refreshListButton_Click,
+		//		Keys.Control | Keys.N => newSaveButton_Click,
+		//		_ => null
+		//	};
+
+		//	handler?.Invoke(this, EventArgs.Empty);
+		//}
+
 		private void saveList_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			SetSaveButtonsEnabled(false);
@@ -100,13 +116,13 @@ namespace PZSaveManager.Pages
 
 		private void newSaveButton_Click(object? sender, EventArgs e)
 		{
-			using var saveNameForm = new SaveNameForm() { Text = "New Save" };
-
 			if (Save.IsSaveInProgress)
 			{
 				ShowSaveInProgressError();
 				return;
 			}
+
+			using var saveNameForm = new SaveNameForm() { Text = "New Save" };
 
 			if (saveNameForm.ShowDialog() != DialogResult.OK)
 				return;
@@ -123,14 +139,9 @@ namespace PZSaveManager.Pages
 			}
 
 			if (progressForm.ShowDialog() == DialogResult.OK)
-			{
 				WindowHelper.FlashIfMinimized();
-				UpdateUI();
-			}
 			else
-			{
 				MessageBoxManager.ShowError($"The save could not be exported.\n\nError message: {progressForm.ErrorMessage}");
-			}
 		}
 
 		private void restoreSaveButton_Click(object? sender, EventArgs e)
@@ -228,11 +239,5 @@ namespace PZSaveManager.Pages
 
 		private void listContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
 			=> restoreToolStripMenuItem.Enabled = renameToolStripMenuItem.Enabled = deleteToolStripMenuItem.Enabled = SelectedSave is not null;
-
-		private void saveList_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-		{
-			if (e.Control && e.KeyCode == Keys.N)
-				e.IsInputKey = true;
-		}
 	}
 }

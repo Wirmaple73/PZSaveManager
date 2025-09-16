@@ -37,7 +37,7 @@ namespace PZSaveManager.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool UseCompression {
             get {
                 return ((bool)(this["UseCompression"]));
@@ -109,7 +109,7 @@ namespace PZSaveManager.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("80")]
+        [global::System.Configuration.DefaultSettingValueAttribute("50")]
         public int SoundVolume {
             get {
                 return ((int)(this["SoundVolume"]));

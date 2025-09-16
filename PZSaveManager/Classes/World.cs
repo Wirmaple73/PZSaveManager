@@ -186,20 +186,16 @@ namespace PZSaveManager.Classes
 			if (!Directory.Exists(WorldDirectory))
 				throw new DirectoryNotFoundException("Project Zomboid is installed, but the save folder could not be located.");
 
-			var gamemodes = Directory.GetDirectories(WorldDirectory);
-
-			foreach (var gamemodeFolder in gamemodes)
+			foreach (string gamemodePath in Directory.EnumerateDirectories(WorldDirectory))
 			{
-				var worldFolders = Directory.GetDirectories(gamemodeFolder);
-
-				foreach (var world in worldFolders)
+				foreach (string worldPath in Directory.EnumerateDirectories(gamemodePath))
 				{
-					string tarPath = IOPath.Combine(world, $"{Save.ArchiveFileName}.tar");
-					string zipPath = IOPath.Combine(world, $"{Save.ArchiveFileName}.zip");
+					string tarPath = IOPath.Combine(worldPath, $"{Save.ArchiveFileName}.tar");
+					string zipPath = IOPath.Combine(worldPath, $"{Save.ArchiveFileName}.zip");
 
 					// Filter out backups
 					if (!File.Exists(tarPath) && !File.Exists(zipPath))
-						yield return new(IOPath.GetFileName(world), world, IOPath.GetFileName(gamemodeFolder));
+						yield return new(IOPath.GetFileName(worldPath), worldPath, IOPath.GetFileName(gamemodePath));
 				}
 			}
 		}
@@ -221,7 +217,7 @@ namespace PZSaveManager.Classes
 
 				try
 				{
-					await save.ExportAsync(false, token.Token);
+					await save.ExportAsync(token.Token);
 					SoundPlayer.Shared.PlaySaveEffect(SoundEffect.SaveComplete);
 				}
 				catch (OperationCanceledException)

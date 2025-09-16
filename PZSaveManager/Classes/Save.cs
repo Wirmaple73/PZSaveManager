@@ -23,19 +23,19 @@ namespace PZSaveManager.Classes
 				=> world.GetSaves().Sum(s => s.ArchivePath is not null && File.Exists(s.ArchivePath) ? new FileInfo(s.ArchivePath).Length : 0);
 		}
 
-		public const string ArchiveFileName = "Save";
+		public const string ArchiveFileName	 = "Save";
 		public const string MetadataFileName = "Metadata.xml";
-		public const string ThumbFileName = "Thumb.png";
+		public const string ThumbFileName	 = "Thumb.png";
 
-		public const string ManualSaveDescription = "Manual save";
+		public const string ManualSaveDescription	= "Manual save";
 		public const string ExternalSaveDescription = "External save";
-		public const string AutosaveDescription = "Auto-save";
-		public const string UnnamedSaveDescription = "Unnamed save";
+		public const string AutosaveDescription		= "Auto-save";
+		public const string UnnamedSaveDescription	= "Unnamed save";
 
 		public static readonly string DefaultBackupPath = Path.Combine(World.BaseDirectory, "Backups");
 
 		public static string BackupPath => Settings.Default.SavePath.Length > 0 ? Settings.Default.SavePath : DefaultBackupPath;
-		public static int ProgressReportThreshold { get; } = 50;  // Report progress every 50 files
+		public static int ProgressReportThreshold { get; set; } = 50;  // Report progress every 50 files
 
 		public World? AssociatedWorld { get; }
 		public string? ArchivePath { get; }
@@ -57,7 +57,8 @@ namespace PZSaveManager.Classes
 			Thumb = thumb;
 		}
 
-		public Save(World associatedWorld, string description) : this(associatedWorld, description, null, DateTime.Now, new()) { }
+		public Save(World associatedWorld, string description)
+			: this(associatedWorld, description, null, DateTime.Now, new()) { }
 
 		public async Task RestoreAsync()
 		{
@@ -159,7 +160,7 @@ namespace PZSaveManager.Classes
 			});
 		}
 
-		public async Task ExportAsync(bool useCompression, CancellationToken token)
+		public async Task ExportAsync(CancellationToken token)
 		{
 			lock (saveLock)
 			{
@@ -183,23 +184,22 @@ namespace PZSaveManager.Classes
 				await Task.Run(() =>
 				{
 					Directory.CreateDirectory(BackupPath);
-
-					Logger.Log($"Beginning to export {AssociatedWorld.Name}... (compression {(useCompression ? "enabled" : "disabled")})", LogSeverity.Info);
-					var startTime = DateTime.Now;
-
 					Directory.CreateDirectory(saveDir);
 
-					string outputArchivePath = Path.Combine(saveDir, ArchiveFileName + (useCompression ? ".zip" : ".tar"));
-					string outputXmlPath = Path.Combine(saveDir, MetadataFileName);
-					string outputThumbPath = Path.Combine(saveDir, ThumbFileName);
+					Logger.Log($"Beginning to export {AssociatedWorld.Name}... (compression {(Settings.Default.UseCompression ? "enabled" : "disabled")})", LogSeverity.Info);
+					var startTime = DateTime.Now;
+
+					string outputArchivePath = Path.Combine(saveDir, ArchiveFileName + (Settings.Default.UseCompression ? ".zip" : ".tar"));
+					string outputXmlPath	 = Path.Combine(saveDir, MetadataFileName);
+					string outputThumbPath	 = Path.Combine(saveDir, ThumbFileName);
 
 					var files = Directory.GetFiles(AssociatedWorld.Path, "*", SearchOption.AllDirectories);
 					int totalFiles = files.Length, processedFiles = 0;
 
-					using IWritableArchive archive = useCompression ? ZipArchive.Create() : TarArchive.Create();
+					using IWritableArchive archive = Settings.Default.UseCompression ? ZipArchive.Create() : TarArchive.Create();
 
 					var bag = new ConcurrentBag<(string EntryPath, MemoryStream Stream, DateTime EntryDate)>();
-
+					
 					UpdateArchiveStatus(ArchiveStatus.AddingFromDisk, "Adding files from disk...");
 					var thumb = GetSaveThumb();
 
@@ -217,6 +217,7 @@ namespace PZSaveManager.Classes
 						string entryPath = Path.Combine(AssociatedWorld.Gamemode, AssociatedWorld.Name, relativePath).Replace('\\', '/');  // e.g. Gamemode/WorldName/folder/file.dat
 
 						bag.Add((entryPath, ms, File.GetLastWriteTime(files[i])));
+
 						int processedFilesNew = Interlocked.Increment(ref processedFiles);
 
 						if (processedFilesNew % ProgressReportThreshold == 0)
@@ -226,16 +227,19 @@ namespace PZSaveManager.Classes
 					UpdateArchiveStatus(ArchiveStatus.AddingToArchive, "Adding files to archive...");
 					processedFiles = 0;
 
-					while (bag.TryTake(out var entry))
+					using (archive.PauseEntryRebuilding())
 					{
-						archive.AddEntry(entry.EntryPath, entry.Stream, true, entry.Stream.Length, entry.EntryDate);
-
-						if (++processedFiles % ProgressReportThreshold == 0)
+						while (bag.TryTake(out var entry))
 						{
-							if (token.IsCancellationRequested)
-								throw new OperationCanceledException();
+							archive.AddEntry(entry.EntryPath, entry.Stream, true, entry.Stream.Length, entry.EntryDate);
 
-							ArchiveProgressChanged?.Invoke(this, new(processedFiles, totalFiles));
+							if (++processedFiles % ProgressReportThreshold == 0)
+							{
+								if (token.IsCancellationRequested)
+									throw new OperationCanceledException();
+
+								ArchiveProgressChanged?.Invoke(this, new(processedFiles, totalFiles));
+							}
 						}
 					}
 
@@ -243,8 +247,8 @@ namespace PZSaveManager.Classes
 					SetSaveState(true, false);
 					UpdateArchiveStatus(ArchiveStatus.Exporting, "Save is now uncancellable. Exporting the archive...");
 
-					archive.SaveTo(outputArchivePath, new(useCompression ? CompressionType.Deflate : CompressionType.None));
-
+					archive.SaveTo(outputArchivePath, new(Settings.Default.UseCompression ? CompressionType.Deflate : CompressionType.None));
+					
 					// Save the metadata and thumb
 					CreateMetadata(AssociatedWorld.Name, AssociatedWorld.Gamemode, Description, Date).Save(outputXmlPath);
 
@@ -252,6 +256,8 @@ namespace PZSaveManager.Classes
 					thumb?.Dispose();
 
 					Logger.Log($"Successfully exported the world {AssociatedWorld.Name} in {(DateTime.Now - startTime).TotalSeconds:f1} seconds.", LogSeverity.Info);
+					SaveExported?.Invoke(null, EventArgs.Empty);
+
 
 					Bitmap? GetSaveThumb()
 					{
@@ -264,6 +270,7 @@ namespace PZSaveManager.Classes
 						}
 
 						return GetOriginalThumb();
+
 
 						Bitmap? GetOriginalThumb()
 						{
@@ -350,7 +357,13 @@ namespace PZSaveManager.Classes
 			}
 		}
 
-		public async Task DeleteAsync() => await Task.Run(() => Directory.Delete(Directory.GetParent(ArchivePath!)!.FullName, true));
+		public async Task DeleteAsync()
+		{
+			if (ArchivePath is null)
+				throw new InvalidOperationException($"{nameof(ArchivePath)} is null.");
+
+			await Task.Run(() => Directory.Delete(Directory.GetParent(ArchivePath)!.FullName, true));
+		}
 
 		private void UpdateArchiveStatus(ArchiveStatus status, string logMessage)
 		{
@@ -361,6 +374,7 @@ namespace PZSaveManager.Classes
 		private static XDocument CreateMetadata(string worldName, string worldGamemode, string description, DateTime date)
 		{
 			return new XDocument(
+				new XComment($" Generated by Project Zomboid Save Manager {VersionManager.CurrentVersion.ToString(2)} "),
 				new XElement(XmlElementName.SaveMetadata,
 					new XElement(XmlElementName.WorldName, worldName),
 					new XElement(XmlElementName.WorldGamemode, worldGamemode),
@@ -372,5 +386,7 @@ namespace PZSaveManager.Classes
 
 		public event EventHandler<ArchiveProgressEventArgs>? ArchiveProgressChanged;
 		public event EventHandler<ArchiveStatusChangedEventArgs>? ArchiveStatusChanged;
+
+		public static event EventHandler<EventArgs>? SaveExported;
 	}
 }

@@ -30,7 +30,7 @@ namespace PZSaveManager.Forms
 
 			try
 			{
-				await Save.ExportAsync(Settings.Default.UseCompression, tokenSource.Token);
+				await Save.ExportAsync(tokenSource.Token);
 				result = DialogResult.OK;
 			}
 			catch (OperationCanceledException)

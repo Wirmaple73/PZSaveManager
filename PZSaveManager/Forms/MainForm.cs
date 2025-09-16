@@ -18,7 +18,7 @@ namespace PZSaveManager.Forms
 
 			SaveHelper.UpdateAutosaveTimer();
 
-			if (!SaveHelper.UpdateHotkeys() && MessageBoxManager.ShowConfirmation("One of the save hotkeys could not be loaded properly. Would you like to open the save options now?", "Save Hotkey Error", isYesDefault: true))
+			if (!SaveHelper.Hotkeys.UpdateAll() && MessageBoxManager.ShowConfirmation("One of the save hotkeys could not be loaded properly. Would you like to open the save options now?", "Save Hotkey Error", isYesDefault: true))
 				configureSaveOptionsToolStripMenuItem_Click(this, EventArgs.Empty);
 
 
@@ -65,11 +65,11 @@ namespace PZSaveManager.Forms
 
 			if (form.ShowDialog() == DialogResult.OK)
 			{
-				SaveHelper.UpdateHotkeys();
 				SaveHelper.UpdateAutosaveTimer();
-
 				saveSelectionPage.UpdateUI();
 			}
+
+			SaveHelper.Hotkeys.UpdateAll();
 		}
 
 		private void openLogFileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -88,7 +88,7 @@ namespace PZSaveManager.Forms
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			if (SaveHelper.GetKeyByString(Settings.Default.SaveHotkey).Key is null && !Settings.Default.EnableAutosave)
+			if (SaveHelper.Hotkeys.GetKeyByString(Settings.Default.SaveHotkey).Key is null && !Settings.Default.EnableAutosave)
 				return;
 
 			if (!MessageBoxManager.ShowConfirmation("Are you sure you want to quit? The program must be kept running in the background in order to perform manual or automatic saves!", "Exit Confirmation"))
@@ -97,7 +97,7 @@ namespace PZSaveManager.Forms
 
 		private void Application_ApplicationExit(object? sender, EventArgs e)
 		{
-			SaveHelper.UnbindAll();
+			SaveHelper.Hotkeys.UnbindAll();
 
 			Settings.Default.Save();
 			Logger.Log("All settings have been saved.", LogSeverity.Info);
@@ -134,5 +134,19 @@ namespace PZSaveManager.Forms
 				MessageBoxManager.ShowInfo("You are currently running the latest version of the program.", "Update Check");
 			}
 		}
+
+		// TODO: Figure out a way to prevent controls from stealing pressed keys
+		//protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+		//{
+		//	if (PageLoader.CurrentPage is not null)
+		//	{
+		//		// Propagate pressed keys to child pages
+		//		((IPage)PageLoader.CurrentPage).GlobalKeyDown(keyData);
+
+		//		return true;
+		//	}
+
+		//	return base.ProcessCmdKey(ref msg, keyData);
+		//}
 	}
 }

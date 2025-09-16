@@ -137,18 +137,21 @@ If this feature is not desired, please select "None".
     <value>17, 17</value>
   </metadata>
   <data name="useCompression.ToolTip" xml:space="preserve">
-    <value>Enables fast (DEFLATE) compression to significantly reduce output archive size at the cost of noticeably slower saving, especially for larger worlds. Restoration speed is largely unaffected.
-This setting also applies to manual &amp; automatic save functions.
+    <value>Enables fast (DEFLATE) compression to significantly reduce output archive size at the cost of significantly slower saving, especially for larger worlds. Restoration speed is largely unaffected.
+You are suggested to leave this setting disabled for optimal performance unless you're low on disk space. This setting applies to all save functions.
 
 Tests performed on a sample world using an Intel i5-3470 CPU (4 cores):
 * Saving:
-    Compression on: 40 MB (38 seconds)
-    Compression off: 166 MB (30 seconds)
+    Compression on: 40 MB (11.7 seconds)
+    Compression off: 165 MB (3 seconds)
 
 * Restoration:
     Compression on: 14 seconds
     Compression off: 12 seconds</value>
   </data>
+  <metadata name="compressToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
   <metadata name="folderBrowser.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>240, 17</value>
   </metadata>

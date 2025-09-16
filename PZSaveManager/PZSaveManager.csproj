@@ -13,7 +13,18 @@
     <FileVersion>1.0</FileVersion>
     <PlatformTarget>x64</PlatformTarget>
     <ApplicationIcon>Resources\Images\Icon.ico</ApplicationIcon>
-    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
+    <AssemblyName>PZSaveManager</AssemblyName>
+    <PackageId>PZSaveManager</PackageId>
+    <Authors>Wirmaple73</Authors>
+    <Description>Project Zomboid Save Manager</Description>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>full</DebugType>
   </PropertyGroup>
 
   <ItemGroup>

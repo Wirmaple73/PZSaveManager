@@ -44,8 +44,8 @@
 			deleteToolStripMenuItem = new ToolStripMenuItem();
 			errorLabel = new Label();
 			errorLabelIcon = new PictureBox();
-			totalDiskUsage = new Label();
-			label5 = new Label();
+			actualTotalDiskUsage = new Label();
+			totalDiskUsageLabel = new Label();
 			toolStrip = new ToolStrip();
 			refreshWorldButton = new ToolStripButton();
 			toolStripSeparator1 = new ToolStripSeparator();
@@ -136,14 +136,14 @@
 			// 
 			listContextMenu.Items.AddRange(new ToolStripItem[] { refreshToolStripMenuItem, toolStripMenuItem1, deleteToolStripMenuItem });
 			listContextMenu.Name = "listContextMenu";
-			listContextMenu.Size = new Size(181, 76);
+			listContextMenu.Size = new Size(141, 54);
 			listContextMenu.Opening += listContextMenu_Opening;
 			// 
 			// refreshToolStripMenuItem
 			// 
 			refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
 			refreshToolStripMenuItem.ShortcutKeys = Keys.F5;
-			refreshToolStripMenuItem.Size = new Size(180, 22);
+			refreshToolStripMenuItem.Size = new Size(140, 22);
 			refreshToolStripMenuItem.Text = "&Refresh";
 			refreshToolStripMenuItem.ToolTipText = "Refreshes the world list.";
 			refreshToolStripMenuItem.Click += refreshListButton_Click;
@@ -151,13 +151,13 @@
 			// toolStripMenuItem1
 			// 
 			toolStripMenuItem1.Name = "toolStripMenuItem1";
-			toolStripMenuItem1.Size = new Size(177, 6);
+			toolStripMenuItem1.Size = new Size(137, 6);
 			// 
 			// deleteToolStripMenuItem
 			// 
 			deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
 			deleteToolStripMenuItem.ShortcutKeys = Keys.Delete;
-			deleteToolStripMenuItem.Size = new Size(180, 22);
+			deleteToolStripMenuItem.Size = new Size(140, 22);
 			deleteToolStripMenuItem.Text = "&Delete...";
 			deleteToolStripMenuItem.ToolTipText = "Deletes the selected world and all of its saves.";
 			deleteToolStripMenuItem.Click += deleteWorldButton_Click;
@@ -185,27 +185,27 @@
 			errorLabelIcon.TabStop = false;
 			errorLabelIcon.Visible = false;
 			// 
-			// totalDiskUsage
+			// actualTotalDiskUsage
 			// 
-			totalDiskUsage.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			totalDiskUsage.AutoSize = true;
-			totalDiskUsage.Location = new Point(553, 31);
-			totalDiskUsage.Name = "totalDiskUsage";
-			totalDiskUsage.Size = new Size(76, 15);
-			totalDiskUsage.TabIndex = 3;
-			totalDiskUsage.Text = "Calculating...";
-			totalDiskUsage.TextAlign = ContentAlignment.MiddleRight;
+			actualTotalDiskUsage.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			actualTotalDiskUsage.AutoSize = true;
+			actualTotalDiskUsage.Location = new Point(553, 31);
+			actualTotalDiskUsage.Name = "actualTotalDiskUsage";
+			actualTotalDiskUsage.Size = new Size(76, 15);
+			actualTotalDiskUsage.TabIndex = 3;
+			actualTotalDiskUsage.Text = "Calculating...";
+			actualTotalDiskUsage.TextAlign = ContentAlignment.MiddleRight;
 			// 
-			// label5
+			// totalDiskUsageLabel
 			// 
-			label5.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			label5.AutoSize = true;
-			label5.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-			label5.Location = new Point(430, 31);
-			label5.Name = "label5";
-			label5.Size = new Size(125, 15);
-			label5.TabIndex = 2;
-			label5.Text = "Total save disk usage:";
+			totalDiskUsageLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			totalDiskUsageLabel.AutoSize = true;
+			totalDiskUsageLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+			totalDiskUsageLabel.Location = new Point(430, 31);
+			totalDiskUsageLabel.Name = "totalDiskUsageLabel";
+			totalDiskUsageLabel.Size = new Size(125, 15);
+			totalDiskUsageLabel.TabIndex = 2;
+			totalDiskUsageLabel.Text = "Total save disk usage:";
 			// 
 			// toolStrip
 			// 
@@ -256,8 +256,8 @@
 			AutoScaleMode = AutoScaleMode.Font;
 			BackColor = SystemColors.Window;
 			Controls.Add(toolStrip);
-			Controls.Add(totalDiskUsage);
-			Controls.Add(label5);
+			Controls.Add(actualTotalDiskUsage);
+			Controls.Add(totalDiskUsageLabel);
 			Controls.Add(errorLabelIcon);
 			Controls.Add(errorLabel);
 			Controls.Add(worldList);
@@ -287,8 +287,8 @@
 		private Button nextButton;
 		private Label errorLabel;
 		private PictureBox errorLabelIcon;
-		private Label totalDiskUsage;
-		private Label label5;
+		private Label actualTotalDiskUsage;
+		private Label totalDiskUsageLabel;
 		private ToolStrip toolStrip;
 		private ToolStripButton refreshWorldButton;
 		private ToolStripSeparator toolStripSeparator1;

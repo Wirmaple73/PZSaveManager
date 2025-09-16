@@ -2,7 +2,7 @@
 
 namespace PZSaveManager.Classes
 {
-	internal static class NativeMethods
+	static class NativeMethods
 	{
 		private const uint FLASHW_ALL = 3;
 		private const uint FLASHW_TIMERNOFG = 12;
@@ -15,7 +15,7 @@ namespace PZSaveManager.Classes
 		[DllImport("user32.dll")] public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
 		[DllImport("user32.dll")] public static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
-		public static void FlashWindow(IntPtr hwnd)
+		internal static void FlashWindow(IntPtr hwnd)
 		{
 			var info = new FLASHWINFO
 			{

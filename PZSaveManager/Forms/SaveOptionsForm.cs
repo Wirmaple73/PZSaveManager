@@ -25,6 +25,8 @@ namespace PZSaveManager.Forms
 
 			warningIcon.Image = SystemIcons.Warning.ToBitmap();
 			soundVolume_ValueChanged(this, EventArgs.Empty);
+
+			SaveHelper.Hotkeys.UnbindAll();  // Used to prevent current hotkeys from being unselectable
 		}
 
 		private void useSaveSounds_CheckedChanged(object sender, EventArgs e)
@@ -62,17 +64,14 @@ namespace PZSaveManager.Forms
 				return;
 
 			// Validate hotkeys
-			var saveKey = SaveHelper.GetKeyByString(saveHotkey.Text);
-			var abortKey = SaveHelper.GetKeyByString(abortSaveHotkey.Text);
+			var saveKey = SaveHelper.Hotkeys.GetKeyByString(saveHotkey.Text);
+			var abortKey = SaveHelper.Hotkeys.GetKeyByString(abortSaveHotkey.Text);
 
 			if (saveKey.IsErroneous || abortKey.IsErroneous)
 			{
-				// How does one end up here?
 				MessageBoxManager.ShowError("One of the selected hotkeys is invalid. Please select another one.");
 				return;
 			}
-
-			SaveHelper.UnbindAll();
 
 			if (!ValidateHotkey(saveKey.Key, "manual save") || !ValidateHotkey(abortKey.Key, "cancelling saves"))
 				return;
@@ -143,7 +142,7 @@ namespace PZSaveManager.Forms
 
 			static bool ValidateHotkey(Keys? hotkey, string hotkeyFunction)
 			{
-				if (hotkey is not null && hotkey != Keys.None && !SaveHelper.IsHotkeyAvailable(hotkey.Value))
+				if (hotkey is not null && hotkey != Keys.None && !SaveHelper.Hotkeys.IsHotkeyAvailable(hotkey.Value))
 				{
 					MessageBoxManager.ShowError($"The specified hotkey for {hotkeyFunction} ({hotkey.Value}) could not be registered, probably because it's already in use by another process. Please select another one.");
 					return false;
@@ -156,9 +155,9 @@ namespace PZSaveManager.Forms
 		private void resetButton_Click(object sender, EventArgs e)
 		{
 			backupPath.Text = Save.DefaultBackupPath;
-			useCompression.Checked = true;
+			useCompression.Checked = false;
 			useSaveSounds.Checked = true;
-			soundVolume.Value = 80;
+			soundVolume.Value = 50;
 			saveHotkey.Text = Keys.F6.ToString();
 			abortSaveHotkey.Text = Keys.F7.ToString();
 			enableAutosave.Checked = false;

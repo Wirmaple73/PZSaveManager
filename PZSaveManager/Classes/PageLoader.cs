@@ -2,7 +2,7 @@
 {
 	public static class PageLoader
 	{
-		public static UserControl? CurrentPage { get; set; } = null;
+		public static UserControl? CurrentPage { get; private set; } = null;
 
 		public static void Load<T>(Control host, T page) where T : UserControl, IPage
 		{
