@@ -39,9 +39,12 @@ namespace PZSaveManager.Forms
 			isDeletionInProgress = true;
 			progressBar.Visible = true;
 
+			WindowHelper.TaskbarProgress.State = WindowHelper.TaskbarProgress.TaskbarState.Indeterminate;
 			await Subject.DeleteAsync();
 
+			WindowHelper.TaskbarProgress.Finish();
 			isDeletionInProgress = false;
+
 			this.DialogResult = DialogResult.OK;
 		}
 
