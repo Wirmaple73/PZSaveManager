@@ -33,9 +33,7 @@ namespace PZSaveManager.Classes
 		public const string UnnamedSaveDescription	= "Unnamed save";
 
 		public static readonly string DefaultBackupPath = Path.Combine(World.BaseDirectory, "Backups");
-
 		public static string BackupPath => Settings.Default.SavePath.Length > 0 ? Settings.Default.SavePath : DefaultBackupPath;
-		public static int ProgressReportThreshold { get; set; } = 50;  // Report progress every 50 files
 
 		public World? AssociatedWorld { get; }
 		public string? ArchivePath { get; }
@@ -46,6 +44,7 @@ namespace PZSaveManager.Classes
 		public static bool IsSaveInProgress { get; private set; } = false;
 		public static bool IsSaveCancelable { get; private set; } = true;
 
+		private const int ProgressReportThreshold = 50;  // Report progress every 50 files
 		private static readonly object saveLock = new();
 
 		public Save(World? associatedWorld, string description, string? archivePath, DateTime date, MemoryStream thumb)
