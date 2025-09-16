@@ -49,7 +49,7 @@ namespace PZSaveManager.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("F6")]
+        [global::System.Configuration.DefaultSettingValueAttribute("F5, Control")]
         public string SaveHotkey {
             get {
                 return ((string)(this["SaveHotkey"]));
@@ -85,7 +85,7 @@ namespace PZSaveManager.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("F7")]
+        [global::System.Configuration.DefaultSettingValueAttribute("F6, Control")]
         public string AbortSaveHotkey {
             get {
                 return ((string)(this["AbortSaveHotkey"]));

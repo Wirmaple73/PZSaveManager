@@ -158,8 +158,8 @@ namespace PZSaveManager.Forms
 			useCompression.Checked = false;
 			useSaveSounds.Checked = true;
 			soundVolume.Value = 50;
-			saveHotkey.Text = Keys.F6.ToString();
-			abortSaveHotkey.Text = Keys.F7.ToString();
+			saveHotkey.Text = (Keys.Control | Keys.F5).ToString();
+			abortSaveHotkey.Text = (Keys.Control | Keys.F6).ToString();
 			enableAutosave.Checked = false;
 			autosaveInterval.Text = SaveHelper.DefaultAutosaveInterval.ToString();
 		}
