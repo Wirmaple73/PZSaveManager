@@ -7,6 +7,7 @@ using PZSaveManager.Classes.Exceptions;
 using SharpCompress.Archives.Tar;
 using System.Collections.Concurrent;
 using System.Buffers;
+using System.Diagnostics;
 
 namespace PZSaveManager.Classes
 {
@@ -75,11 +76,11 @@ namespace PZSaveManager.Classes
 				if (!ZipArchive.IsZipFile(ArchivePath) && !TarArchive.IsTarFile(ArchivePath))
 					throw new InvalidSaveArchiveException("The specified file is not a real zip or TAR archive.");
 
+				Logger.Log($"Beginning to restore {ArchivePath}...", LogSeverity.Info);
+				var stopwatch = Stopwatch.StartNew();
+
 				try
 				{
-					Logger.Log($"Beginning to restore {ArchivePath}...", LogSeverity.Info);
-					var startTime = DateTime.Now;
-
 					using var stream = File.OpenRead(ArchivePath);
 					using var archive = ArchiveFactory.Open(stream);
 
@@ -130,14 +131,14 @@ namespace PZSaveManager.Classes
 							ArchiveProgressChanged?.Invoke(this, new(filesProcessedNew, totalFiles));
 						}
 					});
-
-					Logger.Log($"Restoration took {(DateTime.Now - startTime).TotalSeconds:f1}s.", LogSeverity.Info);
 				}
 				catch (Exception ex)
 				{
 					// SaveExtractionException implies that the save might be corrupted
 					throw new SaveExtractionException("Could not extract the specified save to the world directory.", ex);
 				}
+
+				Logger.Log($"Successfully restored {ArchivePath}", stopwatch);
 
 				// Replace the old thumb
 				if (Thumb is null || Thumb.Length == 0)
@@ -186,7 +187,7 @@ namespace PZSaveManager.Classes
 					Directory.CreateDirectory(saveDir);
 
 					Logger.Log($"Beginning to export {AssociatedWorld.Name}... (compression {(Settings.Default.UseCompression ? "enabled" : "disabled")})", LogSeverity.Info);
-					var startTime = DateTime.Now;
+					var stopwatch = Stopwatch.StartNew();
 
 					string outputArchivePath = Path.Combine(saveDir, ArchiveFileName + (Settings.Default.UseCompression ? ".zip" : ".tar"));
 					string outputXmlPath	 = Path.Combine(saveDir, MetadataFileName);
@@ -254,7 +255,7 @@ namespace PZSaveManager.Classes
 					thumb?.Save(outputThumbPath, System.Drawing.Imaging.ImageFormat.Png);
 					thumb?.Dispose();
 
-					Logger.Log($"Successfully exported the world {AssociatedWorld.Name} in {(DateTime.Now - startTime).TotalSeconds:f1} seconds.", LogSeverity.Info);
+					Logger.Log($"Successfully exported the world {AssociatedWorld.Name}", stopwatch);
 					SaveExported?.Invoke(null, EventArgs.Empty);
 
 

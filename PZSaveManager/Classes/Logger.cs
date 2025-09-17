@@ -52,6 +52,12 @@ namespace PZSaveManager.Classes
 			}
 		}
 
+		public static void Log(string description, Stopwatch sw)
+		{
+			sw.Stop();
+			Log($"{description} in {sw.Elapsed.TotalSeconds:f1} seconds.", LogSeverity.Info);
+		}
+
 		public static void Log(string description, Exception ex)
 			=> Log($"{description}: ({ex.GetType().Name}) {ex.Message}\n{ex.StackTrace}\n", LogSeverity.Error);
 

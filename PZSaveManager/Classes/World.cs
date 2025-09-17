@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System.Diagnostics;
+using System.Xml.Linq;
 using SharpCompress.Archives;
 using SharpCompress.Archives.Tar;
 using SharpCompress.Archives.Zip;
@@ -291,6 +292,9 @@ namespace PZSaveManager.Classes
 
 		public async Task DeleteAsync()
 		{
+			Logger.Log($"Beginning to delete the world {Name}...", LogSeverity.Info);
+			var stopwatch = Stopwatch.StartNew();
+			
 			await Task.Run(() =>
 			{
 				// Delete all saves
@@ -301,8 +305,10 @@ namespace PZSaveManager.Classes
 
 					string? parentFolderPath = IOPath.GetDirectoryName(save.ArchivePath);
 
-					if (string.IsNullOrWhiteSpace(parentFolderPath) || !Directory.Exists(parentFolderPath))
+					if (!Directory.Exists(parentFolderPath))
 						return;
+
+					Logger.Log($"Deleting the save at {parentFolderPath}...", LogSeverity.Info);
 
 					foreach (string filename in FilesToDelete)
 					{
@@ -331,10 +337,14 @@ namespace PZSaveManager.Classes
 					}
 				});
 
+				Logger.Log($"Deleting the world folder...", LogSeverity.Info);
+
 				// Too lazy to parallelize. Who wants to delete an entire world anyway?
 				if (Directory.Exists(Path))
 					Directory.Delete(Path, true);
 			});
+
+			Logger.Log($"Successfully deleted the world {Name}", stopwatch);
 		}
 	}
 }

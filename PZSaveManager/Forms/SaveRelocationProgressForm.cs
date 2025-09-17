@@ -1,4 +1,5 @@
-﻿using PZSaveManager.Classes;
+﻿using System.Diagnostics;
+using PZSaveManager.Classes;
 
 namespace PZSaveManager.Forms
 {
@@ -26,15 +27,15 @@ namespace PZSaveManager.Forms
 		private async Task MoveSaves()
 		{
 			WindowHelper.Buttons.DisableCloseButton(this.Handle);
-			var dt = DateTime.Now;
+
+			Logger.Log($"Beginning to relocate saves from {OldPath} to {NewPath}...", LogSeverity.Info);
+			var stopwatch = Stopwatch.StartNew();
 
 			await Task.Run(() =>
 			{
 				// Copy all saves to the new folder
 				var savePaths = Directory.GetDirectories(OldPath, "*", SearchOption.TopDirectoryOnly);
 				int filesMoved = 0, totalDirs = savePaths.Length;
-
-				Logger.Log($"Beginning to relocate saves from {OldPath} to {NewPath}...", LogSeverity.Info);
 
 				Parallel.ForEach(savePaths, (string path, ParallelLoopState ls) =>
 				{
@@ -76,7 +77,7 @@ namespace PZSaveManager.Forms
 				});
 			});
 
-			Logger.Log($"Save relocation took {(DateTime.Now - dt).TotalSeconds:f1} seconds.", LogSeverity.Info);
+			Logger.Log("Successfully relocated all saves", stopwatch);
 		}
 
 		private void SaveRelocationProgressForm_FormClosing(object sender, FormClosingEventArgs e)
