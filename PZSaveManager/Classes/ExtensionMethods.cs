@@ -1,4 +1,6 @@
-﻿namespace PZSaveManager.Classes
+﻿using System.Diagnostics;
+
+namespace PZSaveManager.Classes
 {
 	public static class ExtensionMethods
 	{
@@ -13,6 +15,26 @@
 
 			var cropRect = new Rectangle(x, y, width, height);
 			return source.Clone(cropRect, source.PixelFormat);
+		}
+
+		public static async Task DeleteParallelAsync(this DirectoryInfo path)
+		{
+			await Task.Run(() =>
+			{
+				Parallel.ForEach(Directory.EnumerateFiles(path.FullName, "*", SearchOption.AllDirectories), filePath =>
+				{
+					try
+					{
+						File.Delete(filePath);
+					}
+					catch (Exception ex)
+					{
+						Logger.Log($"Could not delete {filePath}", ex);
+					}
+				});
+
+				Directory.Delete(path.FullName, true);
+			});
 		}
 	}
 }

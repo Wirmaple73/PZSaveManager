@@ -1,4 +1,5 @@
-﻿using PZSaveManager.Classes;
+﻿using System.Diagnostics;
+using PZSaveManager.Classes;
 using PZSaveManager.Classes.Exceptions;
 
 namespace PZSaveManager.Forms
@@ -32,15 +33,12 @@ namespace PZSaveManager.Forms
 			{
 				try
 				{
-					await Task.Run(() =>
-					{
-						// Delete the old save backup
-						if (Directory.Exists(SelectedSave.AssociatedWorld.BackupPath))
-							Directory.Delete(SelectedSave.AssociatedWorld.BackupPath, true);
+					// Delete the old save backup
+					if (Directory.Exists(SelectedSave.AssociatedWorld.BackupPath))
+						await new DirectoryInfo(SelectedSave.AssociatedWorld.BackupPath).DeleteParallelAsync();
 
-						Directory.Move(SelectedSave.AssociatedWorld.Path, SelectedSave.AssociatedWorld.BackupPath);
-						Directory.CreateDirectory(SelectedSave.AssociatedWorld.Path);
-					});
+					Directory.Move(SelectedSave.AssociatedWorld.Path, SelectedSave.AssociatedWorld.BackupPath);
+					Directory.CreateDirectory(SelectedSave.AssociatedWorld.Path);
 				}
 				catch (Exception exc)
 				{
@@ -73,7 +71,7 @@ namespace PZSaveManager.Forms
 
 				try
 				{
-					Directory.Delete(SelectedSave.AssociatedWorld.Path, true);
+					await new DirectoryInfo(SelectedSave.AssociatedWorld.Path).DeleteParallelAsync();
 					Directory.Move(SelectedSave.AssociatedWorld.BackupPath, SelectedSave.AssociatedWorld.Path);
 
 					IsOriginalWorldRestored = true;
@@ -109,8 +107,12 @@ namespace PZSaveManager.Forms
 
 					try
 					{
-						// Delete the world backup as it's of no use anymore
-						await Task.Run(() => Directory.Delete(SelectedSave.AssociatedWorld.BackupPath, true));
+						var sw = Stopwatch.StartNew();
+
+						// Delete the temporary world backup as it's of no use anymore
+						await new DirectoryInfo(SelectedSave.AssociatedWorld.BackupPath).DeleteParallelAsync();
+
+						Logger.Log($"Successfully deleted {SelectedSave.AssociatedWorld.BackupPath}", sw);
 						IsRedundantBackupDeleted = true;
 					}
 					catch

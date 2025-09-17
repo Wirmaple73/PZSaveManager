@@ -8,6 +8,7 @@ using SharpCompress.Archives.Tar;
 using System.Collections.Concurrent;
 using System.Buffers;
 using System.Diagnostics;
+using System.IO;
 
 namespace PZSaveManager.Classes
 {
@@ -47,6 +48,8 @@ namespace PZSaveManager.Classes
 
 		private const int ProgressReportThreshold = 50;  // Report progress every 50 files
 		private static readonly object saveLock = new();
+
+		private static readonly string[] FilesToDelete = { "Save.tar", "Save.zip", "Metadata.xml", "Thumb.png" };
 
 		public Save(World? associatedWorld, string description, string? archivePath, DateTime date, MemoryStream thumb)
 		{
@@ -284,7 +287,7 @@ namespace PZSaveManager.Classes
 			{
 				try
 				{
-					Directory.Delete(saveDir, true);
+					await new DirectoryInfo(saveDir).DeleteParallelAsync();
 				}
 				catch (Exception ex)
 				{
@@ -359,10 +362,44 @@ namespace PZSaveManager.Classes
 
 		public async Task DeleteAsync()
 		{
-			if (ArchivePath is null)
-				throw new InvalidOperationException($"{nameof(ArchivePath)} is null.");
+			await Task.Run(() =>
+			{
+				if (string.IsNullOrWhiteSpace(ArchivePath))
+					throw new InvalidOperationException($"{nameof(ArchivePath)} is null.");
 
-			await Task.Run(() => Directory.Delete(Directory.GetParent(ArchivePath)!.FullName, true));
+				string? parentFolderPath = Directory.GetParent(ArchivePath)!.FullName;
+
+				if (!Directory.Exists(parentFolderPath))
+					return;
+
+				Logger.Log($"Deleting the save {parentFolderPath}...", LogSeverity.Info);
+
+				foreach (string filename in FilesToDelete)
+				{
+					string filePath = Path.Combine(parentFolderPath, filename);
+
+					if (File.Exists(filePath))
+					{
+						try
+						{
+							File.Delete(filePath);
+						}
+						catch (Exception ex)
+						{
+							Logger.Log($"Couldn't delete the file {filePath}", ex);
+						}
+					}
+				}
+
+				try
+				{
+					Directory.Delete(parentFolderPath);
+				}
+				catch (Exception ex)
+				{
+					Logger.Log($"Couldn't delete the save directory {parentFolderPath}", ex);
+				}
+			});
 		}
 
 		private void UpdateArchiveStatus(ArchiveStatus status, string logMessage)

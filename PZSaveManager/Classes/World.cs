@@ -13,9 +13,7 @@ namespace PZSaveManager.Classes
 		public static readonly string WorldDirectory = IOPath.Combine(BaseDirectory, "Saves");
 
 		private const string LockedFileName = "players.db";
-		private const string BackupSuffix = "_old";
-
-		private static readonly string[] FilesToDelete = { "Save.tar", "Save.zip", "Metadata.xml", "Thumb.png" };
+		private const string BackupSuffix = "__old";
 
 		public const string ThumbName = "thumb.png";
 		public const int ThumbWidth = 256;
@@ -294,57 +292,15 @@ namespace PZSaveManager.Classes
 		{
 			Logger.Log($"Beginning to delete the world {Name}...", LogSeverity.Info);
 			var stopwatch = Stopwatch.StartNew();
-			
-			await Task.Run(() =>
-			{
-				// Delete all saves
-				Parallel.ForEach(GetSaves(), save =>
-				{
-					if (string.IsNullOrWhiteSpace(save.ArchivePath))
-						return;  // continue
 
-					string? parentFolderPath = IOPath.GetDirectoryName(save.ArchivePath);
+			await Task.WhenAll(GetSaves().Select(save => save.DeleteAsync()));
 
-					if (!Directory.Exists(parentFolderPath))
-						return;
+			Logger.Log($"Deleting the world folder...", LogSeverity.Info);
 
-					Logger.Log($"Deleting the save at {parentFolderPath}...", LogSeverity.Info);
+			if (Directory.Exists(Path))
+				await new DirectoryInfo(Path).DeleteParallelAsync();
 
-					foreach (string filename in FilesToDelete)
-					{
-						string filePath = IOPath.Combine(parentFolderPath, filename);
-
-						if (File.Exists(filePath))
-						{
-							try
-							{
-								File.Delete(filePath);
-							}
-							catch (Exception ex)
-							{
-								Logger.Log($"Couldn't delete the file at {filePath}", ex);
-							}
-						}
-					}
-
-					try
-					{
-						Directory.Delete(parentFolderPath);
-					}
-					catch (Exception ex)
-					{
-						Logger.Log($"Couldn't delete the save directory at {parentFolderPath}", ex);
-					}
-				});
-
-				Logger.Log($"Deleting the world folder...", LogSeverity.Info);
-
-				// Too lazy to parallelize. Who wants to delete an entire world anyway?
-				if (Directory.Exists(Path))
-					Directory.Delete(Path, true);
-			});
-
-			Logger.Log($"Successfully deleted the world {Name}", stopwatch);
+			Logger.Log($"Successfully deleted the world {Name} and all of its saves", stopwatch);
 		}
 	}
 }
