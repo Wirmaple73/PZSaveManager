@@ -84,13 +84,13 @@ namespace PZSaveManager.Classes
 
 				try
 				{
-					using var stream = File.OpenRead(ArchivePath);
+					using var stream = new FileStream(ArchivePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.SequentialScan);
 					using var archive = ArchiveFactory.Open(stream);
 
 					var entryArray = archive.Entries.ToArray();  // Evil exception dynamite warehouse
 					int totalFiles = entryArray.Length;
 
-					var streams = new ConcurrentBag<(string OutputPath, MemoryStream Stream)>();
+					var streams = new List<(string OutputPath, MemoryStream Stream)>(totalFiles);
 					UpdateArchiveStatus(ArchiveStatus.Extracting, "Extracting entries to memory...");
 
 					for (int i = 0; i < totalFiles; i++)
@@ -120,18 +120,19 @@ namespace PZSaveManager.Classes
 
 						using (entry.Stream)
 						{
-							using var fs = File.OpenWrite(entry.OutputPath);
+							using var fs = File.Create(entry.OutputPath, 4096, FileOptions.SequentialScan);
 							entry.Stream.CopyTo(fs);
 						}
 
-						int filesProcessedNew = Interlocked.Increment(ref filesProcessed);
+						// Accuracy is a small price to pay
+						// int filesProcessedNew = Interlocked.Increment(ref filesProcessed);
 
-						if (filesProcessedNew % ProgressReportThreshold == 0)
+						if (++filesProcessed % ProgressReportThreshold == 0)
 						{
 							if (AssociatedWorld.IsActive)
 								throw new WorldActiveException("The current world must not be active before proceeding.");
 
-							ArchiveProgressChanged?.Invoke(this, new(filesProcessedNew, totalFiles));
+							ArchiveProgressChanged?.Invoke(this, new(filesProcessed, totalFiles));
 						}
 					});
 				}
@@ -149,7 +150,7 @@ namespace PZSaveManager.Classes
 
 				try
 				{
-					using var ts = File.OpenWrite(Path.Combine(AssociatedWorld.Path, World.ThumbName));
+					using var ts = File.Create(Path.Combine(AssociatedWorld.Path, World.ThumbName));
 
 					Thumb.Position = 0;
 					Thumb.CopyTo(ts);
@@ -211,7 +212,7 @@ namespace PZSaveManager.Classes
 						var ms = new MemoryStream();
 
 						// Copy every file to the memory to avoid archive corruption. The game actively messes with them.
-						using (var fs = new FileStream(files[i], FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+						using (var fs = new FileStream(files[i], FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan))
 							fs.CopyTo(ms);
 
 						ms.Position = 0;
@@ -221,10 +222,10 @@ namespace PZSaveManager.Classes
 
 						bag.Add((entryPath, ms, File.GetLastWriteTime(files[i])));
 
-						int processedFilesNew = Interlocked.Increment(ref processedFiles);
+						// int processedFilesNew = Interlocked.Increment(ref processedFiles);
 
-						if (processedFilesNew % ProgressReportThreshold == 0)
-							ArchiveProgressChanged?.Invoke(this, new(processedFilesNew, totalFiles));
+						if (++processedFiles % ProgressReportThreshold == 0)
+							ArchiveProgressChanged?.Invoke(this, new(processedFiles, totalFiles));
 					});
 
 					UpdateArchiveStatus(ArchiveStatus.AddingToArchive, "Adding files to archive...");

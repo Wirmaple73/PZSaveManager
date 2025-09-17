@@ -55,7 +55,7 @@ namespace PZSaveManager.Classes
 		public static void Log(string description, Stopwatch sw)
 		{
 			sw.Stop();
-			Log($"{description} in {sw.Elapsed.TotalSeconds:f1} seconds.", LogSeverity.Info);
+			Log($"{description} in {sw.Elapsed.TotalSeconds:f2} seconds.", LogSeverity.Info);
 		}
 
 		public static void Log(string description, Exception ex)
