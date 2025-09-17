@@ -155,7 +155,7 @@ namespace PZSaveManager.Pages
 				return;
 			}
 
-			if (!MessageBoxManager.ShowConfirmation($"Are you sure you want to restore the world {SelectedWorld.Name} back to the following save? ALL CURRENT UNSAVED PROGRESS WILL BE LOST!\n\n{SaveInfo}", "Save Restoration Confirmation"))
+			if (!MessageBoxManager.ShowConfirmation($"Are you sure you want to restore the world {SelectedWorld.Name} back to the following save?\nALL CURRENT PROGRESS WILL BE PERMANENTLY LOST!\n\n{SaveInfo}", "Save Restoration Confirmation"))
 				return;
 
 			var progressForm = new RestorationProgressForm { SelectedSave = this.SelectedSave };
@@ -218,7 +218,7 @@ namespace PZSaveManager.Pages
 			if (SelectedSave is null)
 				return;
 
-			if (!MessageBoxManager.ShowConfirmation($"Are you sure you want to delete the following save?\nThis action cannot be undone!\n\n{SaveInfo}", "Save Deletion Confirmation"))
+			if (!MessageBoxManager.ShowConfirmation($"Are you sure you want to permanently delete the following save? This action cannot be undone!\n\n{SaveInfo}", "Save Deletion Confirmation"))
 				return;
 
 			try
