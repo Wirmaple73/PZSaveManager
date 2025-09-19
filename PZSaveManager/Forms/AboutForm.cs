@@ -13,10 +13,13 @@ namespace PZSaveManager.Forms
 			using (var icon = new Icon(Properties.Resources.Icon, new(MaxIconSize, MaxIconSize)))
 				appIcon.Image = icon.ToBitmap();
 
-			versionLabel.Text = "Version " + VersionManager.CurrentVersion.ToString();
+			versionLabel.Text = $"Version {VersionManager.CurrentVersion.ToString(3)} (2025/09/19)";
 		}
 
 		private void githubLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 			=> FileExplorer.Browse(githubLink.Text);
+
+		private void licenseLink_Click(object sender, EventArgs e)
+			=> FileExplorer.Browse("https://github.com/Wirmaple73/PZSaveManager/blob/main/LICENSE");
 	}
 }

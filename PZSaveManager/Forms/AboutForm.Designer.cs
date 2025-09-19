@@ -34,6 +34,8 @@
 			okButton = new Button();
 			githubLink = new LinkLabel();
 			label2 = new Label();
+			label3 = new Label();
+			licenseLink = new LinkLabel();
 			((System.ComponentModel.ISupportInitialize)appIcon).BeginInit();
 			SuspendLayout();
 			// 
@@ -68,7 +70,7 @@
 			// 
 			okButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 			okButton.FlatStyle = FlatStyle.System;
-			okButton.Location = new Point(295, 131);
+			okButton.Location = new Point(295, 161);
 			okButton.Name = "okButton";
 			okButton.Size = new Size(97, 28);
 			okButton.TabIndex = 4;
@@ -95,6 +97,26 @@
 			label2.TabIndex = 2;
 			label2.Text = "Created by Wirmaple73";
 			// 
+			// label3
+			// 
+			label3.AutoSize = true;
+			label3.Location = new Point(98, 105);
+			label3.Name = "label3";
+			label3.Size = new Size(256, 15);
+			label3.TabIndex = 5;
+			label3.Text = "This program is licensed under the MIT License.";
+			// 
+			// licenseLink
+			// 
+			licenseLink.AutoSize = true;
+			licenseLink.Location = new Point(98, 123);
+			licenseLink.Name = "licenseLink";
+			licenseLink.Size = new Size(71, 15);
+			licenseLink.TabIndex = 6;
+			licenseLink.TabStop = true;
+			licenseLink.Text = "View license";
+			licenseLink.Click += licenseLink_Click;
+			// 
 			// AboutForm
 			// 
 			AcceptButton = okButton;
@@ -102,7 +124,9 @@
 			AutoScaleMode = AutoScaleMode.Font;
 			BackColor = SystemColors.Window;
 			CancelButton = okButton;
-			ClientSize = new Size(404, 171);
+			ClientSize = new Size(404, 201);
+			Controls.Add(licenseLink);
+			Controls.Add(label3);
 			Controls.Add(label2);
 			Controls.Add(githubLink);
 			Controls.Add(okButton);
@@ -128,5 +152,7 @@
 		private Button okButton;
 		private LinkLabel githubLink;
 		private Label label2;
+		private Label label3;
+		private LinkLabel licenseLink;
 	}
 }
