@@ -7,5 +7,7 @@
 		public const string WorldGamemode = "WorldGamemode";
 		public const string Description = "Description";
 		public const string Date = "Date";
+
+		public const string Version = "version";
 	}
 }
