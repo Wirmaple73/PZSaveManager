@@ -233,11 +233,19 @@ namespace PZSaveManager.Pages
 			}
 		}
 
+		private void viewInExplorerToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (SelectedSave is null || SelectedSave.ArchivePath is null)
+				return;
+
+			FileExplorer.Browse(Path.GetDirectoryName(SelectedSave.ArchivePath)!);
+		}
+
 		private void SetSaveButtonsEnabled(bool value) => restoreSaveButton.Enabled = renameSaveButton.Enabled = deleteSaveButton.Enabled = value;
 
 		private static void ShowSaveInProgressError() => MessageBoxManager.ShowError("Another save process is already in progress. Please wait until it is completed.");
 
 		private void listContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
-			=> restoreToolStripMenuItem.Enabled = renameToolStripMenuItem.Enabled = deleteToolStripMenuItem.Enabled = SelectedSave is not null;
+			=> restoreToolStripMenuItem.Enabled = renameToolStripMenuItem.Enabled = deleteToolStripMenuItem.Enabled = viewInExplorerToolStripMenuItem.Enabled = SelectedSave is not null;
 	}
 }

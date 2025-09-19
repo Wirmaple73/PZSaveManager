@@ -55,6 +55,8 @@
 			restoreToolStripMenuItem = new ToolStripMenuItem();
 			renameToolStripMenuItem = new ToolStripMenuItem();
 			deleteToolStripMenuItem = new ToolStripMenuItem();
+			toolStripMenuItem2 = new ToolStripSeparator();
+			viewInExplorerToolStripMenuItem = new ToolStripMenuItem();
 			((System.ComponentModel.ISupportInitialize)savePreview).BeginInit();
 			((System.ComponentModel.ISupportInitialize)saveLabelIcon).BeginInit();
 			toolStrip.SuspendLayout();
@@ -267,9 +269,9 @@
 			// 
 			// listContextMenu
 			// 
-			listContextMenu.Items.AddRange(new ToolStripItem[] { refreshToolStripMenuItem, toolStripMenuItem1, newToolStripMenuItem, restoreToolStripMenuItem, renameToolStripMenuItem, deleteToolStripMenuItem });
+			listContextMenu.Items.AddRange(new ToolStripItem[] { refreshToolStripMenuItem, toolStripMenuItem1, newToolStripMenuItem, restoreToolStripMenuItem, renameToolStripMenuItem, deleteToolStripMenuItem, toolStripMenuItem2, viewInExplorerToolStripMenuItem });
 			listContextMenu.Name = "listContextMenu";
-			listContextMenu.Size = new Size(164, 120);
+			listContextMenu.Size = new Size(164, 148);
 			listContextMenu.Opening += listContextMenu_Opening;
 			// 
 			// refreshToolStripMenuItem
@@ -321,6 +323,18 @@
 			deleteToolStripMenuItem.Text = "&Delete...";
 			deleteToolStripMenuItem.ToolTipText = "Deletes the selected save.";
 			deleteToolStripMenuItem.Click += deleteSaveButton_Click;
+			// 
+			// toolStripMenuItem2
+			// 
+			toolStripMenuItem2.Name = "toolStripMenuItem2";
+			toolStripMenuItem2.Size = new Size(160, 6);
+			// 
+			// viewInExplorerToolStripMenuItem
+			// 
+			viewInExplorerToolStripMenuItem.Name = "viewInExplorerToolStripMenuItem";
+			viewInExplorerToolStripMenuItem.Size = new Size(163, 22);
+			viewInExplorerToolStripMenuItem.Text = "&View in Explorer";
+			viewInExplorerToolStripMenuItem.Click += viewInExplorerToolStripMenuItem_Click;
 			// 
 			// SaveSelectionPage
 			// 
@@ -376,5 +390,7 @@
 		private ToolStripMenuItem deleteToolStripMenuItem;
 		private ToolStripMenuItem refreshToolStripMenuItem;
 		private ToolStripSeparator toolStripMenuItem1;
+		private ToolStripSeparator toolStripMenuItem2;
+		private ToolStripMenuItem viewInExplorerToolStripMenuItem;
 	}
 }
