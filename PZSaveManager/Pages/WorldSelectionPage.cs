@@ -32,7 +32,8 @@ namespace PZSaveManager.Forms
 					Logger.Log("No worlds have been found.", LogSeverity.Info);
 
 					errorLabel.Text = "Project Zomboid is installed, but no world has been created yet. Please run the game and create a world first.";
-					return;
+                    totalDiskUsageLabel.Visible = actualTotalDiskUsage.Visible = false;
+                    return;
 				}
 			}
 			catch (DirectoryNotFoundException ex)
