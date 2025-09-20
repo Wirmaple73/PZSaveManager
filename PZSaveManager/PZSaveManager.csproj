@@ -9,14 +9,15 @@
     <Title>Project Zomboid Save Manager</Title>
     <Product>Project Zomboid Save Manager</Product>
     <Company>Wirmaple73</Company>
-    <AssemblyVersion>1.0</AssemblyVersion>
-    <FileVersion>1.0</FileVersion>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0</FileVersion>
     <PlatformTarget>x64</PlatformTarget>
     <ApplicationIcon>Resources\Images\Icon.ico</ApplicationIcon>
     <AssemblyName>PZSaveManager</AssemblyName>
-    <PackageId>PZSaveManager</PackageId>
+    <PackageId></PackageId>
     <Authors>Wirmaple73</Authors>
     <Description>Project Zomboid Save Manager</Description>
+    <RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
