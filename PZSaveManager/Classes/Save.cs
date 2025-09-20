@@ -356,7 +356,7 @@ namespace PZSaveManager.Classes
 			}
 			catch (Exception ex)
 			{
-				Logger.Log($"Could not retrieve the world name from the archive at {archivePath}", ex);
+				Logger.Log($"Could not retrieve world information from {archivePath}", ex);
 				return null;
 			}
 		}
