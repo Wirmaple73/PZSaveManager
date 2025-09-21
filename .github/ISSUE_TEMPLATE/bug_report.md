@@ -2,7 +2,7 @@
 name: Bug report
 about: Create a report to notify me of issues
 title: ''
-labels: ''
+labels: bug
 assignees: Wirmaple73
 
 ---
@@ -23,8 +23,10 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Desktop (please complete the following information):**
+**Version information (please complete the following information):**
  - Full Windows version [e.g. Windows 10 x64]
+ - Save Manager version [e.g. 1.0.0]
+ - Project Zomboid version [e.g. 42.11.0]
 
 **Additional context**
 Add any other context about the problem here.
