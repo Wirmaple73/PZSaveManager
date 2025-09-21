@@ -1,11 +1,10 @@
-﻿using System.Diagnostics;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace PZSaveManager.Classes
 {
 	public static class VersionManager
 	{
-		public static readonly DateTime BuildDate = new(2025, 9, 20);
+		public static readonly DateTime BuildDate = new(2025, 9, 21);
 
 		public static readonly Version CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version!;
 		public static readonly string VersionText = CurrentVersion.ToString(3);
@@ -14,9 +13,13 @@ namespace PZSaveManager.Classes
 		public static readonly string XmlMetadataVersionText = XmlMetadataVersion.ToString(2);
 
 		public const string RepoUrl = "https://github.com/Wirmaple73/PZSaveManager";
-		private const string VersionFileUrl = "https://raw.githubusercontent.com/Wirmaple73/PZSaveManager/master/CurrentVersion.txt";
 
-		public static async Task<Version> GetLatestVersion()
+		public const string IssueReportUrl = RepoUrl + "/issues/new/choose";
+        public const string FeedbackUrl = RepoUrl + "/discussions";
+
+        private const string VersionFileUrl = "https://raw.githubusercontent.com/Wirmaple73/PZSaveManager/master/CurrentVersion.txt";
+
+        public static async Task<Version> GetLatestVersion()
 		{
 			using var hc = new HttpClient();
 			using var response = await hc.GetAsync(VersionFileUrl);
