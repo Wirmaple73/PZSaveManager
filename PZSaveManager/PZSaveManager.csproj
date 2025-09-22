@@ -18,6 +18,7 @@
     <Authors>Wirmaple73</Authors>
     <Description>Project Zomboid Save Manager</Description>
     <RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
+    <SignAssembly>False</SignAssembly>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
