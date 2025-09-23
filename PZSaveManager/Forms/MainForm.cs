@@ -111,7 +111,7 @@ namespace PZSaveManager.Forms
 
         private async void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            (Version LatestVersion, DateTime ReleaseDate, string? ReleaseNotes) versionInfo;
+            (Version LatestVersion, DateTime ReleaseDate, string ReleaseNotes) versionInfo;
 
             try
             {
