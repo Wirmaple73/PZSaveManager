@@ -28,7 +28,7 @@ You are advised to read this readme carefully. Don't sacrifice your survivor for
 **A:** Indeed! Save Manager doesn't care about your mods or current world progress. It just stashes copies of your world folder and restores them when needed.
 
 **Q: Can this application modify sandbox settings and save data?** <br>
-**A:** Not for now. This application is responsible for creating saves and restoring them, not editing save data.
+**A:** Not for now. This app specializes in creating saves and restoring them, not editing save data. There are much better mod alternatives for that.
 
 **Q: Will my worlds get rekt if I delete the app? Will my saves disappear?** <br>
 **A:** Nope, Save Manager doesn't self-destruct. Your worlds will be left untouched. Your saves can still be found at `C:\Users\%username%\Zomboid\Backups` (or the custom directory you set before).
