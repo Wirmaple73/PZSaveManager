@@ -57,12 +57,12 @@ Although the **manual save** and **auto-save** functions both work perfectly fin
 * Disabled radios and TVs may sometimes be turned back on.
 * Other miscellaneous issues might arise.
 
-#### The following issues *only* apply to Save Manager itself, not related to saves:
-* In the save selection page, shortcut keys like <kbd>Ctrl</kbd>+<kbd>N</kbd> and <kbd>Ctrl</kbd>+<kbd>R</kbd> may or may not work depending on how the program feels like. Use the buttons provided in the tool strip or right-click context menu instead. Only if I could find that lowlife control that's stealing key presses...
-
 These side effects probably happen because prior to writing certain files (e.g. the minimap) to disk, the game sometimes temporarily stores them in memory, which Save Manager doesn't have access to. You are recommended to quit to the main menu in-game and create an **external save** every time you intend to save, *especially on build 41.* **This guarantees that no side effects will show up.**
 
 Regardless, manual save and auto-save are both very reliable in build 42. The issues above are mostly just minor inconveniences.
+
+#### The following issues *only* apply to Save Manager itself, not related to saves:
+* In the save selection page, shortcut keys like <kbd>Ctrl</kbd>+<kbd>N</kbd> and <kbd>Ctrl</kbd>+<kbd>R</kbd> may or may not work depending on how the program feels like. Use the buttons provided in the tool strip or right-click context menu instead. Only if I could find that lowlife control that's stealing key presses...
 
 ## ⬇️ Download
 Enough chit-chat. You can grab the latest version [here](./releases/latest). Make sure to install **.NET 6 Desktop Runtime** beforehand. Pick either [x86](https://aka.ms/dotnet/6.0/windowsdesktop-runtime-win-x86.exe) or [x64](https://aka.ms/dotnet/6.0/windowsdesktop-runtime-win-x64.exe) depending on your Windows version.
