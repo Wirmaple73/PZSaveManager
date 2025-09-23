@@ -93,11 +93,11 @@ namespace PZSaveManager.Classes
 					{
 						var xml = XElement.Load(metadataPath);
 
-						worldName = xml.Element(XmlElementName.WorldName)?.Value;
-						worldGamemode = xml.Element(XmlElementName.WorldGamemode)?.Value;
-						description = xml.Element(XmlElementName.Description)?.Value;
+						worldName = xml.Element(XmlElementName.Metadata.WorldName)?.Value;
+						worldGamemode = xml.Element(XmlElementName.Metadata.WorldGamemode)?.Value;
+						description = xml.Element(XmlElementName.Metadata.Description)?.Value;
 
-						if (DateTime.TryParse(xml.Element(XmlElementName.Date)?.Value, out var parsedDate))
+						if (DateTime.TryParse(xml.Element(XmlElementName.Metadata.Date)?.Value, out var parsedDate))
 							date = parsedDate;
 					}
 					catch (Exception ex)
@@ -253,8 +253,8 @@ namespace PZSaveManager.Classes
 					{
 						var xml = XElement.Load(metadataPath);
 
-						worldName = xml.Element(XmlElementName.WorldName)?.Value;
-						worldGamemode = xml.Element(XmlElementName.WorldGamemode)?.Value;
+						worldName = xml.Element(XmlElementName.Metadata.WorldName)?.Value;
+						worldGamemode = xml.Element(XmlElementName.Metadata.WorldGamemode)?.Value;
 					}
 					catch (Exception ex)
 					{

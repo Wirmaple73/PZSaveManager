@@ -111,11 +111,11 @@ namespace PZSaveManager.Forms
 
         private async void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Version newVersion;
+            (Version LatestVersion, DateTime ReleaseDate, string? Changelog) versionInfo;
 
             try
             {
-                newVersion = await VersionManager.GetLatestVersion();
+                versionInfo = await VersionManager.GetLatestVersionInfo();
             }
             catch (Exception ex)
             {
@@ -124,14 +124,14 @@ namespace PZSaveManager.Forms
                 return;
             }
 
-            if (newVersion > VersionManager.CurrentVersion)
+            if (versionInfo.LatestVersion > VersionManager.ApplicationVersion)
             {
-                if (MessageBoxManager.ShowConfirmation("A new version is available. Would you like to open the download page now?", "Update Confirmation", MessageBoxIcon.Asterisk, true))
-                    FileExplorer.Browse(VersionManager.RepoUrl);
+                if (MessageBoxManager.ShowConfirmation($"A new version is available.\n\nCurrent version: {VersionManager.ApplicationVersionText}\nLatest version: {versionInfo.LatestVersion} ({versionInfo.ReleaseDate})\n\nChangelog:\n{versionInfo.Changelog}\n\nWould you like to open the download page now?", "Update Confirmation", MessageBoxIcon.Asterisk, true))
+                    FileExplorer.Browse(VersionManager.LatestReleaseUrl);
             }
             else
             {
-                MessageBoxManager.ShowInfo("You are currently running the latest version of the program.", "Update Check");
+                MessageBoxManager.ShowInfo("You are currently running the latest version of the program.", "Check for Updates");
             }
         }
 
