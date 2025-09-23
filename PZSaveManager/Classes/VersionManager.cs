@@ -21,7 +21,7 @@ namespace PZSaveManager.Classes
 
         private const string VersionFileUrl = "https://raw.githubusercontent.com/Wirmaple73/PZSaveManager/master/LatestVersion.xml";
 
-        public static async Task<(Version LatestVersion, DateTime ReleaseDate, string? Changelog)> GetLatestVersionInfo()
+        public static async Task<(Version LatestVersion, DateTime ReleaseDate, string? ReleaseNotes)> GetLatestVersionInfo()
 		{
 			using var hc = new HttpClient();
 			using var response = await hc.GetAsync(VersionFileUrl);
@@ -33,7 +33,7 @@ namespace PZSaveManager.Classes
             return (
 				LatestVersion: new(root.Element(XmlElementName.Version.LatestVersion)!.Value),
 				ReleaseDate: DateTime.Parse(root.Element(XmlElementName.Version.ReleaseDate)!.Value),
-                Changelog: root.Element(XmlElementName.Version.Changelog)!.Value
+                ReleaseNotes: root.Element(XmlElementName.Version.ReleaseNotes)!.Value
 			);
 		}
 	}

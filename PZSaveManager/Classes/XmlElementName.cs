@@ -15,8 +15,8 @@
 		public static class Version
 		{
 			public const string LatestVersion = "LatestVersion";
-            public const string ReleaseDate	   = "ReleaseDate";
-            public const string Changelog	   = "Changelog";
+            public const string ReleaseDate	  = "ReleaseDate";
+            public const string ReleaseNotes  = "ReleaseNotes";
         }
 	}
 }

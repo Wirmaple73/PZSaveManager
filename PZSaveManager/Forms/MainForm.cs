@@ -111,7 +111,7 @@ namespace PZSaveManager.Forms
 
         private async void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            (Version LatestVersion, DateTime ReleaseDate, string? Changelog) versionInfo;
+            (Version LatestVersion, DateTime ReleaseDate, string? ReleaseNotes) versionInfo;
 
             try
             {
@@ -126,7 +126,7 @@ namespace PZSaveManager.Forms
 
             if (versionInfo.LatestVersion > VersionManager.ApplicationVersion)
             {
-                if (MessageBoxManager.ShowConfirmation($"A new version is available.\n\nCurrent version: {VersionManager.ApplicationVersionText}\nLatest version: {versionInfo.LatestVersion} ({versionInfo.ReleaseDate})\n\nChangelog:\n{versionInfo.Changelog}\n\nWould you like to open the download page now?", "Update Confirmation", MessageBoxIcon.Asterisk, true))
+                if (MessageBoxManager.ShowConfirmation($"A new version is available.\n\nCurrent version: {VersionManager.ApplicationVersionText}\nLatest version: {versionInfo.LatestVersion} ({versionInfo.ReleaseDate:yyyy/MM/dd})\n\nRelease notes:\n{versionInfo.ReleaseNotes}\n\nWould you like to open the download page now?", "Update Confirmation", MessageBoxIcon.Asterisk, true))
                     FileExplorer.Browse(VersionManager.LatestReleaseUrl);
             }
             else
