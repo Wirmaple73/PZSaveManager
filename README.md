@@ -87,4 +87,4 @@ Feel free to [report bugs and request new features](https://github.com/Wirmaple7
 * [ZapSplat](https://www.zapsplat.com/) (Free sound effects – attribution required)
 * Various free resources used in the application. All attributions included where required.
 
-> ⚠️ This application is a third-party tool and is **not affiliated with or endorsed by The Indie Stone**.
+> ⚠️ **Disclaimer**: This application is a third-party tool and is **not affiliated with or endorsed by The Indie Stone**.
