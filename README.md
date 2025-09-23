@@ -38,7 +38,7 @@ You are advised to read this readme carefully. Don't sacrifice your survivor for
 
 ## 📙 Common Jargons
 * **World:** Also called a *map*. Corresponds to the worlds you create in-game.
-* **Save:** Also called a *checkpoint* or *backup*. A world can have multiple saves. In the preview at the top of this README, **Manual save**, **Before testing my new shotgun**, etc. are called *saves*.
+* **Save:** Also called a *checkpoint* or *backup*. A world can have multiple saves. In the [preview](https://github.com/Wirmaple73/PZSaveManager#project-zomboid-save-manager) at the top of this README, **Manual save**, **Before testing my new shotgun**, etc. are called *saves*.
 * **External save:** Saves manually created by the user in the Save Manager UI.
 * **Manual save:** Saves created by pressing the save hotkey in-game (by default: <kbd>Ctrl</kbd>+<kbd>F5</kbd>).
 * **Auto-save:** Saves created by the auto-save function. This function is disabled by default.
