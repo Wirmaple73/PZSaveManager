@@ -69,7 +69,7 @@ Enough chit-chat. You can grab the latest version [here](./releases/latest). Mak
 
 ## 🚀 Quick Start
 1. Download Save Manager and install .NET Desktop Runtime.
-2. Extract `PZSaveManager.exe` anywhere you please—preferably the Desktop for ease of access.
+2. Extract `PZSaveManager.exe` anywhere you please—preferably in a folder on the Desktop for ease of access.
 3. Run the application and save your progress. You can also configure many save options (like save path, compression, auto-save settings, hotkeys, etc.) by navigating to **Options > Configure Save Options** in the application.
 4. ???
 5. PROFIT!1!!
