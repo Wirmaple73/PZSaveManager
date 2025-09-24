@@ -5,7 +5,7 @@
 
 Tired of stupid bugs (or decisions) whacking your character and ending your run? Wish there was a straightforward way to back up and restore your worlds after things go haywire? Say no more! Save Manager to the rescue!
 
-[![Latest GitHub release](https://img.shields.io/github/v/release/Wirmaple73/PZSaveManager)](https://github.com/Wirmaple73/PZSaveManager/releases) ![Downloads](https://img.shields.io/github/downloads/Wirmaple73/PZSaveManager/total) <img alt="Supported game versions: build 41 and build 42" src="https://img.shields.io/badge/game_version-build_41_&_42-purple"> ![Platform: Windows](https://img.shields.io/badge/platform-windows-blue) [![MIT License](https://img.shields.io/badge/license-MIT-orange)](LICENSE)
+[![Latest GitHub release](https://img.shields.io/github/v/release/Wirmaple73/PZSaveManager)](https://github.com/Wirmaple73/PZSaveManager/releases) ![Downloads](https://img.shields.io/github/downloads/Wirmaple73/PZSaveManager/total) <img alt="Supported game versions: build 41 and build 42" src="https://img.shields.io/badge/game_version-build_41_&_42-purple"> ![Platform: Windows](https://img.shields.io/badge/platform-windows-blue) [![MIT License](https://img.shields.io/badge/license-MIT-forestgreen)](LICENSE)
 
 ![Project Zomboid Save Manager – Save selection page preview](images/SaveSelectionPagePreview.webp)
 
