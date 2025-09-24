@@ -36,7 +36,7 @@ You are advised to read this readme carefully. Don't sacrifice your survivor for
 **Q: Why is the saving or restoration process relatively slow?** <br>
 **A:** While Save Manager *enslaves* multiple CPU cores to speed things up, the worlds themselves have tens of thousands of tiny files, making most operations dependent on disk speed. By default, your saves are stored at `C:\Users\%username%\Zomboid\Backups`. You should override this path to your SSD drive if needed. Moreover, if you enabled save compression, turn it off unless you're low on disk space. These options can all be configured inside the application.
 
-## 📙 Common Jargons
+## 📙 Technical Mumbo-Jumbo
 * **World:** Also called a *map*. Corresponds to the worlds you create in-game.
 * **Save:** Also called a *checkpoint* or *backup*. A world can have multiple saves. In the [preview](#project-zomboid-save-manager) at the top of this README, **Manual save**, **Before testing my new shotgun**, etc. are called *saves*.
 * **External save:** Saves manually created by the user in the Save Manager UI.
