@@ -15,7 +15,11 @@ namespace PZSaveManager.Classes
 		private const string LockedFileName = "players.db";
 		private const string BackupSuffix = "__old";
 
-		public const string ThumbName = "thumb.png";
+		private const string SaveNoDescription = "No description";
+
+        private static readonly object isActiveLock = new();
+
+        public const string ThumbName = "thumb.png";
 		public const int ThumbWidth = 256;
 
 		public string Name { get; }
@@ -31,25 +35,28 @@ namespace PZSaveManager.Classes
 		{
 			get
 			{
-				string lockedFilePath = IOPath.Combine(Path, LockedFileName);
-
-				if (!File.Exists(lockedFilePath))
-					return false;
-
-				try
+				lock (isActiveLock)
 				{
-					// If the file 'players.db' is locked by the game, then the world is active
+					string lockedFilePath = IOPath.Combine(Path, LockedFileName);
 
-					using (File.Open(lockedFilePath, FileMode.Open, FileAccess.Read, FileShare.None)) { }
-					return false;
-				}
-				catch (IOException)
-				{
-					return true;
-				}
-				catch
-				{
-					return false;
+					if (!File.Exists(lockedFilePath))
+						return false;
+
+					try
+					{
+						// If the file 'players.db' is locked by the game, then the world is active
+
+						using (File.Open(lockedFilePath, FileMode.Open, FileAccess.Read, FileShare.None)) { }
+						return false;
+					}
+					catch (IOException)
+					{
+						return true;
+					}
+					catch
+					{
+						return false;
+					}
 				}
 			}
 		}
@@ -147,7 +154,8 @@ namespace PZSaveManager.Classes
 				thumb.Position = 0;
 				date ??= File.GetLastWriteTime(archivePath);
 
-				yield return new(GetAssociatedWorld(), description ?? "No description", archivePath, date.Value, thumb);
+				yield return new(GetAssociatedWorld(), description ?? SaveNoDescription, archivePath, date.Value, thumb);
+
 
 				string? GetArchivePath()
 				{
@@ -170,9 +178,17 @@ namespace PZSaveManager.Classes
 
 					allWorlds ??= GetAllWorlds();
 
-					return !string.IsNullOrWhiteSpace(worldGamemode) ?
-						allWorlds.FirstOrDefault(w => w.Name == worldName && w.Gamemode == worldGamemode) :
-						allWorlds.FirstOrDefault(w => w.Name == worldName);
+					try
+					{
+						return !string.IsNullOrWhiteSpace(worldGamemode) ?
+							allWorlds.FirstOrDefault(w => w.Name == worldName && w.Gamemode == worldGamemode) :
+							allWorlds.FirstOrDefault(w => w.Name == worldName);
+					}
+					catch (Exception ex)
+					{
+						Logger.Log($"Could not find the world associated with {worldName} ({worldGamemode})", ex);
+						return null;
+					}
 				}
 			}
 		}
