@@ -1,5 +1,5 @@
 <p align="center">
-	<img alt="Project Zomboid Save Manager main logo" src="images/SaveManagerMainLogo.webp" width="128" height="128"><br>
+	<img alt="Project Zomboid Save Manager main logo" src="RepoImages/SaveManagerMainLogo.webp" width="128" height="128"><br>
 	<h2 align="center">Project Zomboid Save Manager</h2>
 </p>
 
@@ -7,7 +7,7 @@ Tired of stupid bugs (or decisions) whacking your character and ending your run?
 
 [![Latest GitHub release](https://img.shields.io/github/v/release/Wirmaple73/PZSaveManager)](https://github.com/Wirmaple73/PZSaveManager/releases) ![Downloads](https://img.shields.io/github/downloads/Wirmaple73/PZSaveManager/total) <img alt="Supported game versions: build 41 and build 42" src="https://img.shields.io/badge/game_version-build_41_&_42-purple"> ![Platform: Windows](https://img.shields.io/badge/platform-windows-blue) [![MIT License](https://img.shields.io/badge/license-MIT-forestgreen)](LICENSE)
 
-![Project Zomboid Save Manager – Save selection page preview](images/SaveSelectionPagePreview.webp)
+![Project Zomboid Save Manager – Save selection page preview](RepoImages/SaveSelectionPagePreview.webp)
 
 You are advised to read this readme carefully. Don't sacrifice your survivor for a three-minute read!
 
