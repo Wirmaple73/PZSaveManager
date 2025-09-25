@@ -20,7 +20,7 @@ You are advised to read this readme carefully. Don't sacrifice your survivor for
 
 ## 🖥️ Supported Versions and Prerequisites
 * Compatible with Project Zomboid build 41 and 42 (including latest updates like `41.78.16` and `42.11.0`).
-* This application needs at least Windows 7 SP1 or above to run. Both x86 and x64 Windows OSes are supported.
+* This application needs at least **Windows 7 SP1** or above to run. Both x86 and x64 Windows OSes are supported.
 * .NET 6 Desktop Runtime is required to run this application (more on that later).
 
 ## ❓ Frequently Asked Questions
