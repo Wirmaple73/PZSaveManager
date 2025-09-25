@@ -30,11 +30,12 @@
         {
             menuStrip = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
-            openLogFileToolStripMenuItem = new ToolStripMenuItem();
-            toolStripMenuItem1 = new ToolStripSeparator();
             exitToolStripMenuItem = new ToolStripMenuItem();
+            logsToolStripMenuItem = new ToolStripMenuItem();
+            viewLogsToolStripMenuItem = new ToolStripMenuItem();
             optionsToolStripMenuItem = new ToolStripMenuItem();
             configureSaveOptionsToolStripMenuItem = new ToolStripMenuItem();
+            checkForUpdatesAutomaticallyToolStripMenuItem = new ToolStripMenuItem();
             helpToolStripMenuItem = new ToolStripMenuItem();
             checkForUpdatesToolStripMenuItem = new ToolStripMenuItem();
             toolStripMenuItem3 = new ToolStripSeparator();
@@ -50,7 +51,7 @@
             // 
             menuStrip.AllowMerge = false;
             menuStrip.BackColor = SystemColors.Menu;
-            menuStrip.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, optionsToolStripMenuItem, helpToolStripMenuItem });
+            menuStrip.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, logsToolStripMenuItem, optionsToolStripMenuItem, helpToolStripMenuItem });
             menuStrip.Location = new Point(0, 0);
             menuStrip.Name = "menuStrip";
             menuStrip.Size = new Size(784, 24);
@@ -59,35 +60,37 @@
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openLogFileToolStripMenuItem, toolStripMenuItem1, exitToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { exitToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new Size(37, 20);
             fileToolStripMenuItem.Text = "&File";
-            // 
-            // openLogFileToolStripMenuItem
-            // 
-            openLogFileToolStripMenuItem.Name = "openLogFileToolStripMenuItem";
-            openLogFileToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.L;
-            openLogFileToolStripMenuItem.Size = new Size(196, 22);
-            openLogFileToolStripMenuItem.Text = "&Open Log File...";
-            openLogFileToolStripMenuItem.Click += openLogFileToolStripMenuItem_Click;
-            // 
-            // toolStripMenuItem1
-            // 
-            toolStripMenuItem1.Name = "toolStripMenuItem1";
-            toolStripMenuItem1.Size = new Size(193, 6);
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             exitToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.F4;
-            exitToolStripMenuItem.Size = new Size(196, 22);
+            exitToolStripMenuItem.Size = new Size(135, 22);
             exitToolStripMenuItem.Text = "&Exit";
             exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
             // 
+            // logsToolStripMenuItem
+            // 
+            logsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { viewLogsToolStripMenuItem });
+            logsToolStripMenuItem.Name = "logsToolStripMenuItem";
+            logsToolStripMenuItem.Size = new Size(44, 20);
+            logsToolStripMenuItem.Text = "&Logs";
+            // 
+            // viewLogsToolStripMenuItem
+            // 
+            viewLogsToolStripMenuItem.Name = "viewLogsToolStripMenuItem";
+            viewLogsToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.L;
+            viewLogsToolStripMenuItem.Size = new Size(180, 22);
+            viewLogsToolStripMenuItem.Text = "&View Logs";
+            viewLogsToolStripMenuItem.Click += viewLogsToolStripMenuItem_Click;
+            // 
             // optionsToolStripMenuItem
             // 
-            optionsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { configureSaveOptionsToolStripMenuItem });
+            optionsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { configureSaveOptionsToolStripMenuItem, checkForUpdatesAutomaticallyToolStripMenuItem });
             optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             optionsToolStripMenuItem.Size = new Size(61, 20);
             optionsToolStripMenuItem.Text = "&Options";
@@ -100,6 +103,14 @@
             configureSaveOptionsToolStripMenuItem.Text = "&Configure Save Options...";
             configureSaveOptionsToolStripMenuItem.Click += configureSaveOptionsToolStripMenuItem_Click;
             // 
+            // checkForUpdatesAutomaticallyToolStripMenuItem
+            // 
+            checkForUpdatesAutomaticallyToolStripMenuItem.CheckOnClick = true;
+            checkForUpdatesAutomaticallyToolStripMenuItem.Name = "checkForUpdatesAutomaticallyToolStripMenuItem";
+            checkForUpdatesAutomaticallyToolStripMenuItem.Size = new Size(248, 22);
+            checkForUpdatesAutomaticallyToolStripMenuItem.Text = "Check for &Updates Automatically";
+            checkForUpdatesAutomaticallyToolStripMenuItem.Click += checkForUpdatesAutomaticallyToolStripMenuItem_Click;
+            // 
             // helpToolStripMenuItem
             // 
             helpToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { checkForUpdatesToolStripMenuItem, toolStripMenuItem3, sendFeedbackToolStripMenuItem, reportToolStripMenuItem, toolStripMenuItem2, aboutToolStripMenuItem });
@@ -111,7 +122,7 @@
             // 
             checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
             checkForUpdatesToolStripMenuItem.Size = new Size(228, 22);
-            checkForUpdatesToolStripMenuItem.Text = "Check for &Updates...";
+            checkForUpdatesToolStripMenuItem.Text = "&Check for Updates...";
             checkForUpdatesToolStripMenuItem.Click += checkForUpdatesToolStripMenuItem_Click;
             // 
             // toolStripMenuItem3
@@ -185,11 +196,12 @@
 		private ToolStripMenuItem checkForUpdatesToolStripMenuItem;
 		private ToolStripMenuItem aboutToolStripMenuItem;
 		private Panel pagePanel;
-		private ToolStripMenuItem openLogFileToolStripMenuItem;
-		private ToolStripSeparator toolStripMenuItem1;
         private ToolStripMenuItem sendFeedbackToolStripMenuItem;
         private ToolStripMenuItem reportToolStripMenuItem;
         private ToolStripSeparator toolStripMenuItem3;
         private ToolStripSeparator toolStripMenuItem2;
+        private ToolStripMenuItem checkForUpdatesAutomaticallyToolStripMenuItem;
+        private ToolStripMenuItem logsToolStripMenuItem;
+        private ToolStripMenuItem viewLogsToolStripMenuItem;
     }
 }

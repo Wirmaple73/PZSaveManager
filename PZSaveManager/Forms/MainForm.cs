@@ -1,4 +1,22 @@
-﻿using PZSaveManager.Classes;
+﻿// ==============================================================================================================
+// Look at me, desperately schizo-optimizing SEO
+
+// Project: Project Zomboid Save Manager
+// Description: A Windows utility for backing up and restoring Project Zomboid worlds.
+// Compatible with mods and latest build 41 and build 42 versions.
+
+// Keywords: Save Manager, Project Zomboid, PZ, Save backup tool, Game saves, C#, Windows Forms, .NET 6
+// Author: Wirmaple73 (https://github.com/Wirmaple73)
+// License: MIT
+
+// This app allows users to automatically detect, export, and restore saves for their worlds.
+// Key features include ease of use, manual save (saving using a hotkey), auto-save, and save compression.
+// See https://github.com/Wirmaple73/PZSaveManager for more details.
+
+// Disclaimer: This application is a third-party tool and is NOT affiliated with or endorsed by The Indie Stone.
+// ==============================================================================================================
+
+using PZSaveManager.Classes;
 using PZSaveManager.Pages;
 using PZSaveManager.Properties;
 
@@ -9,11 +27,13 @@ namespace PZSaveManager.Forms
         private readonly WorldSelectionPage worldSelectionPage = new();
         private readonly SaveSelectionPage saveSelectionPage = new();
 
+        private LogForm? logForm;
+
         public MainForm() => InitializeComponent();
 
-        private void MainForm_Shown(object sender, EventArgs e)
+        private async void MainForm_Shown(object sender, EventArgs e)
         {
-            InitializeApplication();
+            await InitializeApplication();
             CheckForInsufficientDiskSpace();
 
             SaveHelper.UpdateAutosaveTimer();
@@ -22,7 +42,7 @@ namespace PZSaveManager.Forms
                 configureSaveOptionsToolStripMenuItem_Click(this, EventArgs.Empty);
 
 
-            void InitializeApplication()
+            async Task InitializeApplication()
             {
                 Application.ApplicationExit += Application_ApplicationExit;
 
@@ -31,6 +51,11 @@ namespace PZSaveManager.Forms
 
                 this.AcceptButton = worldSelectionPage.NextButton;
                 BackButton_Click(this, EventArgs.Empty);
+
+                checkForUpdatesAutomaticallyToolStripMenuItem.Checked = Settings.Default.AutoCheckForUpdates;
+
+                if (Settings.Default.AutoCheckForUpdates)
+                    await CheckForUpdates(false);
             }
 
             void CheckForInsufficientDiskSpace()
@@ -72,12 +97,6 @@ namespace PZSaveManager.Forms
             SaveHelper.Hotkeys.UpdateAll();
         }
 
-        private void openLogFileToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!FileExplorer.Browse(Logger.FilePath))
-                MessageBoxManager.ShowError($"The log file could not be opened. It may still be opened manually at {Logger.FilePath}.");
-        }
-
         private void exitToolStripMenuItem_Click(object sender, EventArgs e) => this.Close();
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -109,9 +128,30 @@ namespace PZSaveManager.Forms
             Logger.Dispose();
         }
 
+        private void viewLogsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (logForm is null || logForm.IsDisposed)
+                logForm = new();
+            
+            if (!Application.OpenForms.OfType<LogForm>().Any())
+                logForm.Show();
+            else
+                logForm.BringToFrontReal();
+        }
+
         private async void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
+            => await CheckForUpdates();
+
+        private void sendFeedbackToolStripMenuItem_Click(object sender, EventArgs e) => FileExplorer.Browse(VersionManager.FeedbackUrl);
+        private void reportToolStripMenuItem_Click(object sender, EventArgs e) => FileExplorer.Browse(VersionManager.IssueReportUrl);
+
+        private void checkForUpdatesAutomaticallyToolStripMenuItem_Click(object sender, EventArgs e)
+            => Settings.Default.AutoCheckForUpdates = checkForUpdatesAutomaticallyToolStripMenuItem.Checked;
+
+        private static async Task CheckForUpdates(bool displayExtraMessages = true)
         {
             (Version LatestVersion, DateTime ReleaseDate, string ReleaseNotes) versionInfo;
+            Logger.Log("Checking for updates...", LogSeverity.Info);
 
             try
             {
@@ -120,7 +160,10 @@ namespace PZSaveManager.Forms
             catch (Exception ex)
             {
                 Logger.Log("Could not check for updates", ex);
-                MessageBoxManager.ShowError($"Could not check for updates. Please ensure you are properly connected to the internet and try again.\n\nError message: {ex.Message}");
+
+                if (displayExtraMessages)
+                    MessageBoxManager.ShowError($"Could not check for updates. Please ensure you are properly connected to the internet and try again.\n\nError message: {ex.Message}");
+
                 return;
             }
 
@@ -131,12 +174,10 @@ namespace PZSaveManager.Forms
             }
             else
             {
-                MessageBoxManager.ShowInfo("You are currently running the latest version of the program.", "Check for Updates");
+                if (displayExtraMessages)
+                    MessageBoxManager.ShowInfo("You are currently running the latest version of the program.", "Check for Updates");
             }
         }
-
-        private void sendFeedbackToolStripMenuItem_Click(object sender, EventArgs e) => FileExplorer.Browse(VersionManager.FeedbackUrl);
-        private void reportToolStripMenuItem_Click(object sender, EventArgs e) => FileExplorer.Browse(VersionManager.IssueReportUrl);
 
         // TODO: Figure out a way to prevent controls from stealing pressed keys
         //protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
