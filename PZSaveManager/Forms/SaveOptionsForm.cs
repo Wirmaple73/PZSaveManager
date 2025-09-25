@@ -104,7 +104,7 @@ namespace PZSaveManager.Forms
 				catch (Exception ex)
 				{
 					Logger.Log($"Could not create the save backup directory at {backupPath.Text}", ex);
-					MessageBoxManager.ShowError("The selected save backup path could not be created automatically. Please select another path.");
+					MessageBoxManager.ShowDetailedError("The selected save backup path could not be created automatically. Please select another path.", ex);
 
 					return;
 				}

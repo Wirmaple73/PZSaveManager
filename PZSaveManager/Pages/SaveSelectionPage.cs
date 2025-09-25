@@ -141,7 +141,7 @@ namespace PZSaveManager.Pages
 			if (progressForm.ShowDialog() == DialogResult.OK)
 				WindowHelper.FlashIfMinimized();
 			else
-				MessageBoxManager.ShowError($"The save could not be exported.\n\nError message: {progressForm.ErrorMessage}");
+				MessageBoxManager.ShowDetailedError("The save could not be exported.", progressForm.ErrorMessage ?? "No message found. Consult the logs for more details.");
 		}
 
 		private void restoreSaveButton_Click(object? sender, EventArgs e)
@@ -208,7 +208,7 @@ namespace PZSaveManager.Pages
 				catch (Exception ex)
 				{
 					Logger.Log("Could not rename the selected save", ex);
-					MessageBoxManager.ShowError($"The selected save could not be renamed.\nError message: {ex.Message}");
+					MessageBoxManager.ShowDetailedError("The selected save could not be renamed.", ex);
 				}
 			}
 		}
@@ -229,7 +229,7 @@ namespace PZSaveManager.Pages
 			catch (Exception ex)
 			{
 				Logger.Log("The selected save could not be deleted", ex);
-				MessageBoxManager.ShowError($"The selected save could not be deleted.\nError message: {ex.Message}");
+				MessageBoxManager.ShowDetailedError("The selected save could not be deleted.", ex);
 			}
 		}
 
@@ -243,7 +243,7 @@ namespace PZSaveManager.Pages
 
 		private void SetSaveButtonsEnabled(bool value) => restoreSaveButton.Enabled = renameSaveButton.Enabled = deleteSaveButton.Enabled = value;
 
-		private static void ShowSaveInProgressError() => MessageBoxManager.ShowError("Another save process is already in progress. Please wait until it is completed.");
+		private static void ShowSaveInProgressError() => MessageBoxManager.ShowError("Another save is already in progress. Please wait until it is completed.");
 
 		private void listContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
 			=> restoreToolStripMenuItem.Enabled = renameToolStripMenuItem.Enabled = deleteToolStripMenuItem.Enabled = viewInExplorerToolStripMenuItem.Enabled = SelectedSave is not null;

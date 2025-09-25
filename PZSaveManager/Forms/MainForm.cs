@@ -162,7 +162,7 @@ namespace PZSaveManager.Forms
                 Logger.Log("Could not check for updates", ex);
 
                 if (displayExtraMessages)
-                    MessageBoxManager.ShowError($"Could not check for updates. Please ensure you are properly connected to the internet and try again.\n\nError message: {ex.Message}");
+                    MessageBoxManager.ShowDetailedError("Could not check for updates. Please ensure you are properly connected to the internet and try again.", ex.Message);
 
                 return;
             }

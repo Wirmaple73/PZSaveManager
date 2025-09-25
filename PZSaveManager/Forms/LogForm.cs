@@ -19,7 +19,7 @@ namespace PZSaveManager.Forms
             }
             catch (Exception ex)
             {
-                MessageBoxManager.ShowError($"Could not read {Logger.FilePath}.\n\nError message: {ex.Message}");
+                MessageBoxManager.ShowDetailedError($"Could not read {Logger.FilePath}.", ex);
             }
 
             logBox.ScrollToEnd();
