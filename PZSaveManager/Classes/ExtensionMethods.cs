@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using PZSaveManager.Forms;
+using System.Diagnostics;
 
 namespace PZSaveManager.Classes
 {
@@ -36,5 +37,23 @@ namespace PZSaveManager.Classes
 				Directory.Delete(path.FullName, true);
 			});
 		}
+
+		public static void ScrollTo(this TextBox box, int index)
+		{
+            box.Focus();
+            box.SelectionStart = index;
+            box.ScrollToCaret();
+        }
+
+		public static void ScrollToEnd(this TextBox box) => ScrollTo(box, box.TextLength);
+
+		public static void BringToFrontReal(this Form form)
+		{
+            if (form.WindowState == FormWindowState.Minimized)
+                form.WindowState = FormWindowState.Normal;
+
+            form.BringToFront();
+            form.Activate();
+        }
 	}
 }
