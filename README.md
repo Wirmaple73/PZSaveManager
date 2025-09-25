@@ -21,9 +21,14 @@ You are advised to read this readme carefully. Don't sacrifice your survivor for
 ## 🖥️ Supported Versions and Prerequisites
 * Compatible with Project Zomboid build 41 and 42 (including latest updates like `41.78.16` and `42.11.0`).
 * This application needs at least Windows 7 SP1 or above to run. Both x86 and x64 Windows OSes are supported.
-* .NET 6 Desktop Runtime is required to run this application.
+* .NET 6 Desktop Runtime is required to run this application (more on that later).
 
 ## ❓ Frequently Asked Questions
+**Q: What makes your app more suitable than other save utilities for Project Zomboid?** <br>
+**A:** Honestly, I didn't realize there were already multiple similar tools on GitHub until the ending phase of the project — lucky you. Here's why you might prefer mine:
+* **Ease of use:** *The hell is Git? What's a command line anyway?* **Doesn't matter**. Just download the EXE and run it.
+* **Fully automated:** Who said you need to fiddle around with files yourself? Just make a few clicks and let the tool handle the rest. Not to mention the manual save and auto-save features.
+
 **Q: Is Save Manager compatible with mods? Will it work with existing worlds?** <br>
 **A:** Indeed! Save Manager doesn't care about your mods or current world progress. It just stashes copies of your world folder and restores them when needed.
 
@@ -33,8 +38,11 @@ You are advised to read this readme carefully. Don't sacrifice your survivor for
 **Q: Will my worlds get rekt if I delete the app? Will my saves disappear?** <br>
 **A:** Nope, Save Manager doesn't self-destruct. Your worlds will be left untouched. Your saves can still be found at `C:\Users\%username%\Zomboid\Backups` (or the custom directory you set before).
 
-**Q: Why is the saving or restoration process relatively slow?** <br>
+**Q: Can the saving or restoration process be sped up?** <br>
 **A:** While Save Manager *enslaves* multiple CPU cores to speed things up, the worlds themselves have tens of thousands of tiny files, making most operations dependent on disk speed. By default, your saves are stored at `C:\Users\%username%\Zomboid\Backups`. You should override this path to your SSD drive if needed. Moreover, if you enabled save compression, turn it off unless you're low on disk space. These options can all be configured inside the application.
+
+**Q: Can this tool save my Telecorn?** <br>
+**A:** Sadly, no. The Telecorn is too powerful for this tool to contain. It uses sophisticated alien teleportation technology to evade capture.
 
 ## 📙 Technical Mumbo-Jumbo
 * **World:** Also called a *map*. Corresponds to the worlds you create in-game.
