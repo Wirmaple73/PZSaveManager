@@ -8,7 +8,6 @@ using SharpCompress.Archives.Tar;
 using System.Collections.Concurrent;
 using System.Buffers;
 using System.Diagnostics;
-using System.IO;
 
 namespace PZSaveManager.Classes
 {
@@ -47,7 +46,11 @@ namespace PZSaveManager.Classes
 		public static bool IsSaveCancelable { get; private set; } = true;
 
 		private const int ProgressReportThreshold = 50;  // Report progress every 50 files
-		private static readonly object saveLock = new();
+
+		private const int FileBufferSize	= 16 * 1024;  // Larger values don't squeeze out any noticeable performance boost
+        private const int ArchiveBufferSize = 128 * 1024;  // 128 KB
+
+        private static readonly object saveLock = new();
 
 		private static readonly string[] FilesToDelete = { "Save.tar", "Save.zip", "Metadata.xml", "Thumb.png" };
 
@@ -84,23 +87,24 @@ namespace PZSaveManager.Classes
 
 				try
 				{
-					using var stream = new FileStream(ArchivePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.SequentialScan);
+					using var stream = new FileStream(ArchivePath, FileMode.Open, FileAccess.Read, FileShare.Read, ArchiveBufferSize, FileOptions.SequentialScan);
 					using var archive = ArchiveFactory.Open(stream);
 
 					var entryArray = archive.Entries.ToArray();  // Evil exception dynamite warehouse
 					int totalFiles = entryArray.Length;
 
-					var streams = new List<(string OutputPath, MemoryStream Stream)>(totalFiles);
+					var entryStreams = new List<(string RelativePath, MemoryStream Stream)>(totalFiles);
 					UpdateArchiveStatus(ArchiveStatus.Extracting, "Extracting entries to memory...");
 
 					for (int i = 0; i < totalFiles; i++)
 					{
-						var ms = new MemoryStream();
-
-						entryArray[i].WriteTo(ms);
+						// Specifying the capacity doesn't show any noticeable performance boost. Don't risk overflow.
+						var ms = new MemoryStream(/* (int)entryArray[i].Size */);
+						
+						entryArray[i].WriteTo(ms);  // Not thread-safe. Doing Parallel.For with a lock doesn't speed it up.
 						ms.Position = 0;
-
-						streams.Add((Path.Combine(World.WorldDirectory, entryArray[i].Key!), ms));
+						
+                        entryStreams.Add((entryArray[i].Key!, ms));
 
 						if (i % ProgressReportThreshold == 0)
 						{
@@ -114,13 +118,14 @@ namespace PZSaveManager.Classes
 					UpdateArchiveStatus(ArchiveStatus.SavingToDisk, "Saving entries to disk...");
 					int filesProcessed = 0;
 
-					Parallel.ForEach(streams, entry =>
+					Parallel.ForEach(entryStreams, entry =>
 					{
-						Directory.CreateDirectory(Directory.GetParent(entry.OutputPath)!.FullName);
+						string outputPath = Path.Combine(World.WorldDirectory, entry.RelativePath);
+						Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
 
-						using (entry.Stream)
+                        using (entry.Stream)
 						{
-							using var fs = File.Create(entry.OutputPath, 4096, FileOptions.SequentialScan);
+							using var fs = File.Create(outputPath, FileBufferSize, FileOptions.SequentialScan);
 							entry.Stream.CopyTo(fs);
 						}
 
@@ -197,7 +202,7 @@ namespace PZSaveManager.Classes
 					string outputXmlPath	 = Path.Combine(saveDir, MetadataFileName);
 					string outputThumbPath	 = Path.Combine(saveDir, ThumbFileName);
 
-					var files = Directory.GetFiles(AssociatedWorld.Path, "*", SearchOption.AllDirectories);
+					string[] files = Directory.GetFiles(AssociatedWorld.Path, "*", SearchOption.AllDirectories);
 					int totalFiles = files.Length, processedFiles = 0;
 
 					using IWritableArchive archive = Settings.Default.UseCompression ? ZipArchive.Create() : TarArchive.Create();
@@ -212,7 +217,7 @@ namespace PZSaveManager.Classes
 						var ms = new MemoryStream();
 
 						// Copy every file to the memory to avoid archive corruption. The game actively messes with them.
-						using (var fs = new FileStream(files[i], FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan))
+						using (var fs = new FileStream(files[i], FileMode.Open, FileAccess.Read, FileShare.ReadWrite, FileBufferSize, FileOptions.SequentialScan))
 							fs.CopyTo(ms);
 
 						ms.Position = 0;
@@ -235,14 +240,12 @@ namespace PZSaveManager.Classes
 					{
 						while (bag.TryTake(out var entry))
 						{
-							archive.AddEntry(entry.EntryPath, entry.Stream, true, entry.Stream.Length, entry.EntryDate);
+							archive.AddEntry(entry.EntryPath, entry.Stream, true, entry.Stream.Length, entry.EntryDate);  // Not thread-safe
 
 							if (++processedFiles % ProgressReportThreshold == 0)
 							{
-								if (token.IsCancellationRequested)
-									throw new OperationCanceledException();
-
-								ArchiveProgressChanged?.Invoke(this, new(processedFiles, totalFiles));
+                                token.ThrowIfCancellationRequested();
+                                ArchiveProgressChanged?.Invoke(this, new(processedFiles, totalFiles));
 							}
 						}
 					}
