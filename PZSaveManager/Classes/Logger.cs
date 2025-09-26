@@ -24,7 +24,7 @@ namespace PZSaveManager.Classes
 				bool prependNewLine = File.Exists(FilePath);
 
 				UpdateWriter();
-				Log($"Application started.", LogSeverity.Info, prependNewLine);
+				Log($"Application started in {(Environment.Is64BitProcess ? "x64" : "x86")} mode.", LogSeverity.Info, prependNewLine);
 			}
 			catch (Exception ex)
 			{

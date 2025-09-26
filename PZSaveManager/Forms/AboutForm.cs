@@ -13,7 +13,7 @@ namespace PZSaveManager.Forms
 			using (var icon = new Icon(Properties.Resources.Icon, new(MaxIconSize, MaxIconSize)))
 				appIcon.Image = icon.ToBitmap();
 
-			versionLabel.Text = $"Version {VersionManager.ApplicationVersionText} ({VersionManager.BuildDate:yyyy/MM/dd})";
+			versionLabel.Text = $"Version {VersionManager.ApplicationVersionText} ({VersionManager.BuildDate:yyyy/MM/dd})  –  {(Environment.Is64BitProcess ? "x64" : "x86")}";
 		}
 
 		private void githubLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
