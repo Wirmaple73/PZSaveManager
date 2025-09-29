@@ -354,6 +354,7 @@
             Controls.Add(saveList);
             Name = "SaveSelectionPage";
             Size = new Size(734, 537);
+            Load += SaveSelectionPage_Load;
             ((System.ComponentModel.ISupportInitialize)savePreview).EndInit();
             ((System.ComponentModel.ISupportInitialize)saveLabelIcon).EndInit();
             toolStrip.ResumeLayout(false);
