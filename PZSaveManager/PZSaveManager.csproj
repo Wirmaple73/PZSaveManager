@@ -11,23 +11,10 @@
     <Company>Wirmaple73</Company>
     <AssemblyVersion>1.0.0</AssemblyVersion>
     <FileVersion>1.0.0</FileVersion>
-    <PlatformTarget>x64</PlatformTarget>
     <ApplicationIcon>Resources\Images\Icon.ico</ApplicationIcon>
     <AssemblyName>PZSaveManager</AssemblyName>
-    <PackageId></PackageId>
     <Authors>Wirmaple73</Authors>
     <Description>Project Zomboid Save Manager</Description>
-    <RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
-    <SignAssembly>False</SignAssembly>
-    <Platforms>AnyCPU</Platforms>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DebugType>full</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
