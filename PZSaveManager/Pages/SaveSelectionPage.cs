@@ -1,6 +1,7 @@
 ﻿using PZSaveManager.Classes;
 using PZSaveManager.Forms;
 using PZSaveManager.Properties;
+using System.Diagnostics;
 
 namespace PZSaveManager.Pages
 {
@@ -17,7 +18,7 @@ namespace PZSaveManager.Pages
         private void SaveSelectionPage_Load(object sender, EventArgs e)
         {
             saveLabelIcon.Image = SystemIcons.Asterisk.ToBitmap();
-            Save.SaveExported += (s, e) => this.Invoke(() => UpdateUI());
+            Save.SaveExported += (s, e) => this.Invoke(UpdateUI);
         }
 
         public void PageLoaded()
@@ -39,7 +40,7 @@ namespace PZSaveManager.Pages
             if (SelectedWorld is null)
                 return;
 
-            foreach (Save save in SelectedWorld.GetSaves().Reverse())  // Reverse to sort by date (descending)
+            foreach (Save save in SelectedWorld.GetSaves().OrderByDescending(s => s.Date))
                 saveList.Items.Add(new ListViewItem(new[] { save.Description, save.Date.ToString() }) { Tag = save });
 
             if (saveList.Items.Count > 0)
