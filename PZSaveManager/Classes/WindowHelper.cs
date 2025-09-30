@@ -15,7 +15,9 @@ namespace PZSaveManager.Classes
 			return processes.Length > 0 && processes[0].MainWindowHandle == NativeMethods.GetForegroundWindow();
 		}
 
-		public static void FlashIfMinimized()
+        public static bool IsInForeground(IntPtr handle) => handle == NativeMethods.GetForegroundWindow();
+
+        public static void FlashIfMinimized()
 		{
 			if (!IsInForeground())
 			{
