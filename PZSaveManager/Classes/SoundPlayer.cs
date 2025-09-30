@@ -43,18 +43,12 @@ namespace PZSaveManager.Classes
 
 				var stream = effect switch
 				{
-					SoundEffect.Saving => Resources.Saving,
-					SoundEffect.AlreadySaving => Resources.AlreadySaving,
-					SoundEffect.SaveCanceled => Resources.SaveCanceled,
+					SoundEffect.Saving			=> Resources.Saving,
+					SoundEffect.AlreadySaving	=> Resources.AlreadySaving,
+					SoundEffect.SaveCanceled	=> Resources.SaveCanceled,
 					SoundEffect.SaveNotCanceled => Resources.SaveNotCanceled,
-					SoundEffect.SaveComplete => Resources.SaveComplete,
-					SoundEffect.SaveFailure => Resources.SaveFailure,
-					SoundEffect.Spam1 => Resources.Spam1,
-					SoundEffect.Spam2 => Resources.Spam2,
-					SoundEffect.Spam3 => Resources.Spam3,
-					SoundEffect.Spam4 => Resources.Spam4,
-					SoundEffect.Spam5 => Resources.Spam5,
-					SoundEffect.Spam6 => Resources.Spam6,
+					SoundEffect.SaveComplete	=> Resources.SaveComplete,
+					SoundEffect.SaveFailure		=> Resources.SaveFailure,
 					_ => throw new ArgumentOutOfRangeException(nameof(effect), "The specified sound effect could not be resolved.")
 				};
 

@@ -14,7 +14,7 @@ namespace PZSaveManager.Classes
 		private static System.Timers.Timer autosaveTimer = new();
 		private static CancellationTokenSource token = new();
 
-		public static void UpdateAutosaveTimer()
+        public static void UpdateAutosaveTimer()
 		{
 			autosaveTimer.Elapsed -= AutosaveTimer_Elapsed;
 			autosaveTimer.Stop();
@@ -43,39 +43,24 @@ namespace PZSaveManager.Classes
 			}
 		}
 
-		private static void PerformSave(string description)
+		private static async Task PerformSave(string description)
 		{
-			if (Hotkeys.SpamHandler.IsLastHotkeyCoolingDown)
-			{
-				Hotkeys.SpamHandler.RecordHotkeyCooldown();
-				return;
-			}
-
-			Hotkeys.SpamHandler.ResetTimer();
 			Logger.Log($"{description} has been requested.", LogSeverity.Info);
 
-			if (!Save.IsSaveInProgress)
-			{
-				token = new();
-				World.SaveActiveWorld(description, token);
-			}
-			else
-			{
-				Logger.Log($"Another save is already in progress.", LogSeverity.Warning);
-				Hotkeys.SpamHandler.SpamPlayer.PlaySaveEffect(SoundEffect.AlreadySaving);
-			}
-		}
+            if (!Save.IsSaveInProgress)
+            {
+                token = new();
+                await World.SaveActiveWorldAsync(description, token).ConfigureAwait(false);
+            }
+            else
+            {
+                Logger.Log("Another save is already in progress.", LogSeverity.Warning);
+                SoundPlayer.Shared.PlaySaveEffect(SoundEffect.AlreadySaving);
+            }
+        }
 
 		private static void AbortSave()
 		{
-			if (Hotkeys.SpamHandler.IsLastHotkeyCoolingDown)
-			{
-				Hotkeys.SpamHandler.RecordHotkeyCooldown();
-				return;
-			}
-
-			Hotkeys.SpamHandler.ResetTimer();
-
 			if (Save.IsSaveInProgress)
 			{
 				if (Save.IsSaveCancelable)
@@ -97,14 +82,12 @@ namespace PZSaveManager.Classes
 
 		public static void Dispose()
 		{
-			Hotkeys.SpamHandler.SpamPlayer.PlaybackStopped -= Hotkeys.SpamHandler.SpamPlayer_PlaybackStopped;
-			Hotkeys.SpamHandler.SpamPlayer.Dispose();
 			autosaveTimer.Dispose();
 			token.Dispose();
 		}
 
-		private static void AutosaveTimer_Elapsed(object? sender, ElapsedEventArgs e)
-			=> PerformSave(Save.AutosaveDescription);
+		private static async void AutosaveTimer_Elapsed(object? sender, ElapsedEventArgs e)
+			=> await PerformSave(Save.AutosaveDescription);
 
 		public static class Hotkeys
 		{
@@ -112,7 +95,12 @@ namespace PZSaveManager.Classes
 			private const string AbortSaveBind = "AbortSave";
 			private const string DummyBind = "Dummy";
 
-			public static bool IsHotkeyAvailable(Keys key)
+			private const int HotkeyCooldown = 1000;  // in milliseconds
+			private static readonly Stopwatch cooldownStopwatch = Stopwatch.StartNew();
+
+            private static bool CanTriggerHotkeys => cooldownStopwatch.ElapsedMilliseconds >= HotkeyCooldown;
+
+            public static bool IsHotkeyAvailable(Keys key)
 			{
 				try
 				{
@@ -122,7 +110,7 @@ namespace PZSaveManager.Classes
 				}
 				catch (HotkeyAlreadyRegisteredException ex)
 				{
-					Logger.Log($"The hotkey {key} is not available: {ex.Message} (Windows error code: {Marshal.GetLastWin32Error()})", LogSeverity.Error);
+					Logger.Log($"The hotkey {key} is not available (Windows error code {Marshal.GetLastWin32Error()})", ex);
 					return false;
 				}
 
@@ -133,11 +121,44 @@ namespace PZSaveManager.Classes
 			{
 				UnbindAll();
 
-				return RegisterHotkey(Settings.Default.SaveHotkey, SaveBind, "manual save", (s, e) => PerformSave(Save.ManualSaveDescription)) &&
-					   RegisterHotkey(Settings.Default.AbortSaveHotkey, AbortSaveBind, "abort save", (s, e) => AbortSave());
+				return RegisterHotkey(Settings.Default.SaveHotkey, SaveBind, "manual save", (s, e) =>
+				{
+					if (!CanTriggerHotkeys)
+					{
+						LogCooldown();
+						return;
+					}
+
+					cooldownStopwatch.Restart();
+
+                    _ = Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await PerformSave(Save.ManualSaveDescription).ConfigureAwait(false);
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Log($"PerformSave failed", ex);
+                        }
+                    });
+
+                }) && RegisterHotkey(Settings.Default.AbortSaveHotkey, AbortSaveBind, "abort save", (s, e) =>
+				{
+					if (!CanTriggerHotkeys)
+					{
+                        LogCooldown();
+                        return;
+					}
+
+                    cooldownStopwatch.Restart();
+                    AbortSave();
+				});
 
 
-				static bool RegisterHotkey(string hotkeyString, string bindName, string hotkeyFunction, EventHandler<HotkeyEventArgs> handler)
+                static void LogCooldown() => Logger.Log($"Hotkey was just triggered recently. Ignoring key press.", LogSeverity.Info);
+
+                static bool RegisterHotkey(string hotkeyString, string bindName, string hotkeyFunction, EventHandler<HotkeyEventArgs> handler)
 				{
 					var (key, isErroneous) = GetKeyByString(hotkeyString);
 
@@ -176,49 +197,6 @@ namespace PZSaveManager.Classes
 
 				return (null, false);
 			}
-
-			internal static class SpamHandler
-			{
-				internal static readonly SoundPlayer SpamPlayer = new();
-				internal static bool IsLastHotkeyCoolingDown => HotkeyTimer.Elapsed < HotkeyCooldown;
-
-				private const int HotkeySpamThreshold = 50;
-				private static readonly Stopwatch HotkeyTimer = Stopwatch.StartNew();
-
-				private static readonly SoundEffect[] SpamEffects = { SoundEffect.Spam1, SoundEffect.Spam2, SoundEffect.Spam3, SoundEffect.Spam4, SoundEffect.Spam5, SoundEffect.Spam6 };
-				private static readonly TimeSpan HotkeyCooldown = TimeSpan.FromMilliseconds(300);
-
-				private static uint hotkeySpamCounter = 0;
-
-				static SpamHandler() => SpamPlayer.PlaybackStopped += SpamPlayer_PlaybackStopped;
-
-				internal static void ResetTimer() => HotkeyTimer.Restart();
-
-				internal static void RecordHotkeyCooldown()
-				{
-					Logger.Log("Hotkey was just triggered recently. Ignoring key press.", LogSeverity.Info);
-
-					if (++hotkeySpamCounter % HotkeySpamThreshold == 0)
-					{
-						// We do a little bit of trolling
-						Logger.Log("Please stop being a tryhard.", LogSeverity.Warning);
-
-						SoundPlayer.Shared.Stop();
-						SoundPlayer.Shared.IsPlaybackAllowed = false;
-
-						const int SoundBoostAmount = 30;
-
-						// Play the spam sound effect 30% louder than the sound volume, capping it at 100%
-						int volume = Math.Min(Settings.Default.SoundVolume + SoundBoostAmount, 100);
-
-						SpamPlayer.PlaySaveEffect(SpamEffects[Random.Shared.Next(SpamEffects.Length)], volume);
-						HotkeyTimer.Restart();
-					}
-				}
-
-				internal static void SpamPlayer_PlaybackStopped(object? sender, NAudio.Wave.StoppedEventArgs e)
-					=> SoundPlayer.Shared.IsPlaybackAllowed = true;
-			}
-		}
+        }
 	}
 }
