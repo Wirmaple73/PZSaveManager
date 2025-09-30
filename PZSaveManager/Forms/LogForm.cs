@@ -35,15 +35,21 @@ namespace PZSaveManager.Forms
 
         private void Logger_Logged(object? sender, LogEventArgs e)
         {
-            int lastCaretPosition = logBox.SelectionStart;
+            this.Invoke(() =>
+            {
+                int lastCaretPosition = logBox.SelectionStart;
 
-            logBox.Text += e.Message + "\r\n";
-            UpdateLogFileName();
+                logBox.Text += e.Message + "\r\n";
+                UpdateLogFileName();
 
-            if (autoscrollCheckBox.Checked)
-                logBox.ScrollToEnd();
-            else
-                logBox.ScrollTo(lastCaretPosition);
+                if (WindowHelper.IsInForeground(this.Handle))
+                {
+                    if (autoscrollCheckBox.Checked)
+                        logBox.ScrollToEnd();
+                    else
+                        logBox.ScrollTo(lastCaretPosition);
+                }
+            });
         }
 
         private void UpdateLogFileName() => logFileName.Text = Logger.FileName + " (click to browse)";

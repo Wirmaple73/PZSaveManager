@@ -75,7 +75,7 @@
             autoscrollCheckBox.AutoSize = true;
             autoscrollCheckBox.Checked = true;
             autoscrollCheckBox.CheckState = CheckState.Checked;
-            autoscrollCheckBox.Location = new Point(337, 377);
+            autoscrollCheckBox.Location = new Point(341, 377);
             autoscrollCheckBox.Name = "autoscrollCheckBox";
             autoscrollCheckBox.Size = new Size(85, 19);
             autoscrollCheckBox.TabIndex = 4;
@@ -86,7 +86,7 @@
             // 
             clearButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             clearButton.FlatStyle = FlatStyle.System;
-            clearButton.Location = new Point(12, 371);
+            clearButton.Location = new Point(11, 371);
             clearButton.Name = "clearButton";
             clearButton.Size = new Size(86, 28);
             clearButton.TabIndex = 5;
