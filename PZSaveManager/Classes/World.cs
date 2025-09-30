@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Xml.Linq;
 using SharpCompress.Archives;
 using SharpCompress.Archives.Tar;
@@ -75,122 +76,124 @@ namespace PZSaveManager.Classes
 
 		private static IEnumerable<Save> GetOrphanedSaves() => GetAllSaves().Where(s => s.AssociatedWorld is null);
 
-		private static IEnumerable<Save> GetAllSaves()
+		private static List<Save> GetAllSaves()
 		{
+			var saves = new ConcurrentBag<Save>();
+
 			if (!Directory.Exists(Save.BackupPath))
-				yield break;
+				return saves.ToList();
 
-			IEnumerable<World>? allWorlds = null;
+			var allWorlds = GetAllWorlds();
 
-			foreach (string folderPath in Directory.EnumerateDirectories(Save.BackupPath))
-			{
-				string? archivePath = GetArchivePath();
+			Parallel.ForEach(Directory.EnumerateDirectories(Save.BackupPath), folderPath =>
+            {
+                string? archivePath = GetArchivePath();
 
 				if (archivePath is null)
-					continue;
+					return;  // Continue
 
-				// Fetch the metadata
-				string metadataPath = IOPath.Combine(folderPath, Save.MetadataFileName);
-				string? worldName = null, worldGamemode = null, description = null;
-				DateTime? date = null;
+                // Fetch the metadata
+                string metadataPath = IOPath.Combine(folderPath, Save.MetadataFileName);
+                string? worldName = null, worldGamemode = null, description = null;
+                DateTime? date = null;
 
-				if (File.Exists(metadataPath))
-				{
-					try
-					{
-						var xml = XElement.Load(metadataPath);
+                if (File.Exists(metadataPath))
+                {
+                    try
+                    {
+                        var xml = XElement.Load(metadataPath);
 
-						worldName = xml.Element(XmlElementName.Metadata.WorldName)?.Value;
-						worldGamemode = xml.Element(XmlElementName.Metadata.WorldGamemode)?.Value;
-						description = xml.Element(XmlElementName.Metadata.Description)?.Value;
+                        worldName = xml.Element(XmlElementName.Metadata.WorldName)?.Value;
+                        worldGamemode = xml.Element(XmlElementName.Metadata.WorldGamemode)?.Value;
+                        description = xml.Element(XmlElementName.Metadata.Description)?.Value;
 
-						if (DateTime.TryParse(xml.Element(XmlElementName.Metadata.Date)?.Value, out var parsedDate))
-							date = parsedDate;
-					}
-					catch (Exception ex)
-					{
-						// Not a big deal. The save is probably still fine.
-						Logger.Log($"Could not process the metadata at {metadataPath}", ex);
-					}
-				}
+                        if (DateTime.TryParse(xml.Element(XmlElementName.Metadata.Date)?.Value, out var parsedDate))
+                            date = parsedDate;
+                    }
+                    catch (Exception ex)
+                    {
+                        // Not a big deal. The save is probably still fine.
+                        Logger.Log($"Could not process the metadata at {metadataPath}", ex);
+                    }
+                }
 
-				if (worldName is null || worldGamemode is null)
-				{
-					var worldData = Save.GetWorldDataFromArchive(archivePath);
+                if (worldName is null || worldGamemode is null)
+                {
+                    var worldData = Save.GetWorldDataFromArchive(archivePath);
 
-					if (worldData is null)
-					{
-						Logger.Log($"The save archive at {archivePath} appears to be corrupt. Skipping.", LogSeverity.Warning);
-						continue;
-					}
+                    if (worldData is null)
+                    {
+                        Logger.Log($"The save archive at {archivePath} appears to be corrupt. Skipping.", LogSeverity.Warning);
+						return;
+                    }
 
-					worldName = worldData.Value.Name;
-					worldGamemode = worldData.Value.Gamemode;
-				}
+                    worldName = worldData.Value.Name;
+                    worldGamemode = worldData.Value.Gamemode;
+                }
 
-				// Fetch the save preview
-				string thumbPath = IOPath.Combine(folderPath, Save.ThumbFileName);
-				var thumb = new MemoryStream();
+                // Fetch the save preview
+                string thumbPath = IOPath.Combine(folderPath, Save.ThumbFileName);
+                var thumb = new MemoryStream();
 
-				try
-				{
-					if (File.Exists(thumbPath))
-					{
-						using var thumbFile = File.OpenRead(thumbPath);
-						thumbFile.CopyTo(thumb);
-					}
-					else
-					{
-						using var archive = ArchiveFactory.Open(archivePath);
-						using var ts = archive.Entries.FirstOrDefault(e => e.Key == $"{worldGamemode}/{worldName}/{ThumbName}")?.OpenEntryStream();
-						ts?.CopyTo(thumb);
-					}
-				}
-				catch (Exception ex)
-				{
-					Logger.Log($"Could not load the thumb for the world {worldName} ({worldGamemode})", ex);
-				}
+                try
+                {
+                    if (File.Exists(thumbPath))
+                    {
+                        using var thumbFile = File.OpenRead(thumbPath);
+                        thumbFile.CopyTo(thumb);
+                    }
+                    else
+                    {
+                        using var archive = ArchiveFactory.Open(archivePath);
+                        using var ts = archive.Entries.FirstOrDefault(e => e.Key == $"{worldGamemode}/{worldName}/{ThumbName}")?.OpenEntryStream();
+                        ts?.CopyTo(thumb);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log($"Could not load the thumb for world {worldName} ({worldGamemode})", ex);
+                }
 
-				thumb.Position = 0;
-				date ??= File.GetLastWriteTime(archivePath);
+                thumb.Position = 0;
+                date ??= File.GetLastWriteTime(archivePath);
 
-				yield return new(GetAssociatedWorld(), description ?? SaveNoDescription, archivePath, date.Value, thumb);
+                saves.Add(new Save(GetAssociatedWorld(), description ?? SaveNoDescription, archivePath, date.Value, thumb));
 
 
-				string? GetArchivePath()
-				{
-					string zipPath = IOPath.Combine(folderPath, Save.ArchiveFileName + ".zip");
-					string tarPath = IOPath.Combine(folderPath, Save.ArchiveFileName + ".tar");
+                string? GetArchivePath()
+                {
+                    string zipPath = IOPath.Combine(folderPath, Save.ArchiveFileName + ".zip");
+                    string tarPath = IOPath.Combine(folderPath, Save.ArchiveFileName + ".tar");
 
-					if (File.Exists(zipPath) && ZipArchive.IsZipFile(zipPath))
-						return zipPath;
+                    if (File.Exists(zipPath) && ZipArchive.IsZipFile(zipPath))
+                        return zipPath;
 
-					if (File.Exists(tarPath) && TarArchive.IsTarFile(tarPath))
-						return tarPath;
+                    if (File.Exists(tarPath) && TarArchive.IsTarFile(tarPath))
+                        return tarPath;
 
-					return null;
-				}
+                    return null;
+                }
 
-				World? GetAssociatedWorld()
-				{
-					if (string.IsNullOrWhiteSpace(worldName))
-						return null;
+                World? GetAssociatedWorld()
+                {
+                    if (string.IsNullOrWhiteSpace(worldName))
+                        return null;
 
-					allWorlds ??= GetAllWorlds();
+                    try
+                    {
+                        return !string.IsNullOrWhiteSpace(worldGamemode) ?
+                            allWorlds.FirstOrDefault(w => w.Name == worldName && w.Gamemode == worldGamemode) :
+                            allWorlds.FirstOrDefault(w => w.Name == worldName);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Log($"Could not find any world called {worldName} ({worldGamemode})", ex);
+                        return null;
+                    }
+                }
+            });
 
-					try
-					{
-						return !string.IsNullOrWhiteSpace(worldGamemode) ?
-							allWorlds.FirstOrDefault(w => w.Name == worldName && w.Gamemode == worldGamemode) :
-							allWorlds.FirstOrDefault(w => w.Name == worldName);
-					}
-					catch (Exception ex)
-					{
-						Logger.Log($"Could not find the world associated with {worldName} ({worldGamemode})", ex);
-						return null;
-					}
-				}
-			}
+			return saves.ToList();
 		}
 
 		public static IEnumerable<World> GetAllWorlds()
@@ -215,37 +218,34 @@ namespace PZSaveManager.Classes
 			}
 		}
 
-		public static void SaveActiveWorld(string description, CancellationTokenSource token)
+		public static async Task SaveActiveWorldAsync(string description, CancellationTokenSource token)
 		{
-			Task.Run(async () =>
-			{
-				var activeWorld = GetAllWorlds().FirstOrDefault(w => w.IsActive);
+            var activeWorld = GetAllWorlds().FirstOrDefault(w => w.IsActive);
 
-				if (activeWorld is null)
-				{
-					Logger.Log("No world is currently active. Saving has been canceled.", LogSeverity.Info);
-					return;
-				}
+            if (activeWorld is null)
+            {
+                Logger.Log("No world is currently active. Saving has been canceled.", LogSeverity.Info);
+                return;
+            }
 
-				var save = new Save(activeWorld, description);
-				SoundPlayer.Shared.PlaySaveEffect(SoundEffect.Saving);
+            var save = new Save(activeWorld, description);
+            SoundPlayer.Shared.PlaySaveEffect(SoundEffect.Saving);
 
-				try
-				{
-					await save.ExportAsync(token.Token);
-					SoundPlayer.Shared.PlaySaveEffect(SoundEffect.SaveComplete);
-				}
-				catch (OperationCanceledException)
-				{
-					SoundPlayer.Shared.PlaySaveEffect(SoundEffect.SaveCanceled);
-				}
-				catch (Exception ex)
-				{
-					Logger.Log($"Could not save the world {activeWorld.Name}", ex);
-					SoundPlayer.Shared.PlaySaveEffect(SoundEffect.SaveFailure);
-				}
-			}, token.Token);
-		}
+            try
+            {
+                await save.ExportAsync(token.Token);
+                SoundPlayer.Shared.PlaySaveEffect(SoundEffect.SaveComplete);
+            }
+            catch (OperationCanceledException)
+            {
+                SoundPlayer.Shared.PlaySaveEffect(SoundEffect.SaveCanceled);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"Could not save the world {activeWorld.Name}", ex);
+                SoundPlayer.Shared.PlaySaveEffect(SoundEffect.SaveFailure);
+            }
+        }
 
 		public static void CreateMissingWorlds()
 		{
