@@ -24,12 +24,6 @@
     <None Remove="Resources\Audio\SaveFailure.wav" />
     <None Remove="Resources\Audio\SaveNotCanceled.wav" />
     <None Remove="Resources\Audio\Saving.wav" />
-    <None Remove="Resources\Audio\Spam\Spam1.wav" />
-    <None Remove="Resources\Audio\Spam\Spam2.wav" />
-    <None Remove="Resources\Audio\Spam\Spam3.wav" />
-    <None Remove="Resources\Audio\Spam\Spam4.wav" />
-    <None Remove="Resources\Audio\Spam\Spam5.wav" />
-    <None Remove="Resources\Audio\Spam\Spam6.wav" />
     <None Remove="Resources\Images\Delete.png" />
     <None Remove="Resources\Images\Icon.ico" />
     <None Remove="Resources\Images\New.png" />
@@ -47,12 +41,6 @@
     <EmbeddedResource Include="Resources\Audio\SaveFailure.wav" />
     <EmbeddedResource Include="Resources\Audio\SaveNotCanceled.wav" />
     <EmbeddedResource Include="Resources\Audio\Saving.wav" />
-    <EmbeddedResource Include="Resources\Audio\Spam\Spam1.wav" />
-    <EmbeddedResource Include="Resources\Audio\Spam\Spam2.wav" />
-    <EmbeddedResource Include="Resources\Audio\Spam\Spam3.wav" />
-    <EmbeddedResource Include="Resources\Audio\Spam\Spam4.wav" />
-    <EmbeddedResource Include="Resources\Audio\Spam\Spam5.wav" />
-    <EmbeddedResource Include="Resources\Audio\Spam\Spam6.wav" />
     <EmbeddedResource Include="Resources\Images\Delete.png" />
     <EmbeddedResource Include="Resources\Images\Icon.ico" />
     <EmbeddedResource Include="Resources\Images\New.png" />
