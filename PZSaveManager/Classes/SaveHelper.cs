@@ -96,9 +96,7 @@ namespace PZSaveManager.Classes
 			private const string DummyBind = "Dummy";
 
 			private const int HotkeyCooldown = 1000;  // in milliseconds
-			private static readonly Stopwatch cooldownStopwatch = Stopwatch.StartNew();
-
-            private static bool CanTriggerHotkeys => cooldownStopwatch.ElapsedMilliseconds >= HotkeyCooldown;
+			private static readonly Stopwatch cooldownStopwatch = new();
 
             public static bool IsHotkeyAvailable(Keys key)
 			{
@@ -121,17 +119,13 @@ namespace PZSaveManager.Classes
 			{
 				UnbindAll();
 
-				return RegisterHotkey(Settings.Default.SaveHotkey, SaveBind, "manual save", (s, e) =>
+				return RegisterHotkey(Settings.Default.SaveHotkey, SaveBind, "manual save", static (s, e) =>
 				{
-					if (!CanTriggerHotkeys)
-					{
-						LogCooldown();
+					if (!TryProcessHotkey())
 						return;
-					}
 
-					cooldownStopwatch.Restart();
-
-                    _ = Task.Run(async () =>
+					// Avoid locking the window
+                    _ = Task.Run(static async () =>
                     {
                         try
                         {
@@ -139,24 +133,37 @@ namespace PZSaveManager.Classes
                         }
                         catch (Exception ex)
                         {
-                            Logger.Log($"PerformSave failed", ex);
+                            Logger.Log($"Manual save failed", ex);
                         }
                     });
 
-                }) && RegisterHotkey(Settings.Default.AbortSaveHotkey, AbortSaveBind, "abort save", (s, e) =>
+                }) && RegisterHotkey(Settings.Default.AbortSaveHotkey, AbortSaveBind, "abort save", static (s, e) =>
 				{
-					if (!CanTriggerHotkeys)
-					{
-                        LogCooldown();
+                    if (!TryProcessHotkey())
                         return;
-					}
 
                     cooldownStopwatch.Restart();
                     AbortSave();
 				});
 
 
-                static void LogCooldown() => Logger.Log($"Hotkey was just triggered recently. Ignoring key press.", LogSeverity.Info);
+				static bool TryProcessHotkey()
+				{
+					if (!cooldownStopwatch.IsRunning)
+					{
+						cooldownStopwatch.Start();
+						return true;
+					}
+
+					if (cooldownStopwatch.ElapsedMilliseconds >= HotkeyCooldown)  // If the cooldown is over
+					{
+						cooldownStopwatch.Restart();
+						return true;
+					}
+
+                    Logger.Log($"Hotkey was just triggered recently. Ignoring key press.", LogSeverity.Info);
+                    return false;
+				}
 
                 static bool RegisterHotkey(string hotkeyString, string bindName, string hotkeyFunction, EventHandler<HotkeyEventArgs> handler)
 				{
