@@ -1,4 +1,10 @@
 <p align="center">
+	<h2 align="center">In the Name of God</h2>
+</p>
+
+<br>
+
+<p align="center">
 	<img alt="Project Zomboid Save Manager main logo" src="RepoImages/SaveManagerMainLogo.webp" width="128" height="128"><br>
 	<h2 align="center">Project Zomboid Save Manager</h2>
 </p>
@@ -78,7 +84,7 @@ Enough chit-chat. You can grab the latest version [here](https://github.com/Wirm
 
 ## 🚀 Quick Start
 1. Download Save Manager and install .NET Desktop Runtime.
-2. Extract `PZSaveManager.exe` anywhere you please—preferably in a folder on the Desktop for ease of access.
+2. Extract `PZSaveManager.exe` (and optionally `PZSaveManager.pdb`) anywhere you please—preferably in a folder on the Desktop for ease of access.
 3. Run the application and save your progress. You can also configure many save options (like save path, compression, auto-save settings, hotkeys, etc.) by navigating to **Options > Configure Save Options** in the application.
 4. ???
 5. PROFIT!1!!
