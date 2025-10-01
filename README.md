@@ -3,7 +3,7 @@
 	<h2 align="center">Project Zomboid Save Manager</h2>
 </p>
 
-Tired of stupid bugs (or decisions) whacking your character and ending your run? Wish there was a straightforward way to back up and restore your worlds after things go haywire? Say no more! Save Manager to the rescue!
+Tired of stupid bugs or decisions whacking your character and ending your run? Wish there was a straightforward way to back up and restore your worlds after things go haywire? Say no more! Save Manager to the rescue!
 
 [![Latest GitHub release](https://img.shields.io/github/v/release/Wirmaple73/PZSaveManager)](https://github.com/Wirmaple73/PZSaveManager/releases) ![Downloads](https://img.shields.io/github/downloads/Wirmaple73/PZSaveManager/total) <img alt="Supported game versions: build 41 and build 42" src="https://img.shields.io/badge/game_version-build_41_&_42-purple"> ![Platform: Windows](https://img.shields.io/badge/platform-windows-blue) [![MIT License](https://img.shields.io/badge/license-MIT-forestgreen)](LICENSE)
 
@@ -19,7 +19,7 @@ You are advised to read this readme carefully. Don't sacrifice your survivor for
 * Optional save compression to save disk space
 
 ## 🖥️ Supported Versions and Prerequisites
-* Compatible with Project Zomboid build 41 and 42 (including latest updates like `41.78.16` and `42.11.0`).
+* Compatible with Project Zomboid build 41 and 42 (including latest updates like `41.78.16`, `42.11.0` and `42.12.0`).
 * This application needs at least **Windows 7 SP1** or above to run. Both x86 and x64 Windows OSes are supported.
 * .NET 6 Desktop Runtime is required to run this application (more on that later).
 
@@ -54,14 +54,15 @@ You are advised to read this readme carefully. Don't sacrifice your survivor for
 ## ⚠️ Known Issues
 Although the **manual save** and **auto-save** functions both work perfectly fine, you might sometimes experience some of the following side effects after restoring a save that was created using these functions.
 
-#### The following side effects apply to all game versions:
+#### The following side effects apply to *all* game versions:
 * Discovered locations on the minimap might temporarily disappear. This can be fixed by simply quitting to the main menu in-game and loading the world again.
+* Map annotations that were made recently may be erased (but not old ones).
 * Some nearby 'alive' and recently-killed zombies may be missing in some cases.
 * Recently discovered locations may be randomized—they might spawn different zombies & vehicles, different vehicle and zone stories, etc. This mostly occurs when you drive to an undiscovered location and immediately save afterward.
 * If you save while your car is running, it may be turned off after restoring the save. This behavior exists in vanilla Project Zomboid itself. Don't blame me if you save amidst a horde and your wreck doesn't start in time!
 
 #### The following side effects *only* apply to 41.78.16 (and probably other build 41 versions):
-* Your **map annotations** and discovered minimap/worldmap locations may be erased. ⚠️
+* Your **map annotations** and discovered locations on the minimap or worldmap may be completely erased. ⚠️
 * Disabled radios and TVs may sometimes be turned back on.
 * Other miscellaneous issues might arise.
 
