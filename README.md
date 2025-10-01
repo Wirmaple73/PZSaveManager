@@ -74,7 +74,7 @@ Regardless, manual save and auto-save are both very reliable in build 42. The is
 * In the save selection page, shortcut keys like <kbd>Ctrl</kbd>+<kbd>N</kbd> and <kbd>Ctrl</kbd>+<kbd>R</kbd> may or may not work depending on how the program feels like. Use the buttons provided in the tool strip or right-click context menu instead. If I ever find that lowlife control that's stealing key presses...
 
 ## ⬇️ Download
-Enough chit-chat. You can grab the latest version [here](./releases/latest). Make sure to install **.NET 6 Desktop Runtime** beforehand. Pick either [x86](https://aka.ms/dotnet/6.0/windowsdesktop-runtime-win-x86.exe) or [x64](https://aka.ms/dotnet/6.0/windowsdesktop-runtime-win-x64.exe) depending on your Windows version.
+Enough chit-chat. You can grab the latest version [here](https://github.com/Wirmaple73/PZSaveManager/releases/latest). Make sure to install **.NET 6 Desktop Runtime** beforehand. Pick either [x86](https://aka.ms/dotnet/6.0/windowsdesktop-runtime-win-x86.exe) or [x64](https://aka.ms/dotnet/6.0/windowsdesktop-runtime-win-x64.exe) depending on your Windows version.
 
 ## 🚀 Quick Start
 1. Download Save Manager and install .NET Desktop Runtime.
