@@ -39,7 +39,7 @@ You are advised to read this readme carefully. Don't sacrifice your survivor for
 **A:** Indeed! Save Manager doesn't care about your mods or current world progress. It just stashes copies of your world folder and restores them when needed.
 
 **Q: Can this application modify sandbox settings and save data?** <br>
-**A:** Not for now. This app specializes in creating saves and restoring them, not editing save data. There are much better mod alternatives for that.
+**A:** Not for now. There are much better mod alternatives for that anyway.
 
 **Q: Will my worlds get rekt if I delete the app? Will my saves disappear?** <br>
 **A:** Nope, Save Manager doesn't self-destruct. Your worlds will be left untouched. Your saves can still be found at `C:\Users\%username%\Zomboid\Backups` (or the custom directory you set before).
@@ -58,7 +58,8 @@ You are advised to read this readme carefully. Don't sacrifice your survivor for
 * **Auto-save:** Saves created by the auto-save function. This function is disabled by default.
 
 ## ⚠️ Known Issues
-Although the **manual save** and **auto-save** functions both work perfectly fine, you might sometimes experience some of the following side effects after restoring a save that was created using these functions.
+> [!NOTE]
+> Although the **manual save** and **auto-save** functions both work perfectly fine, you might sometimes experience some of the following side effects after restoring a save that was created using these functions.
 
 #### The following side effects apply to *all* game versions:
 * Discovered locations on the minimap might temporarily disappear. This can be fixed by simply quitting to the main menu in-game and loading the world again.
@@ -72,7 +73,10 @@ Although the **manual save** and **auto-save** functions both work perfectly fin
 * Disabled radios and TVs may sometimes be turned back on.
 * Other miscellaneous issues might arise.
 
-These side effects probably happen because prior to writing certain files (e.g. the minimap) to disk, the game sometimes temporarily stores them in memory, which Save Manager doesn't have access to. You are recommended to quit to the main menu in-game and create an **external save** every time you intend to save, *especially on build 41.* **This guarantees that no side effects will show up.**
+These side effects probably happen because prior to writing certain files (e.g. the minimap) to disk, the game sometimes temporarily stores them in memory, which Save Manager doesn't have access to.
+
+> [!TIP]
+> You are recommended to quit to the main menu in-game and create an **external save** every time you intend to save, *especially on build 41.* **This guarantees that no side effects will show up.**
 
 Regardless, manual save and auto-save are both very reliable in build 42. The issues above are mostly just minor inconveniences.
 
@@ -102,4 +106,5 @@ Feel free to [report bugs and request new features](https://github.com/Wirmaple7
 * [ZapSplat](https://www.zapsplat.com/) (Free sound effects – attribution required)
 * Various free resources used in the application. All attributions included where required.
 
-> ⚠️ **Disclaimer**: This application is a third-party tool and is **not affiliated with or endorsed by The Indie Stone**.
+> [!WARNING]
+> **Disclaimer**: This application is a third-party tool and is **not affiliated with or endorsed by The Indie Stone**.
