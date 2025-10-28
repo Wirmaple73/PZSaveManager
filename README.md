@@ -10,7 +10,7 @@
 </p>
 
 > [!NOTE]
-> **If you are looking for a cross-platform alternative that runs on Linux and macOS, check out [ZomboidVault](https://github.com/indepth666/ZomboidVault).**
+> **If you are looking for a cross-platform alternative that runs on Windows, Linux and macOS, check out [ZomboidVault](https://github.com/indepth666/ZomboidVault).**
 
 Tired of stupid bugs or decisions whacking your character and ending your run? Wish there was a straightforward way to back up and restore your worlds after things go haywire? Say no more! Save Manager to the rescue!
 
