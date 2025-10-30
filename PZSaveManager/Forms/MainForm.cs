@@ -1,6 +1,4 @@
 ﻿// ==============================================================================================================
-// Look at me, desperately schizo-optimizing SEO
-
 // Project: Project Zomboid Save Manager
 // Description: A Windows utility for backing up and restoring Project Zomboid worlds.
 // Compatible with mods and latest build 41 and build 42 versions.
@@ -53,6 +51,7 @@ namespace PZSaveManager.Forms
                 BackButton_Click(this, EventArgs.Empty);
 
                 checkForUpdatesAutomaticallyToolStripMenuItem.Checked = Settings.Default.AutoCheckForUpdates;
+                minimizeToSystemTrayToolStripMenuItem.Checked = Settings.Default.MinimizeToSystemTray;
 
                 if (Settings.Default.AutoCheckForUpdates)
                     await CheckForUpdates(false);
@@ -105,13 +104,39 @@ namespace PZSaveManager.Forms
             form.ShowDialog();
         }
 
+        private void MainForm_Resize(object sender, EventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Minimized && Settings.Default.MinimizeToSystemTray)
+            {
+                // Minimize to system tray
+                this.WindowState = FormWindowState.Minimized;
+                this.Visible = false;
+
+                notifyIcon.Visible = true;
+
+                if (!Settings.Default.IsEverMinimized)
+                {
+                    notifyIcon.ShowBalloonTip(3000);
+                    Settings.Default.IsEverMinimized = true;
+                }
+            }
+        }
+
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (SaveHelper.Hotkeys.GetKeyByString(Settings.Default.SaveHotkey).Key is null && !Settings.Default.EnableAutosave)
-                return;
+            //if (SaveHelper.Hotkeys.GetKeyByString(Settings.Default.SaveHotkey).Key is null && !Settings.Default.EnableAutosave)
+            //    return;
 
             if (!MessageBoxManager.ShowConfirmation("Are you sure you want to quit? The program must be kept running in the background in order to perform manual or automatic saves!", "Exit Confirmation"))
                 e.Cancel = true;
+        }
+
+        private void NotifyIcon_MouseUp(object sender, MouseEventArgs e)
+        {
+            // No thanks, proper keyboard support is too much of a headache to implement
+
+            if (e.Button == MouseButtons.Left)
+                ShowWindowToolStripMenuItem_Click(sender, EventArgs.Empty);
         }
 
         private void Application_ApplicationExit(object? sender, EventArgs e)
@@ -132,7 +157,7 @@ namespace PZSaveManager.Forms
         {
             if (logForm is null || logForm.IsDisposed)
                 logForm = new();
-            
+
             if (!Application.OpenForms.OfType<LogForm>().Any())
                 logForm.Show();
             else
@@ -147,6 +172,17 @@ namespace PZSaveManager.Forms
 
         private void checkForUpdatesAutomaticallyToolStripMenuItem_Click(object sender, EventArgs e)
             => Settings.Default.AutoCheckForUpdates = checkForUpdatesAutomaticallyToolStripMenuItem.Checked;
+
+        private void MinimizeToSystemTrayToolStripMenuItem_Click(object sender, EventArgs e)
+            => Settings.Default.MinimizeToSystemTray = minimizeToSystemTrayToolStripMenuItem.Checked;
+
+        private void ShowWindowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Visible = true;
+            this.WindowState = FormWindowState.Normal;
+
+            notifyIcon.Visible = false;
+        }
 
         private static async Task CheckForUpdates(bool displayExtraMessages = true)
         {

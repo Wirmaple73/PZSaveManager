@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             menuStrip = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
@@ -35,7 +36,9 @@
             viewLogsToolStripMenuItem = new ToolStripMenuItem();
             optionsToolStripMenuItem = new ToolStripMenuItem();
             configureSaveOptionsToolStripMenuItem = new ToolStripMenuItem();
+            toolStripMenuItem1 = new ToolStripSeparator();
             checkForUpdatesAutomaticallyToolStripMenuItem = new ToolStripMenuItem();
+            minimizeToSystemTrayToolStripMenuItem = new ToolStripMenuItem();
             helpToolStripMenuItem = new ToolStripMenuItem();
             checkForUpdatesToolStripMenuItem = new ToolStripMenuItem();
             toolStripMenuItem3 = new ToolStripSeparator();
@@ -44,7 +47,12 @@
             toolStripMenuItem2 = new ToolStripSeparator();
             aboutToolStripMenuItem = new ToolStripMenuItem();
             pagePanel = new Panel();
+            notifyIcon = new NotifyIcon(components);
+            notifyIconContextMenu = new ContextMenuStrip(components);
+            showWindowToolStripMenuItem = new ToolStripMenuItem();
+            exitCMToolStripMenuItem = new ToolStripMenuItem();
             menuStrip.SuspendLayout();
+            notifyIconContextMenu.SuspendLayout();
             SuspendLayout();
             // 
             // menuStrip
@@ -84,13 +92,13 @@
             // 
             viewLogsToolStripMenuItem.Name = "viewLogsToolStripMenuItem";
             viewLogsToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.L;
-            viewLogsToolStripMenuItem.Size = new Size(180, 22);
+            viewLogsToolStripMenuItem.Size = new Size(167, 22);
             viewLogsToolStripMenuItem.Text = "&View Logs";
             viewLogsToolStripMenuItem.Click += viewLogsToolStripMenuItem_Click;
             // 
             // optionsToolStripMenuItem
             // 
-            optionsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { configureSaveOptionsToolStripMenuItem, checkForUpdatesAutomaticallyToolStripMenuItem });
+            optionsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { configureSaveOptionsToolStripMenuItem, toolStripMenuItem1, checkForUpdatesAutomaticallyToolStripMenuItem, minimizeToSystemTrayToolStripMenuItem });
             optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             optionsToolStripMenuItem.Size = new Size(61, 20);
             optionsToolStripMenuItem.Text = "&Options";
@@ -103,6 +111,11 @@
             configureSaveOptionsToolStripMenuItem.Text = "&Configure Save Options...";
             configureSaveOptionsToolStripMenuItem.Click += configureSaveOptionsToolStripMenuItem_Click;
             // 
+            // toolStripMenuItem1
+            // 
+            toolStripMenuItem1.Name = "toolStripMenuItem1";
+            toolStripMenuItem1.Size = new Size(245, 6);
+            // 
             // checkForUpdatesAutomaticallyToolStripMenuItem
             // 
             checkForUpdatesAutomaticallyToolStripMenuItem.CheckOnClick = true;
@@ -110,6 +123,14 @@
             checkForUpdatesAutomaticallyToolStripMenuItem.Size = new Size(248, 22);
             checkForUpdatesAutomaticallyToolStripMenuItem.Text = "Check for &Updates Automatically";
             checkForUpdatesAutomaticallyToolStripMenuItem.Click += checkForUpdatesAutomaticallyToolStripMenuItem_Click;
+            // 
+            // minimizeToSystemTrayToolStripMenuItem
+            // 
+            minimizeToSystemTrayToolStripMenuItem.CheckOnClick = true;
+            minimizeToSystemTrayToolStripMenuItem.Name = "minimizeToSystemTrayToolStripMenuItem";
+            minimizeToSystemTrayToolStripMenuItem.Size = new Size(248, 22);
+            minimizeToSystemTrayToolStripMenuItem.Text = "Minimize to &System Tray";
+            minimizeToSystemTrayToolStripMenuItem.Click += MinimizeToSystemTrayToolStripMenuItem_Click;
             // 
             // helpToolStripMenuItem
             // 
@@ -164,6 +185,36 @@
             pagePanel.Size = new Size(784, 537);
             pagePanel.TabIndex = 1;
             // 
+            // notifyIcon
+            // 
+            notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
+            notifyIcon.BalloonTipText = "Save Manager has been minimized to the system tray.";
+            notifyIcon.BalloonTipTitle = "Minimized to Tray";
+            notifyIcon.ContextMenuStrip = notifyIconContextMenu;
+            notifyIcon.Icon = Properties.Resources.Icon;
+            notifyIcon.Text = "Project Zomboid Save Manager";
+            notifyIcon.MouseUp += NotifyIcon_MouseUp;
+            // 
+            // notifyIconContextMenu
+            // 
+            notifyIconContextMenu.Items.AddRange(new ToolStripItem[] { showWindowToolStripMenuItem, exitCMToolStripMenuItem });
+            notifyIconContextMenu.Name = "notifyIconContextMenu";
+            notifyIconContextMenu.Size = new Size(181, 70);
+            // 
+            // showWindowToolStripMenuItem
+            // 
+            showWindowToolStripMenuItem.Name = "showWindowToolStripMenuItem";
+            showWindowToolStripMenuItem.Size = new Size(180, 22);
+            showWindowToolStripMenuItem.Text = "&Show";
+            showWindowToolStripMenuItem.Click += ShowWindowToolStripMenuItem_Click;
+            // 
+            // exitCMToolStripMenuItem
+            // 
+            exitCMToolStripMenuItem.Name = "exitCMToolStripMenuItem";
+            exitCMToolStripMenuItem.Size = new Size(180, 22);
+            exitCMToolStripMenuItem.Text = "&Exit";
+            exitCMToolStripMenuItem.Click += exitToolStripMenuItem_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -180,8 +231,10 @@
             Text = "Project Zomboid Save Manager";
             FormClosing += MainForm_FormClosing;
             Shown += MainForm_Shown;
+            Resize += MainForm_Resize;
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();
+            notifyIconContextMenu.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -203,5 +256,11 @@
         private ToolStripMenuItem checkForUpdatesAutomaticallyToolStripMenuItem;
         private ToolStripMenuItem logsToolStripMenuItem;
         private ToolStripMenuItem viewLogsToolStripMenuItem;
+        private ToolStripSeparator toolStripMenuItem1;
+        private ToolStripMenuItem minimizeToSystemTrayToolStripMenuItem;
+        private NotifyIcon notifyIcon;
+        private ContextMenuStrip notifyIconContextMenu;
+        private ToolStripMenuItem showWindowToolStripMenuItem;
+        private ToolStripMenuItem exitCMToolStripMenuItem;
     }
 }
