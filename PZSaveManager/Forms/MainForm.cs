@@ -89,10 +89,10 @@ namespace PZSaveManager.Forms
 
             if (form.ShowDialog() == DialogResult.OK)
             {
-                SaveHelper.UpdateAutosaveTimer();
+                // Switch to the world selection page to avoid strange behavior with the save selection page after applying new settings
+                PageLoader.Load(pagePanel, worldSelectionPage);
 
-                worldSelectionPage.UpdateUI();
-                saveSelectionPage.UpdateUI();
+                SaveHelper.UpdateAutosaveTimer();
             }
 
             SaveHelper.Hotkeys.UpdateAll();
