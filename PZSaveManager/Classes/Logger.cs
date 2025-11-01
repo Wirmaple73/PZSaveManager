@@ -8,7 +8,7 @@ namespace PZSaveManager.Classes
 		public static string FileName => $"PZSaveManager {DateTime.Now:yyyy-MM-dd}.log";
         public static string FilePath => Path.Combine(LogDirectory, FileName);
 
-		public static readonly string LogDirectory = Path.Combine(Environment.CurrentDirectory, "Logs");
+		public static readonly string LogDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PZSaveManager", "Logs");
 
         private static readonly BlockingCollection<string> logQueue = new();
         private static readonly Task? logWorker = null;
