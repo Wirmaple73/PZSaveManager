@@ -90,6 +90,8 @@ namespace PZSaveManager.Forms
             if (form.ShowDialog() == DialogResult.OK)
             {
                 SaveHelper.UpdateAutosaveTimer();
+
+                worldSelectionPage.UpdateUI();
                 saveSelectionPage.UpdateUI();
             }
 
