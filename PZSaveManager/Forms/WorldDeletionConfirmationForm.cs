@@ -33,6 +33,12 @@ namespace PZSaveManager.Forms
 			if (Subject is null)
 				throw new InvalidOperationException($"{nameof(Subject)} is null.");
 
+			if (Subject.IsActive)
+			{
+				MessageBoxManager.ShowWarning("The world is currently active. Please quit to the main menu in-game and try again.");
+				return;
+			}
+
 			deleteButton.Enabled = cancelButton.Enabled = confirmationTextBox.Enabled = false;
 			WindowHelper.Buttons.DisableCloseButton(this.Handle);
 
