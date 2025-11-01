@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Xml.Linq;
+using PZSaveManager.Properties;
 using SharpCompress.Archives;
 using SharpCompress.Archives.Tar;
 using SharpCompress.Archives.Zip;
@@ -10,10 +11,13 @@ namespace PZSaveManager.Classes
 {
 	public class World
 	{
-		public static readonly string BaseDirectory = IOPath.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Zomboid");
-		public static readonly string WorldDirectory = IOPath.Combine(BaseDirectory, "Saves");
+        public static readonly string DefaultDuserPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
-		private const string LockedFileName = "players.db";
+		public static string BaseDirectory => Directory.Exists(Settings.Default.DuserPath) ? IOPath.Combine(Settings.Default.DuserPath, "Zomboid") : IOPath.Combine(DefaultDuserPath, "Zomboid");
+		public static string WorldDirectory => IOPath.Combine(BaseDirectory, "Saves");
+
+
+        private const string LockedFileName = "players.db";
 		private const string BackupSuffix = "__old";
 
 		private const string SaveNoDescription = "No description";

@@ -33,7 +33,7 @@ namespace PZSaveManager.Classes
 		public const string AutosaveDescription		= "Auto-save";
 		public const string UnnamedSaveDescription	= "Unnamed save";
 
-		public static readonly string DefaultBackupPath = Path.Combine(World.BaseDirectory, "Backups");
+		public static string DefaultBackupPath => Path.Combine(World.BaseDirectory, "Backups");
 		public static string BackupPath => Settings.Default.SavePath.Length > 0 ? Settings.Default.SavePath : DefaultBackupPath;
 
 		public World? AssociatedWorld { get; }

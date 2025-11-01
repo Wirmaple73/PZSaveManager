@@ -154,5 +154,17 @@ namespace PZSaveManager.Properties {
                 this["IsEverMinimized"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DuserPath {
+            get {
+                return ((string)(this["DuserPath"]));
+            }
+            set {
+                this["DuserPath"] = value;
+            }
+        }
     }
 }
