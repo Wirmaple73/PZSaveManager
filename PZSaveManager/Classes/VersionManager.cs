@@ -5,7 +5,7 @@ namespace PZSaveManager.Classes
 {
 	public static class VersionManager
 	{
-		public static readonly DateTime BuildDate = new(2025, 9, 30);
+		public static readonly DateTime BuildDate = new(2025, 11, 1);
 
 		public static readonly Version ApplicationVersion = Assembly.GetExecutingAssembly().GetName().Version!;
 		public static readonly string ApplicationVersionText = ApplicationVersion.ToString(3);

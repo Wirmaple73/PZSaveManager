@@ -10,12 +10,13 @@
     <Product>Project Zomboid Save Manager</Product>
 	<AssemblyTitle>Project Zomboid Save Manager</AssemblyTitle>
     <Company>Wirmaple73</Company>
-    <AssemblyVersion>1.0.0</AssemblyVersion>
-    <FileVersion>1.0.0</FileVersion>
+    <AssemblyVersion>1.1.0</AssemblyVersion>
+    <FileVersion>1.1.0</FileVersion>
     <ApplicationIcon>Resources\Images\Icon.ico</ApplicationIcon>
     <AssemblyName>PZSaveManager</AssemblyName>
     <Authors>Wirmaple73</Authors>
     <Description>Project Zomboid Save Manager</Description>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
