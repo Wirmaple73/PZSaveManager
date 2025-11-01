@@ -40,8 +40,9 @@
             columnHeader4 = new ColumnHeader();
             listContextMenu = new ContextMenuStrip(components);
             refreshToolStripMenuItem = new ToolStripMenuItem();
-            toolStripMenuItem1 = new ToolStripSeparator();
             deleteToolStripMenuItem = new ToolStripMenuItem();
+            toolStripMenuItem2 = new ToolStripSeparator();
+            viewInExplorerToolStripMenuItem = new ToolStripMenuItem();
             errorLabel = new Label();
             errorLabelIcon = new PictureBox();
             actualTotalDiskUsage = new Label();
@@ -134,33 +135,40 @@
             // 
             // listContextMenu
             // 
-            listContextMenu.Items.AddRange(new ToolStripItem[] { refreshToolStripMenuItem, toolStripMenuItem1, deleteToolStripMenuItem });
+            listContextMenu.Items.AddRange(new ToolStripItem[] { refreshToolStripMenuItem, deleteToolStripMenuItem, toolStripMenuItem2, viewInExplorerToolStripMenuItem });
             listContextMenu.Name = "listContextMenu";
-            listContextMenu.Size = new Size(141, 54);
+            listContextMenu.Size = new Size(181, 98);
             listContextMenu.Opening += listContextMenu_Opening;
             // 
             // refreshToolStripMenuItem
             // 
             refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
             refreshToolStripMenuItem.ShortcutKeys = Keys.F5;
-            refreshToolStripMenuItem.Size = new Size(140, 22);
+            refreshToolStripMenuItem.Size = new Size(180, 22);
             refreshToolStripMenuItem.Text = "&Refresh";
             refreshToolStripMenuItem.ToolTipText = "Refreshes the world list.";
             refreshToolStripMenuItem.Click += refreshListButton_Click;
-            // 
-            // toolStripMenuItem1
-            // 
-            toolStripMenuItem1.Name = "toolStripMenuItem1";
-            toolStripMenuItem1.Size = new Size(137, 6);
             // 
             // deleteToolStripMenuItem
             // 
             deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
             deleteToolStripMenuItem.ShortcutKeys = Keys.Delete;
-            deleteToolStripMenuItem.Size = new Size(140, 22);
+            deleteToolStripMenuItem.Size = new Size(180, 22);
             deleteToolStripMenuItem.Text = "&Delete...";
             deleteToolStripMenuItem.ToolTipText = "Deletes the selected world and all of its saves.";
             deleteToolStripMenuItem.Click += deleteWorldButton_Click;
+            // 
+            // toolStripMenuItem2
+            // 
+            toolStripMenuItem2.Name = "toolStripMenuItem2";
+            toolStripMenuItem2.Size = new Size(177, 6);
+            // 
+            // viewInExplorerToolStripMenuItem
+            // 
+            viewInExplorerToolStripMenuItem.Name = "viewInExplorerToolStripMenuItem";
+            viewInExplorerToolStripMenuItem.Size = new Size(180, 22);
+            viewInExplorerToolStripMenuItem.Text = "&View in Explorer";
+            viewInExplorerToolStripMenuItem.Click += ViewInExplorerToolStripMenuItem_Click;
             // 
             // errorLabel
             // 
@@ -296,7 +304,8 @@
 		private ContextMenuStrip listContextMenu;
 		private ToolStripMenuItem deleteToolStripMenuItem;
 		private ToolStripMenuItem refreshToolStripMenuItem;
-		private ToolStripSeparator toolStripMenuItem1;
 		private ColumnHeader columnHeader4;
-	}
+        private ToolStripSeparator toolStripMenuItem2;
+        private ToolStripMenuItem viewInExplorerToolStripMenuItem;
+    }
 }
