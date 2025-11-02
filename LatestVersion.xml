@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <VersionInfo>
-  <LatestVersion>1.0.0</LatestVersion>
-  <ReleaseDate>2025/09/30</ReleaseDate>
-  <ReleaseNotes>Initial release.</ReleaseNotes>
+  <LatestVersion>1.1.0</LatestVersion>
+  <ReleaseDate>2025/11/01</ReleaseDate>
+  <ReleaseNotes>
+Additions:
+  * Added support for custom `Duser.home` paths in the **Options → Configure Save Options** dialog for advanced users. (thanks to [u/the_vico](https://www.reddit.com/user/the_vico/)!)
+  * Added an option to minimize the app to the system tray (**Options → Minimize to System Tray**). This option is enabled by default. (thanks to [u/Historical_Bus_8041](https://www.reddit.com/user/Historical_Bus_8041/)!)
+  * Added an option called **View in Explorer** to the context (right-click) menu in the world selection page.
+  * Added a safeguard to avoid deleting active worlds in the world deletion dialog.
+Changes:
+  * Relocated the log directory to `C:\Users\Username\AppData\Local\PZSaveManager\Logs`.
+
+This release is compatible with saves created by the previous version of Save Manager (`1.0.0`).
+  </ReleaseNotes>
 </VersionInfo>
