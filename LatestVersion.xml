@@ -8,6 +8,7 @@ Additions:
   * Added an option to minimize the app to the system tray (Options → Minimize to System Tray). This option is enabled by default. (thanks to u/Historical_Bus_8041!)
   * Added an option called View in Explorer to the context (right-click) menu in the world selection page.
   * Added a safeguard to avoid deleting active worlds in the world deletion dialog.
+
 Changes:
   * Relocated the log directory to C:\Users\Username\AppData\Local\PZSaveManager\Logs.
 
